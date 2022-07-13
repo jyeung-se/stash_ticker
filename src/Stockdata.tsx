@@ -25,7 +25,7 @@ export default function StockData() {
         //continue here where you left off: correct variables for api call to hourly data to make graph/table for hourly prices
         axios.get('https://financialmodelingprep.com/api/v3/historical-chart/1hour/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
             const stockHourlyData = await res.data
-            console.log('stockHourlyData[0]:', stockHourlyData[0]);
+            console.log('stockHourlyData:', stockHourlyData);
             setStockHourlyResults(stockHourlyData)      
         }).catch((error) => {
             console.error(error);
@@ -56,23 +56,19 @@ export default function StockData() {
    
     // displayed stock
     let stockHourlyDisplayed: any = () => {
-        console.log('stockHourly:', stockHourlyResults);
-        // const {date, open, low, high, close, volume} = stockResults[0] || {}
-        // '|| {}' is for avoiding undefined due to data not available yet
+        console.log('stockHourlyDisplayed:', stockHourlyResults);
 
-        
-
-        // return (
-        //     <div>
-        //         <p>name: {name}</p>
-        //         <p>symbol: {symbol}</p>
-        //         <p>price: {price}</p>
-        //         <p>eps: {eps}</p>
-        //         <p>dayHigh: {dayHigh}</p>
-        //         <p>dayLow: {dayLow}</p>
-        //         <p>change: {change}</p>
-        //     </div>
-        // )
+        return stockHourlyResults.map((hourData: any) => {
+            return (
+            <div>    
+                <p>{hourData.close}</p>
+                <p>{hourData.date}</p>
+                <p>{hourData.high}</p>
+                <p>{hourData.low}</p>
+                <p>{hourData.volume}</p>
+            </div>
+            )
+        })
     }
 
 
