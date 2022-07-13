@@ -8,8 +8,9 @@ export default function StockData() {
     const [error, setError] = useState(null)
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
+ 
 
-    
+    // API Calls
     useEffect(() => {
 
         //API key: 4672ed38f1e727b95f8a9cbd22574eed
@@ -33,7 +34,8 @@ export default function StockData() {
 
 
 
-    let stockDisplayed = () => {
+    // displayed stock on load
+    let stockOverviewDisplayed = () => {
         console.log('stockResults:', stockResults[0]);
         const {name, symbol, price, eps, dayHigh, dayLow, change} = stockResults[0] || {}
         // '|| {}' is for avoiding undefined due to data not available yet
@@ -52,101 +54,104 @@ export default function StockData() {
     }
 
    
-    let stockHourly = () => {
-        console.log('stockHourly:', stockHourly[0]);
-        const {name, symbol, price, eps, dayHigh, dayLow, change} = stockResults[0] || {}
+    // displayed stock
+    let stockHourlyDisplayed: any = () => {
+        console.log('stockHourly:', stockHourlyResults);
+        // const {date, open, low, high, close, volume} = stockResults[0] || {}
         // '|| {}' is for avoiding undefined due to data not available yet
 
-        return (
-            <div>
-                <p>name: {name}</p>
-                <p>symbol: {symbol}</p>
-                <p>price: {price}</p>
-                <p>eps: {eps}</p>
-                <p>dayHigh: {dayHigh}</p>
-                <p>dayLow: {dayLow}</p>
-                <p>change: {change}</p>
-            </div>
-        )
+        
+
+        // return (
+        //     <div>
+        //         <p>name: {name}</p>
+        //         <p>symbol: {symbol}</p>
+        //         <p>price: {price}</p>
+        //         <p>eps: {eps}</p>
+        //         <p>dayHigh: {dayHigh}</p>
+        //         <p>dayLow: {dayLow}</p>
+        //         <p>change: {change}</p>
+        //     </div>
+        // )
     }
 
 
 
 
-    interface DataType {
-        key: React.Key;
-        name: string;
-        age: number;
-        address: string;
-      }
+    // interface DataType {
+    //     key: React.Key;
+    //     name: string;
+    //     age: number;
+    //     address: string;
+    //   }
 
 
-    const columns: ColumnsType<DataType> = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        filters: [
-        {
-            text: 'Joe',
-            value: 'Joe',
-        },
-        {
-            text: 'Jim',
-            value: 'Jim',
-        },
-        {
-            text: 'Submenu',
-            value: 'Submenu',
-            children: [
-            {
-                text: 'Green',
-                value: 'Green',
-            },
-            {
-                text: 'Black',
-                value: 'Black',
-            },
-            ],
-        },
-        ],
-        // specify the condition of filtering result
-        // here is that finding the name started with `value`
-        onFilter: (value: string, record) => record.name.indexOf(value) === 0,
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Age',
-        dataIndex: 'age',
-        defaultSortOrder: 'descend',
-        sorter: (a, b) => a.age - b.age,
-    },
-    {
-        title: 'Address',
-        dataIndex: 'address',
-        filters: [
-        {
-            text: 'London',
-            value: 'London',
-        },
-        {
-            text: 'New York',
-            value: 'New York',
-        },
-        ],
-        onFilter: (value: string, record) => record.address.indexOf(value) === 0,
-    },
-    ];
+    // const columns: ColumnsType<DataType> = [
+    // {
+    //     title: 'Name',
+    //     dataIndex: 'name',
+    //     filters: [
+    //     {
+    //         text: 'Joe',
+    //         value: 'Joe',
+    //     },
+    //     {
+    //         text: 'Jim',
+    //         value: 'Jim',
+    //     },
+    //     {
+    //         text: 'Submenu',
+    //         value: 'Submenu',
+    //         children: [
+    //         {
+    //             text: 'Green',
+    //             value: 'Green',
+    //         },
+    //         {
+    //             text: 'Black',
+    //             value: 'Black',
+    //         },
+    //         ],
+    //     },
+    //     ],
+    //     // specify the condition of filtering result
+    //     // here is that finding the name started with `value`
+    //     onFilter: (value: string, record) => record.name.indexOf(value) === 0,
+    //     sorter: (a, b) => a.name.length - b.name.length,
+    //     sortDirections: ['descend'],
+    // },
+    // {
+    //     title: 'Age',
+    //     dataIndex: 'age',
+    //     defaultSortOrder: 'descend',
+    //     sorter: (a, b) => a.age - b.age,
+    // },
+    // {
+    //     title: 'Address',
+    //     dataIndex: 'address',
+    //     filters: [
+    //     {
+    //         text: 'London',
+    //         value: 'London',
+    //     },
+    //     {
+    //         text: 'New York',
+    //         value: 'New York',
+    //     },
+    //     ],
+    //     onFilter: (value: string, record) => record.address.indexOf(value) === 0,
+    // },
+    // ];
 
 
-    let data = 
+    // let data = 
 
 
-    const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
-    };
+    // const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
+    // console.log('params', pagination, filters, sorter, extra);
+    // };
       
-    const App: React.FC = () => <Table columns={columns} dataSource={data} onChange={onChange} />;
+    // const App: React.FC = () => <Table columns={columns} dataSource={data} onChange={onChange} />;
 
 
 
@@ -157,7 +162,10 @@ export default function StockData() {
     }
 
     return (
-       stockDisplayed()
+       <div>
+        {stockOverviewDisplayed()}
+        {stockHourlyDisplayed()}
+        </div>
         // <p>hi</p> 
     )
 }
