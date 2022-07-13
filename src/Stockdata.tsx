@@ -7,7 +7,7 @@ export default function StockData() {
 
     const [error, setError] = useState(null)
     const [stockResults, setStockResults] = useState<any>([])
-    const [stockHourly, setStockHourly] = useState<any>([])
+    const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
 
     
     useEffect(() => {
@@ -21,10 +21,11 @@ export default function StockData() {
             console.error(error);
         });
 
+        //continue here where you left off: correct variables for api call to hourly data to make graph/table for hourly prices
         axios.get('https://financialmodelingprep.com/api/v3/historical-chart/1hour/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
             const stockHourlyData = await res.data
             console.log('stockHourlyData[0]:', stockHourlyData[0]);
-            setStockResults(stockHourlyData)      
+            setStockHourlyResults(stockHourlyData)      
         }).catch((error) => {
             console.error(error);
         });
