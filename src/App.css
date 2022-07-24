@@ -36,3 +36,6 @@
     transform: rotate(360deg);
   }
 }
+
+/* styles the table with lines and columns */
+@import '~antd/dist/antd.css';
