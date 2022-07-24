@@ -34,42 +34,42 @@ export default function StockData() {
 
 
 
-    // displayed stock on load
-    let stockOverviewDisplayed = () => {
-        console.log('stockResults:', stockResults[0]);
-        const {name, symbol, price, eps, dayHigh, dayLow, change} = stockResults[0] || {}
-        // '|| {}' is for avoiding undefined due to data not available yet
+    // displayed stock pre-table implementation
+    // let stockOverviewDisplayed = () => {
+    //     console.log('stockResults:', stockResults[0]);
+    //     const {name, symbol, price, eps, dayHigh, dayLow, change} = stockResults[0] || {}
+    //     // '|| {}' is for avoiding undefined due to data not available yet
 
-        return (
-            <div>
-                <p>name: {name}</p>
-                <p>symbol: {symbol}</p>
-                <p>price: {price}</p>
-                <p>eps: {eps}</p>
-                <p>dayHigh: {dayHigh}</p>
-                <p>dayLow: {dayLow}</p>
-                <p>change: {change}</p>
-            </div>
-        )
-    }
+    //     return (
+    //         <div>
+    //             <p>name: {name}</p>
+    //             <p>symbol: {symbol}</p>
+    //             <p>price: {price}</p>
+    //             <p>eps: {eps}</p>
+    //             <p>dayHigh: {dayHigh}</p>
+    //             <p>dayLow: {dayLow}</p>
+    //             <p>change: {change}</p>
+    //         </div>
+    //     )
+    // }
 
    
-    // displayed stock
-    let stockHourlyDisplayed: any = () => {
-        console.log('stockHourlyDisplayed:', stockHourlyResults);
+    // stock hourly data displayed as text dump
+    // let stockHourlyDisplayed: any = () => {
+    //     console.log('stockHourlyDisplayed:', stockHourlyResults);
 
-        return stockHourlyResults.map((hourData: any) => {
-            return (
-            <div>    
-                <p>{hourData.close}</p>
-                <p>{hourData.date}</p>
-                <p>{hourData.high}</p>
-                <p>{hourData.low}</p>
-                <p>{hourData.volume}</p>
-            </div>
-            )
-        })
-    }
+    //     return stockHourlyResults.map((hourData: any) => {
+    //         return (
+    //         <div>    
+    //             <p>{hourData.close}</p>
+    //             <p>{hourData.date}</p>
+    //             <p>{hourData.high}</p>
+    //             <p>{hourData.low}</p>
+    //             <p>{hourData.volume}</p>
+    //         </div>
+    //         )
+    //     })
+    // }
 
 
 
@@ -82,7 +82,7 @@ export default function StockData() {
       }
 
 
-    const columns: ColumnsType<TableDataType> = [
+    const overviewColumns: ColumnsType<TableDataType> = [
     {
         title: 'Name',
         dataIndex: 'name',
@@ -122,10 +122,44 @@ export default function StockData() {
     ];
 
 
-      
-    const stockTable = () => <Table columns={columns} dataSource={stockResults} />;
-        
+    const detailedColumns: ColumnsType<TableDataType> = [
+        {
+            title: 'Close',
+            dataIndex: 'close',
+            key: 'close'
+            // render: text => <a>{text}</a>
+        },
+        {
+            title: 'Date',
+            dataIndex: 'date',
+            key: 'date'
+        },
+        {
+            title: 'High',
+            dataIndex: 'high',
+            key: 'high'
+        },
+        {
+            title: 'Low',
+            dataIndex: 'low',
+            key: 'low'
+        },
+        {
+            title: 'Open',
+            dataIndex: 'open',
+            key: 'open'
+        },
+        {
+            title: 'Volume',
+            dataIndex: 'volume',
+            key: 'volume'
+        }
+        ];
 
+
+      
+    const stocksTable = () => <Table columns={overviewColumns} dataSource={stockResults} />;
+    const detailedStockTable = () => <Table columns={detailedColumns} dataSource={stockHourlyResults} />; 
 
 
 
@@ -135,11 +169,9 @@ export default function StockData() {
 
     return (
        <div>
-        {stockTable()}
-        {stockOverviewDisplayed()}
-        {stockHourlyDisplayed()}
+        {stocksTable()}
+        {detailedStockTable()}
         </div>
-        // <p>hi</p> 
     )
 }
 
