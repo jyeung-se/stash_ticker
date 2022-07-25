@@ -8,29 +8,30 @@ export default function StockData() {
     const [error, setError] = useState(null)
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
+    const [searchQuery, setsearchQuery] = useState('')
  
 
     // API Calls
-    useEffect(() => {
+    // useEffect(() => {
 
-        //API key: 4672ed38f1e727b95f8a9cbd22574eed
-        axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
-            const stockData = await res.data
-            // console.log('stockData[0]:', stockData[0]);
-            setStockResults(stockData)      
-        }).catch((error) => {
-            console.error(error);
-        });
+    //     //API key: 4672ed38f1e727b95f8a9cbd22574eed
+    //     axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+    //         const stockData = await res.data
+    //         // console.log('stockData[0]:', stockData[0]);
+    //         setStockResults(stockData)      
+    //     }).catch((error) => {
+    //         console.error(error);
+    //     });
 
-        //continue here where you left off: correct variables for api call to hourly data to make graph/table for hourly prices
-        axios.get('https://financialmodelingprep.com/api/v3/historical-chart/1hour/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
-            const stockHourlyData = await res.data
-            console.log('stockHourlyData:', stockHourlyData);
-            setStockHourlyResults(stockHourlyData)      
-        }).catch((error) => {
-            console.error(error);
-        });
-    }, [])
+    //     //continue here where you left off: correct variables for api call to hourly data to make graph/table for hourly prices
+    //     axios.get('https://financialmodelingprep.com/api/v3/historical-chart/1hour/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+    //         const stockHourlyData = await res.data
+    //         console.log('stockHourlyData:', stockHourlyData);
+    //         setStockHourlyResults(stockHourlyData)      
+    //     }).catch((error) => {
+    //         console.error(error);
+    //     });
+    // }, [])
 
 
 
@@ -162,6 +163,16 @@ export default function StockData() {
     const detailedStockTable = () => <Table columns={detailedColumns} dataSource={stockHourlyResults} />; 
 
 
+    // Search bar for stocks
+    // Create functions for onChange 
+    // value is the search string.
+    const searchStocks = (stock: string) => {
+        setsearchQuery(stock)
+        // console.log("searchquery")
+    }
+
+    
+
 
     if(error) {
         return <div>Error: {error}</div>
@@ -169,8 +180,17 @@ export default function StockData() {
 
     return (
        <div>
-        {stocksTable()}
-        {detailedStockTable()}
+            <div className="search-wrapper">
+                <input
+                    type="search"
+                    placeholder="Search Stocks for..."
+                    onChange={(e) => searchStocks(e.target.value)}
+                />
+            </div>
+            <br></br>
+            {stocksTable()}
+            <br></br>
+            {detailedStockTable()}
         </div>
     )
 }
