@@ -6,10 +6,10 @@ import type { ColumnsType } from 'antd/lib/table';
 export default function StockData() {
 
     const [error, setError] = useState(null)
+    const [allStocks, setAllStocks] = useState<any>([])
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
     const [searchQuery, setsearchQuery] = useState('')
-    // const [allStocksQuickView, setallStocksQuickView] = useState<any>([])
 
 
 
@@ -18,10 +18,11 @@ export default function StockData() {
         //Each API key has 250 free daily api calls
         //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
         //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
+        //Endpoint = Symbols List
         axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
             const stockData = await res.data
             // console.log('stockData[0]:', stockData[0]);
-            setStockResults(stockData)      
+            setAllStocks(stockData)      
         }).catch((error) => {
             console.error(error);
         });
@@ -38,18 +39,18 @@ export default function StockData() {
 
 
 
-    useEffect(() => {
-        //API key: 4672ed38f1e727b95f8a9cbd22574eed
+    // useEffect(() => {
+    //     //API key: 4672ed38f1e727b95f8a9cbd22574eed
 
-        // API Call onChange of searchbar input 
-        axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-        .then(async (res) => {    
-            const stockData = await res.data
-                // console.log('queried stockData:', stockData);
-                setStockResults(stockData)      
-            }).catch((error) => {
-                console.error(error);
-        });
+    //     // API Call onChange of searchbar input 
+    //     axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //     .then(async (res) => {    
+    //         const stockData = await res.data
+    //             // console.log('queried stockData:', stockData);
+    //             setStockResults(stockData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //     });
 
         // // API Call for SPECIFICALLY ONLY 1 STOCK = APPLE 
         // axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=82c67b0e070a79fd0ab79b7b1987b6ba')
@@ -60,7 +61,7 @@ export default function StockData() {
         // }).catch((error) => {
         //     console.error(error);
         // });
-        }, [])
+        // }, [])
 
     //     // API Call for hourly data of specific stock
     //     axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
@@ -87,65 +88,37 @@ export default function StockData() {
 
 
 
-    // displayed stock pre-table implementation
-    // let stockOverviewDisplayed = () => {
-    //     console.log('stockResults:', stockResults[0]);
-    //     const {name, symbol, price, eps, dayHigh, dayLow, change} = stockResults[0] || {}
-    //     // '|| {}' is for avoiding undefined due to data not available yet
-
-    //     return (
-    //         <div>
-    //             <p>name: {name}</p>
-    //             <p>symbol: {symbol}</p>
-    //             <p>price: {price}</p>
-    //             <p>eps: {eps}</p>
-    //             <p>dayHigh: {dayHigh}</p>
-    //             <p>dayLow: {dayLow}</p>
-    //             <p>change: {change}</p>
-    //         </div>
-    //     )
-    // }
-
-   
-    // stock hourly data displayed as text dump
-    // let stockHourlyDisplayed: any = () => {
-    //     console.log('stockHourlyDisplayed:', stockHourlyResults);
-
-    //     return stockHourlyResults.map((hourData: any) => {
-    //         return (
-    //         <div>    
-    //             <p>{hourData.close}</p>
-    //             <p>{hourData.date}</p>
-    //             <p>{hourData.high}</p>
-    //             <p>{hourData.low}</p>
-    //             <p>{hourData.volume}</p>
-    //         </div>
-    //         )
-    //     })
-    // }
-
-
 
 
     interface TableDataType {
         key: React.Key;
         name: string;
-        age: number;
-        address: string;
+        symbol: string;
+        price: number;
+        eps: string;
+        dayHigh: number;
+        dayLow: number;
+        change: number;
+        date: string;
+        open: number;
+        low: number;
+        high: number;
+        close: number;
+        volume: number;
       }
 
-
-    const overviewColumns: ColumnsType<TableDataType> = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: text => <a>{text}</a>
-    },
+      
+    const snapshotColumns: ColumnsType<TableDataType> = [
     {
         title: 'Symbol',
         dataIndex: 'symbol',
-        key: 'symbol'
+        key: 'symbol',
+        render: text => <a>{text}</a>
+    },
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name'
     },
     {
         title: 'Price',
@@ -175,12 +148,46 @@ export default function StockData() {
     ];
 
 
-    const detailedColumns: ColumnsType<TableDataType> = [
+    const allStocksColumns: ColumnsType<TableDataType> = [
+    {
+        title: 'Symbol',
+        dataIndex: 'symbol',
+        key: 'symbol',
+        render: text => <a>{text}</a>
+    },
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name'
+    },
+    {
+        title: 'Price',
+        dataIndex: 'price',
+        key: 'price'
+    },
+    {
+        title: 'Exchange',
+        dataIndex: 'exchange',
+        key: 'exchange'
+    },
+    {
+        title: 'ExchangeShortName',
+        dataIndex: 'exchangeShortName',
+        key: 'exchangeShortName'
+    },
+    {
+        title: 'Type',
+        dataIndex: 'type',
+        key: 'type'
+    }
+    ];
+
+
+    const hourlyColumns: ColumnsType<TableDataType> = [
         {
             title: 'Close',
             dataIndex: 'close',
             key: 'close'
-            // render: text => <a>{text}</a>
         },
         {
             title: 'Date',
@@ -211,8 +218,9 @@ export default function StockData() {
 
 
       
-    const stocksTable = () => <Table columns={overviewColumns} dataSource={stockResults} />;
-    const detailedStockTable = () => <Table columns={detailedColumns} dataSource={stockHourlyResults} />; 
+    const snapshotTable = () => <Table columns={snapshotColumns} dataSource={stockResults} />;
+    const allStocksTable = () => <Table columns={allStocksColumns} dataSource={allStocks} />;
+    const hourlyStockTable = () => <Table columns={hourlyColumns} dataSource={stockHourlyResults} />; 
 
 
     // Search bar for stocks
@@ -225,6 +233,7 @@ export default function StockData() {
 
     const handleSubmit = (e: any) => {
         if (searchQuery !== '') {
+            //Endpoint = Company Quote
             axios.get(`https://financialmodelingprep.com/api/v3/quote/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockData = await res.data
@@ -234,6 +243,7 @@ export default function StockData() {
                 console.error(error);
             });
 
+            //Endpoint = Historical Price   (hour historicals)
             axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockHourlyData = await res.data
@@ -267,9 +277,15 @@ export default function StockData() {
                 /> */}
             </div>
             <br></br>
-            {stocksTable()}
+            <h2>Stock Snapshot</h2>
+            {snapshotTable()}
             <br></br>
-            {detailedStockTable()}
+            <h2>Hourly Stock Historicals</h2>
+            {hourlyStockTable()}
+            <br></br>
+            <h2>All Companies</h2>
+            {allStocksTable()}
+            <br></br>
         </div>
     )
 }
