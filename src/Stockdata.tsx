@@ -14,25 +14,27 @@ export default function StockData() {
 
 
     // // API Calls for ALL stocks (NOT COMPLETED YET - RESUME LATER)
-    // useEffect(() => {
-    //     //API key: 4672ed38f1e727b95f8a9cbd22574eed
-    //     axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
-    //         const stockData = await res.data
-    //         // console.log('stockData[0]:', stockData[0]);
-    //         setStockResults(stockData)      
-    //     }).catch((error) => {
-    //         console.error(error);
-    //     });
+    useEffect(() => {
+        //Each API key has 250 free daily api calls
+        //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
+        //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
+        axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+            const stockData = await res.data
+            // console.log('stockData[0]:', stockData[0]);
+            setStockResults(stockData)      
+        }).catch((error) => {
+            console.error(error);
+        });
 
     //     //continue here where you left off: correct variables for api call to hourly data to make graph/table for hourly prices
-    //     axios.get('https://financialmodelingprep.com/api/v3/historical-chart/1hour/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+    //     axios.get('https://financialmodelingprep.com/api/v3/historical-chart/1hour/AAPL?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
     //         const stockHourlyData = await res.data
     //         console.log('stockHourlyData:', stockHourlyData);
     //         setStockHourlyResults(stockHourlyData)      
     //     }).catch((error) => {
     //         console.error(error);
     //     });
-    // }, [])
+    }, [])
 
 
 
@@ -40,7 +42,7 @@ export default function StockData() {
         //API key: 4672ed38f1e727b95f8a9cbd22574eed
 
         // API Call onChange of searchbar input 
-        axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         .then(async (res) => {    
             const stockData = await res.data
                 // console.log('queried stockData:', stockData);
@@ -50,7 +52,7 @@ export default function StockData() {
         });
 
         // // API Call for SPECIFICALLY ONLY 1 STOCK = APPLE 
-        // axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed')
+        // axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=82c67b0e070a79fd0ab79b7b1987b6ba')
         // .then(async (res) => {
         //     const stockData = await res.data
         //     // console.log('stockData[0]:', stockData[0]);
@@ -61,7 +63,7 @@ export default function StockData() {
         }, [])
 
     //     // API Call for hourly data of specific stock
-    //     axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //     axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     //     .then(async (res) => {
     //         const stockHourlyData = await res.data
     //         // console.log('stockHourlyData:', stockHourlyData);
@@ -73,7 +75,7 @@ export default function StockData() {
 
 
     // useEffect(() => {
-    //     axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //     axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     //     .then(async (res) => {    
     //         const stockData = await res.data
     //             // console.log('queried stockData:', stockData);
@@ -223,7 +225,7 @@ export default function StockData() {
 
     const handleSubmit = (e: any) => {
         if (searchQuery !== '') {
-            axios.get(`https://financialmodelingprep.com/api/v3/quote/${searchQuery.toUpperCase()}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            axios.get(`https://financialmodelingprep.com/api/v3/quote/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockData = await res.data
                 // console.log('stockData[0]:', stockData[0]);
@@ -232,7 +234,7 @@ export default function StockData() {
                 console.error(error);
             });
 
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery.toUpperCase()}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockHourlyData = await res.data
                 // console.log('stockHourlyData:', stockHourlyData);
