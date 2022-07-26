@@ -10,11 +10,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          My money don't jiggle jiggle, it folds
-        </p>
         <a>
-          Welcome to StashTicker \n
+          Welcome to StashTicker
         </a>
         <Stockdata/>
       </header>
