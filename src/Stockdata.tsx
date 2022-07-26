@@ -9,13 +9,14 @@ export default function StockData() {
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
     const [searchQuery, setsearchQuery] = useState('')
- 
+    // const [allStocksQuickView, setallStocksQuickView] = useState<any>([])
 
-    // API Calls
+
+
+    // // API Calls for ALL stocks (NOT COMPLETED YET - RESUME LATER)
     // useEffect(() => {
-
     //     //API key: 4672ed38f1e727b95f8a9cbd22574eed
-    //     axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+    //     axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
     //         const stockData = await res.data
     //         // console.log('stockData[0]:', stockData[0]);
     //         setStockResults(stockData)      
@@ -32,6 +33,55 @@ export default function StockData() {
     //         console.error(error);
     //     });
     // }, [])
+
+
+
+    useEffect(() => {
+        //API key: 4672ed38f1e727b95f8a9cbd22574eed
+
+        // API Call onChange of searchbar input 
+        axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        .then(async (res) => {    
+            const stockData = await res.data
+                // console.log('queried stockData:', stockData);
+                setStockResults(stockData)      
+            }).catch((error) => {
+                console.error(error);
+        });
+
+        // // API Call for SPECIFICALLY ONLY 1 STOCK = APPLE 
+        // axios.get('https://financialmodelingprep.com/api/v3/quote/AAPL?apikey=4672ed38f1e727b95f8a9cbd22574eed')
+        // .then(async (res) => {
+        //     const stockData = await res.data
+        //     // console.log('stockData[0]:', stockData[0]);
+        //     setStockResults(stockData)      
+        // }).catch((error) => {
+        //     console.error(error);
+        // });
+        }, [])
+
+    //     // API Call for hourly data of specific stock
+    //     axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //     .then(async (res) => {
+    //         const stockHourlyData = await res.data
+    //         // console.log('stockHourlyData:', stockHourlyData);
+    //         setStockHourlyResults(stockHourlyData)      
+    //     }).catch((error) => {
+    //         console.error(error);
+    //     });
+    // }, [searchQuery])
+
+
+    // useEffect(() => {
+    //     axios.get(`https://financialmodelingprep.com/api/v3/search?query=${searchQuery}&limit=10&exchange=NASDAQ&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //     .then(async (res) => {    
+    //         const stockData = await res.data
+    //             // console.log('queried stockData:', stockData);
+    //             setStockResults(stockData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //     })
+    // }, [searchQuery])
 
 
 
@@ -171,7 +221,29 @@ export default function StockData() {
         // console.log("searchquery")
     }
 
-    
+    const handleSubmit = (e: any) => {
+        if (searchQuery !== '') {
+            axios.get(`https://financialmodelingprep.com/api/v3/quote/${searchQuery.toUpperCase()}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            .then(async (res) => {
+                const stockData = await res.data
+                // console.log('stockData[0]:', stockData[0]);
+                setStockResults(stockData)      
+            }).catch((error) => {
+                console.error(error);
+            });
+
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery.toUpperCase()}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            .then(async (res) => {
+                const stockHourlyData = await res.data
+                // console.log('stockHourlyData:', stockHourlyData);
+                setStockHourlyResults(stockHourlyData)      
+            }).catch((error) => {
+                console.error(error);
+            });
+
+            e.preventDefault()
+        }
+    }
 
 
     if(error) {
@@ -181,11 +253,16 @@ export default function StockData() {
     return (
        <div>
             <div className="search-wrapper">
-                <input
+                <form onSubmit={handleSubmit}>
+                    <input type="text" onChange={(e) => setsearchQuery(e.target.value)} placeholder="Stock Name / Ticker"/>
+                    <input type="submit" value="Search" />
+                </form>                
+                {/* <input
                     type="search"
                     placeholder="Search Stocks for..."
-                    onChange={(e) => searchStocks(e.target.value)}
-                />
+                    onChange={(e) => setsearchQuery(e.target.value)}
+                    onSubmit={e.preventDefault}
+                /> */}
             </div>
             <br></br>
             {stocksTable()}
