@@ -6,6 +6,7 @@ import type { ColumnsType } from 'antd/lib/table';
 export default function StockData() {
 
     const [error, setError] = useState(null)
+    const [stockTickers, setStockTickers] = useState<any>([])
     const [allStocks, setAllStocks] = useState<any>([])
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
@@ -22,7 +23,10 @@ export default function StockData() {
         axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
             const stockData = await res.data
             // console.log('stockData[0]:', stockData[0]);
-            setAllStocks(stockData)      
+            setAllStocks(stockData)
+            const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
+            // console.log('list of stock tickers is: ', listOfStockTickers)
+            setStockTickers(listOfStockTickers)
         }).catch((error) => {
             console.error(error);
         });
@@ -232,7 +236,9 @@ export default function StockData() {
     }
 
     const handleSubmit = (e: any) => {
-        if (searchQuery !== '') {
+        // console.log('stockTickers is: ', stockTickers)
+        if (stockTickers.includes(searchQuery.toUpperCase())) {
+        // if (stockTickers.indexOf(searchQuery) !== -1) {
             //Endpoint = Company Quote
             axios.get(`https://financialmodelingprep.com/api/v3/quote/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
@@ -254,9 +260,12 @@ export default function StockData() {
             });
 
             e.preventDefault()
+        } else {
+            alert("Please check to see if you have entered a correct stock symbol, then try again.")
         }
+        
     }
-
+        
 
     if(error) {
         return <div>Error: {error}</div>
