@@ -226,14 +226,20 @@ export default function StockData() {
     const allStocksTable = () => <Table columns={allStocksColumns} dataSource={allStocks} />;
     const hourlyStockTable = () => <Table columns={hourlyColumns} dataSource={stockHourlyResults} />; 
 
-
-    // Search bar for stocks
-    // Create functions for onChange 
-    // value is the search string.
-    const searchStocks = (stock: string) => {
-        setsearchQuery(stock)
-        // console.log("searchquery")
+    const initialRenderOfSnapshotAndHourlyTables = () => {
+        console.log(stockResults, stockHourlyResults)
+        return (
+            <div>
+                <h2>Stock Snapshot</h2>
+                {snapshotTable()}
+                <br></br>
+                <h2>Hourly Stock Historicals</h2>
+                {hourlyStockTable()}
+                <br></br>
+            </div>
+        )
     }
+
 
     const handleSubmit = (e: any) => {
         // console.log('stockTickers is: ', stockTickers)
@@ -271,27 +277,17 @@ export default function StockData() {
         return <div>Error: {error}</div>
     }
 
+
     return (
-       <div>
+        <div>
             <div className="search-wrapper">
                 <form onSubmit={handleSubmit}>
-                    <input type="text" onChange={(e) => setsearchQuery(e.target.value)} placeholder="Stock Name / Ticker"/>
+                    <input type="text" onChange={(e) => setsearchQuery(e.target.value)} placeholder="Stock Symbol"/>
                     <input type="submit" value="Search" />
                 </form>                
-                {/* <input
-                    type="search"
-                    placeholder="Search Stocks for..."
-                    onChange={(e) => setsearchQuery(e.target.value)}
-                    onSubmit={e.preventDefault}
-                /> */}
             </div>
             <br></br>
-            <h2>Stock Snapshot</h2>
-            {snapshotTable()}
-            <br></br>
-            <h2>Hourly Stock Historicals</h2>
-            {hourlyStockTable()}
-            <br></br>
+            {(stockResults.length || stockHourlyResults.length !== 0) ? initialRenderOfSnapshotAndHourlyTables() : null}
             <h2>All Companies</h2>
             {allStocksTable()}
             <br></br>
