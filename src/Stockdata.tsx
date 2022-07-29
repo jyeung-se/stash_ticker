@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import './App.css';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 
@@ -11,6 +12,7 @@ export default function StockData() {
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
     const [searchQuery, setsearchQuery] = useState('')
+    const [mostRecentSearch, setMostRecentSearch] = useState('')
 
 
 
@@ -227,13 +229,13 @@ export default function StockData() {
     const hourlyStockTable = () => <Table columns={hourlyColumns} dataSource={stockHourlyResults} />; 
 
     const initialRenderOfSnapshotAndHourlyTables = () => {
-        console.log(stockResults, stockHourlyResults)
+        // console.log(stockResults, stockHourlyResults)
         return (
             <div>
-                <h2>Stock Snapshot</h2>
+                <h2>{stockResults[0].symbol} Profile</h2>
                 {snapshotTable()}
                 <br></br>
-                <h2>Hourly Stock Historicals</h2>
+                <h2>{stockResults[0].symbol} Hourly Historicals</h2>
                 {hourlyStockTable()}
                 <br></br>
             </div>
@@ -242,11 +244,11 @@ export default function StockData() {
 
 
     const handleSubmit = (e: any) => {
+        e.preventDefault()
         // console.log('stockTickers is: ', stockTickers)
-        if (stockTickers.includes(searchQuery.toUpperCase())) {
-        // if (stockTickers.indexOf(searchQuery) !== -1) {
+        if (stockTickers.includes(mostRecentSearch)) {
             //Endpoint = Company Quote
-            axios.get(`https://financialmodelingprep.com/api/v3/quote/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockData = await res.data
                 // console.log('stockData[0]:', stockData[0]);
@@ -256,7 +258,7 @@ export default function StockData() {
             });
 
             //Endpoint = Historical Price   (hour historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${searchQuery.toUpperCase()}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockHourlyData = await res.data
                 // console.log('stockHourlyData:', stockHourlyData);
@@ -265,7 +267,7 @@ export default function StockData() {
                 console.error(error);
             });
 
-            e.preventDefault()
+            e.target.reset()
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
         }
@@ -282,7 +284,10 @@ export default function StockData() {
         <div>
             <div className="search-wrapper">
                 <form onSubmit={handleSubmit}>
-                    <input type="text" onChange={(e) => setsearchQuery(e.target.value)} placeholder="Stock Symbol"/>
+                    <input type="text" onChange={(e) => {
+                        setsearchQuery(e.target.value.toUpperCase())
+                        setMostRecentSearch(e.target.value.toUpperCase())}} 
+                        placeholder="Stock Symbol"/>
                     <input type="submit" value="Search" />
                 </form>                
             </div>
