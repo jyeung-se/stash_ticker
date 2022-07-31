@@ -270,6 +270,7 @@ export default function StockData() {
             e.target.reset()
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
+            e.target.reset()
         }
         
     }
