@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import './App.css';
 import { Table } from 'antd';
@@ -118,13 +118,13 @@ export default function StockData() {
     {
         title: 'Symbol',
         dataIndex: 'symbol',
-        key: 'symbol',
-        render: text => <a>{text}</a>
+        key: 'symbol'
     },
     {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name'
+        key: 'name',
+        render: text => <a>{text}</a>
     },
     {
         title: 'Price',
@@ -158,13 +158,13 @@ export default function StockData() {
     {
         title: 'Symbol',
         dataIndex: 'symbol',
-        key: 'symbol',
-        render: text => <a>{text}</a>
+        key: 'symbol'
     },
     {
         title: 'Name',
         dataIndex: 'name',
-        key: 'name'
+        key: 'name',
+        render: text => <a>{text}</a>
     },
     {
         title: 'Price',
@@ -230,17 +230,19 @@ export default function StockData() {
 
     const initialRenderOfSnapshotAndHourlyTables = () => {
         // console.log(stockResults, stockHourlyResults)
-        return (
-            <div>
-                <h2>{stockResults[0].symbol} Profile</h2>
-                {snapshotTable()}
-                <br></br>
-                <h2>{stockResults[0].symbol} Hourly Historicals</h2>
-                {hourlyStockTable()}
-                <br></br>
-            </div>
-        )
-    }
+        if (mostRecentSearch !== '' && stockResults.length > 0) {
+            return (
+                <div>
+                    <h2>{stockResults[0].symbol} Profile</h2>
+                    {snapshotTable()}
+                    <br></br>
+                    <h2>{stockResults[0].symbol} Hourly Historicals</h2>
+                    {hourlyStockTable()}
+                    <br></br>
+                </div>
+            )
+        }
+    }   
 
 
     const handleSubmit = (e: any) => {
