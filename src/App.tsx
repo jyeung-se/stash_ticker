@@ -3,21 +3,25 @@ import logo from './logo.svg';
 import './App.css';
 import background from './BlueVectorBackground.jpg';
 import Stockdata from './Stockdata'
+import Homepage from './Homepage'
+import Mystocks from './Mystocks'
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
-function App() {
+const App = () => {
 
-  
+
   return (
     <div className="App">
-      <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <a>
-          Welcome to StashTicker
-        </a>
-        <Stockdata/>
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/search" element={<Stockdata />} />
+          <Route path="/mystocks" element={<Mystocks />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
+
 }
 
 export default App;

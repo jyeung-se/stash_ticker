@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
 import './App.css';
 import { Table } from 'antd';
@@ -216,14 +215,31 @@ export default function StockData() {
                 <YAxis type="number" domain={['auto', 'auto']} />
                 <CartesianGrid strokeDasharray="3 3" />
                 <Tooltip />
-                <Area type="monotone" dataKey="low" stroke="#8884d8" fill="#8884d8" />
                 <Area type="monotone" dataKey="high" stroke="#FACC32" fill="#FACC32" />
+                <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
             </AreaChart>    
         )
     }
 
+
+    const searchBar = () => {
+        return (
+            <div className="search-wrapper">
+                <form onSubmit={handleSubmit}>
+                    <input type="text" onChange={(e) => {
+                        if (e.target.value !== '') {
+                            setMostRecentSearch(e.target.value.toLocaleUpperCase())}}
+                        }
+                        placeholder="Stock Symbol"/>
+                    <input type="submit" value="Search" />
+                </form>                
+            </div>
+        )
+    }
+
+
     const tablesShownPostSearch = () => {
-        // console.log(stockResults, stockHourlyResults)
+        // console.log(mostRecentSearch, stockResults, stockHourlyResults)
         if (mostRecentSearch !== '' && stockResults.length > 0) {
             return (
                 <div>
@@ -243,6 +259,10 @@ export default function StockData() {
 
     const handleSubmit = (e: any) => {
         e.preventDefault()
+        setMostRecentSearch(mostRecentSearch)
+        // console.log('searchQuery is: ', searchQuery)
+        console.log('mostRecentSearch is: ', mostRecentSearch)
+
         // console.log('stockTickers is: ', stockTickers)
         if (stockTickers.includes(mostRecentSearch)) {
             //Endpoint = Company Quote
@@ -284,20 +304,15 @@ export default function StockData() {
 
     return (
         <div>
-            <div className="search-wrapper">
-                <form onSubmit={handleSubmit}>
-                    <input type="text" onChange={(e) => {
-                        setsearchQuery(e.target.value.toUpperCase())
-                        setMostRecentSearch(e.target.value.toUpperCase())}} 
-                        placeholder="Stock Symbol"/>
-                    <input type="submit" value="Search" />
-                </form>                
-            </div>
-            <br></br>
-            {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null} 
-            <h2>All Companies</h2>
-            {allStocksTable()}
-            <br></br>
+            <header className="App-header">
+                <br></br>
+                {searchBar()}
+                <br></br>
+                {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null} 
+                <h2>All Companies</h2>
+                {allStocksTable()}
+                <br></br>
+            </header>
         </div>
     )
 }
