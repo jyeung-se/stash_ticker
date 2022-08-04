@@ -12,8 +12,8 @@ export default function StockData() {
     const [allStocks, setAllStocks] = useState<any>([])
     const [stockResults, setStockResults] = useState<any>([])
     const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
-    const [searchQuery, setsearchQuery] = useState('')
     const [mostRecentSearch, setMostRecentSearch] = useState('')
+    const [stockStash, setStockStash] = useState<any>([])
 
 
 
@@ -168,6 +168,7 @@ export default function StockData() {
 
       
     const snapshotTable = () => <Table columns={snapshotColumns} dataSource={stockResults} />;
+    const myStashTable = () => <Table columns={snapshotColumns} dataSource={stockStash} />;
     const allStocksTable = () => <Table columns={allStocksColumns} dataSource={allStocks} />;
     const hourlyStockTable = () => <Table columns={hourlyColumns} dataSource={stockHourlyResults} />; 
 
@@ -215,7 +216,7 @@ export default function StockData() {
                 <YAxis type="number" domain={['auto', 'auto']} />
                 <CartesianGrid strokeDasharray="3 3" />
                 <Tooltip />
-                <Area type="monotone" dataKey="high" stroke="#FACC32" fill="#FACC32" />
+                <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
                 <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
             </AreaChart>    
         )
@@ -238,13 +239,28 @@ export default function StockData() {
     }
 
 
+    const addToStockStash = () => {
+        console.log('stockResults is: ', stockResults)
+        console.log('stockStash before updating is: ', stockStash)
+        setStockStash([...stockStash, ...stockResults])
+        console.log('stockStash AFTER updating is: ', stockStash)
+    }
+
+
+
     const tablesShownPostSearch = () => {
         // console.log(mostRecentSearch, stockResults, stockHourlyResults)
         if (mostRecentSearch !== '' && stockResults.length > 0) {
             return (
                 <div>
+                    <br></br>
+                    <h2>My Stock Stash</h2>
+                    {myStashTable()}
+                    <br></br>
                     <h2>{stockResults[0].symbol} Profile</h2>
                     {snapshotTable()}
+                    <button type="button" className="addToStockStashButton" onClick={addToStockStash}>Add to Stash</button>
+                    <br></br>
                     <br></br>
                     {hourlyStockChart()}
                     <br></br>
@@ -256,6 +272,7 @@ export default function StockData() {
         }
     }   
 
+    
 
     const handleSubmit = (e: any) => {
         e.preventDefault()

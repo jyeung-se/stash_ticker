@@ -4,7 +4,7 @@ import './App.css';
 import background from './BlueVectorBackground.jpg';
 import Stockdata from './Stockdata'
 import Homepage from './Homepage'
-import Mystocks from './Mystocks'
+import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
@@ -16,7 +16,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/search" element={<Stockdata />} />
-          <Route path="/mystocks" element={<Mystocks />} />
+          <Route path="/mystash" element={<Mystash />} />
         </Routes>
       </BrowserRouter>
     </div>
