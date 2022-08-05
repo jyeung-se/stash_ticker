@@ -167,10 +167,10 @@ export default function StockData() {
 
 
       
-    const snapshotTable = () => <Table columns={snapshotColumns} dataSource={stockResults} />;
-    const myStashTable = () => <Table columns={snapshotColumns} dataSource={stockStash} />;
-    const allStocksTable = () => <Table columns={allStocksColumns} dataSource={allStocks} />;
-    const hourlyStockTable = () => <Table columns={hourlyColumns} dataSource={stockHourlyResults} />; 
+    const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
+    const myStashTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockStash} />;
+    const allStocksTable = () => <Table className="flex-container" columns={allStocksColumns} dataSource={allStocks} />;
+    const hourlyStockTable = () => <Table className="flex-container" columns={hourlyColumns} dataSource={stockHourlyResults} />; 
 
 
     const hourlyStockChart = () => {
@@ -200,25 +200,26 @@ export default function StockData() {
         })
         // console.log('abridgedHourlyStockData inside hourlyStockChart() is: ', abridgedHourlyStockData)
 
+
         return (
-            <AreaChart
-                width={1000}
-                height={400}
-                data={abridgedHourlyStockData}
-                margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                }}
-            >
-                <XAxis dataKey="date" />
-                <YAxis type="number" domain={['auto', 'auto']} />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
-                <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
-                <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
-            </AreaChart>    
+            <ResponsiveContainer width="99%" height={400}>
+                <AreaChart
+                    data={abridgedHourlyStockData}
+                    margin={{
+                        top: 10,
+                        right: 30,
+                        left: 0,
+                        bottom: 0,
+                    }}
+                >
+                    <XAxis dataKey="date" />
+                    <YAxis type="number" domain={['auto', 'auto']} />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
+                    <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
+                </AreaChart> 
+            </ResponsiveContainer>
         )
     }
 
@@ -240,10 +241,10 @@ export default function StockData() {
 
 
     const addToStockStash = () => {
-        console.log('stockResults is: ', stockResults)
-        console.log('stockStash before updating is: ', stockStash)
+        // console.log('stockResults is: ', stockResults)
+        // console.log('stockStash before updating is: ', stockStash)
         setStockStash([...stockStash, ...stockResults])
-        console.log('stockStash AFTER updating is: ', stockStash)
+        // console.log('stockStash AFTER updating is: ', stockStash)
     }
 
 
@@ -321,7 +322,7 @@ export default function StockData() {
 
     return (
         <div>
-            <header className="App-header">
+            <header>
                 <br></br>
                 {searchBar()}
                 <br></br>
