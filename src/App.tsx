@@ -23,7 +23,7 @@ const App = () => {
   const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
   const [mostRecentSearch, setMostRecentSearch] = useState('')
   const [stockStash, setStockStash] = useState<any>([])
-  const [AllStocksTableVisability, setAllStocksTableVisability] = useState(true)
+  const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
  
   
 
@@ -254,6 +254,14 @@ const App = () => {
     const addToStockStash = () => {
         // console.log('stockResults is: ', stockResults)
         // console.log('stockStash before updating is: ', stockStash)
+        const listOfStockSymbolsInStash: any = () => {
+            return stockStash.map((stock: any) => {
+                return stock.symbol
+            })
+        }
+        if (listOfStockSymbolsInStash().includes(stockResults[0].symbol)) {
+            return alert('The stock has already been added to your Stash before. Please add a different stock instead.')
+        }
         setStockStash([...stockStash, ...stockResults])
         // console.log('stockStash AFTER updating is: ', stockStash)
     }
@@ -287,17 +295,14 @@ const App = () => {
     
 
     const toggleAllStocksTable = () => {
-      setAllStocksTableVisability(!AllStocksTableVisability)
+      setAllStocksTableVisability(!allStocksTableVisability)
       // console.log('stocktablevisibility state after toggle: ', AllStocksTableVisability)
     }
 
 
     const displayAllStocksTable = () => {
-      return (
-        AllStocksTableVisability === true ? <div><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
-        )
+        return allStocksTableVisability === true ? <div><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
     }
-
 
 
     const handleSubmit = (e: any) => {
