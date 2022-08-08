@@ -8,8 +8,10 @@ import Homepage from './Homepage'
 import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Table } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
+// import type { ColumnsType } from 'antd/lib/table';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
+import type { FilterValue, SorterResult } from 'antd/es/table/interface';
 
 
 
@@ -50,6 +52,7 @@ const App = () => {
 
 
     interface TableDataType {
+        sorter?: SorterResult<any> | SorterResult<any>[];
         key: React.Key;
         name: string;
         symbol: string;
@@ -176,7 +179,7 @@ const App = () => {
         }
         ];
 
-
+    
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
     const myStashTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockStash} />;
@@ -251,6 +254,20 @@ const App = () => {
     }
 
 
+
+    const compareForSorting = (a: any, b: any) => {
+        // console.log("compareForSorting fires off")
+        if ( a.symbol < b.symbol ){
+            return -1;
+        }
+        if ( a.symbol > b.symbol ){
+            return 1;
+        }
+        return 0;
+    }
+
+
+
     const addToStockStash = () => {
         // console.log('stockResults is: ', stockResults)
         // console.log('stockStash before updating is: ', stockStash)
@@ -262,7 +279,8 @@ const App = () => {
         if (listOfStockSymbolsInStash().includes(stockResults[0].symbol)) {
             return alert('The stock has already been added to your Stash before. Please add a different stock instead.')
         }
-        setStockStash([...stockStash, ...stockResults])
+        
+        setStockStash([...stockStash, ...stockResults].sort(compareForSorting))
         // console.log('stockStash AFTER updating is: ', stockStash)
     }
 
