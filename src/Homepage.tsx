@@ -1,34 +1,15 @@
-import Stockdata from './Stockdata'
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import SearchBar from './SearchBar';
 
 export default function Homepage() {
 
-    
+    const navigate = useNavigate();
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <a>
-                    Welcome to StashTicker 
-                    <br></br>
-                    hello this is the homepage with search bar
-                </a>
-                <div className="search-wrapper">
-                    <form onSubmit={(e) => {
-                        e.preventDefault()
-                    }}>
-                    {/* <form onSubmit={handleSubmit}> */}
-                        <input type="text" onChange={(e) => {
-                            return e
-                            // setsearchQuery(e.target.value.toUpperCase())
-                            // setMostRecentSearch(e.target.value.toUpperCase())}} 
-                        }}
-                            placeholder="Stock Symbol"/>
-                        <input type="submit" value="Search" />
-                    </form>                
-                 </div>
-            </header>
-        </div>
+        <div>
+            {/* {SearchBar(({handleSubmit, mostRecentSearch, setMostRecentSearch}) */}
+
+     </div>
     )
 
 }

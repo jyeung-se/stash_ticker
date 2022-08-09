@@ -10,9 +10,8 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Table } from 'antd';
 // import type { ColumnsType } from 'antd/lib/table';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
-import type { FilterValue, SorterResult } from 'antd/es/table/interface';
-
+import SearchBar from './SearchBar'
+import type { ColumnsType } from 'antd/es/table';
 
 
 const App = () => {
@@ -48,11 +47,16 @@ const App = () => {
   }, [])
   
 
-  
+
+
+    const unstash = () => {
+        stockStash.filter((stock: any) => {
+            return stock.symbol !== stock.symbol
+        })
+    }
 
 
     interface TableDataType {
-        sorter?: SorterResult<any> | SorterResult<any>[];
         key: React.Key;
         name: string;
         symbol: string;
@@ -70,7 +74,52 @@ const App = () => {
       }
 
 
+    const myStashColumns: ColumnsType<TableDataType> = [
+    {
+        title: 'Symbol',
+        dataIndex: 'symbol',
+        key: 'symbol'
+    },
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+        render: text => <a>{text}</a>
+    },
+    {
+        title: 'Price',
+        dataIndex: 'price',
+        key: 'price'
+    },
+    {
+        title: 'EPS',
+        dataIndex: 'eps',
+        key: 'eps'
+    },
+    {
+        title: 'DayHigh',
+        dataIndex: 'dayHigh',
+        key: 'dayHigh'
+    },
+    {
+        title: 'DayLow',
+        dataIndex: 'dayLow',
+        key: 'dayLow'
+    },
+    {
+        title: 'Change',
+        dataIndex: 'change',
+        key: 'change'
+    },
+    {
+        title: 'Unstash',
+        dataIndex: 'unstash',
+        key: 'unstash',
+        render: Unstash => <button onClick={() => unstash}>Remove</button>
+    }
+    ];
       
+
     const snapshotColumns: ColumnsType<TableDataType> = [
     {
         title: 'Symbol',
@@ -182,7 +231,7 @@ const App = () => {
     
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
-    const myStashTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockStash} />;
+    const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
     const allStocksTable = () => <Table className="flex-container" columns={allStocksColumns} dataSource={allStocks} />;
     const hourlyStockTable = () => <Table className="flex-container" columns={hourlyColumns} dataSource={stockHourlyResults} />; 
 
@@ -238,22 +287,6 @@ const App = () => {
     }
 
 
-    const searchBar = () => {
-        return (
-            <div className="search-wrapper">
-                <form onSubmit={handleSubmit}>
-                    <input type="text" onChange={(e) => {
-                        if (e.target.value !== '') {
-                            setMostRecentSearch(e.target.value.toLocaleUpperCase())}}
-                        }
-                        placeholder="Stock Symbol"/>
-                    <input type="submit" value="Search" />
-                </form>                
-            </div>
-        )
-    }
-
-
 
     const compareForSorting = (a: any, b: any) => {
         // console.log("compareForSorting fires off")
@@ -281,7 +314,7 @@ const App = () => {
         }
         
         setStockStash([...stockStash, ...stockResults].sort(compareForSorting))
-        // console.log('stockStash AFTER updating is: ', stockStash)
+        console.log('stockStash AFTER updating is: ', stockStash)
     }
 
 
@@ -317,12 +350,12 @@ const App = () => {
       // console.log('stocktablevisibility state after toggle: ', AllStocksTableVisability)
     }
 
-
     const displayAllStocksTable = () => {
         return allStocksTableVisability === true ? <div><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
     }
 
 
+    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const handleSubmit = (e: any) => {
         e.preventDefault()
         setMostRecentSearch(mostRecentSearch)
@@ -372,7 +405,7 @@ const App = () => {
     return (
          <div className="App">
                 <br></br>
-                {searchBar()}
+                <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
                 <br></br>
                 <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
                 {displayAllStocksTable()}
@@ -384,8 +417,8 @@ const App = () => {
                 <br></br>
             <BrowserRouter>
               <Routes>
-                {/* <Route path="/" element={<Homepage />} /> */}
-                <Route path="/" element={null} />
+                <Route path="/" element={<Homepage />} />
+                {/* <Route path="/" element={<SearchBar />} /> */}
                 <Route path="/search" element={<Stockdata />} />
                 <Route path="/mystash" element={<Mystash />} />
               </Routes>
