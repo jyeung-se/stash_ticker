@@ -321,7 +321,7 @@ const App = () => {
 
     const tablesShownPostSearch = () => {
         // console.log(mostRecentSearch, stockResults, stockHourlyResults)
-        if (mostRecentSearch !== '' && stockResults.length > 0) {
+        if (stockResults.length > 0) {
             return (
                 <div>
                     <br></br>
