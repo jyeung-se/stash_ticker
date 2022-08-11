@@ -49,6 +49,13 @@ h2 {
   color:#ffffff;
 }
 
+.StashTicker-header {
+  color:#000000;
+  background-color: #f4511e;
+  display: center;
+  font-size: calc(20px + 2vmin);
+}
+
 
 .addToStockStashButton {
   display: inline-block;

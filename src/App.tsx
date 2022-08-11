@@ -404,6 +404,8 @@ const App = () => {
 
     return (
          <div className="App">
+                <h1 className="StashTicker-header">StashTicker</h1>
+                <br></br>
                 <br></br>
                 <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
                 <br></br>
