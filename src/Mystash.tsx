@@ -1,6 +1,6 @@
-import Stockdata from './Stockdata'
+import Stockdata from './App'
 
-export default function Mystocks() {
+export default function Mystash() {
 
     
 

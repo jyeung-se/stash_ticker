@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import logo from './logo.svg';
 import './App.css';
 import background from './BlueVectorBackground.jpg';
-import Stockdata from './Stockdata'
 import Homepage from './Homepage'
 import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Table } from 'antd';
-// import type { ColumnsType } from 'antd/lib/table';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './SearchBar'
-import type { ColumnsType } from 'antd/es/table';
 import myStashColumns from './myStashColumns';
 import snapshotColumns from './snapshotColumns';
 import allStocksColumns from './allStocksColumns';
@@ -253,7 +249,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Homepage />} />
                 {/* <Route path="/" element={<SearchBar />} /> */}
-                <Route path="/search" element={<Stockdata />} />
+                {/* <Route path="/search" element={<Stockdata />} /> */}
                 <Route path="/mystash" element={<Mystash />} />
               </Routes>
             </BrowserRouter>            
