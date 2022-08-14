@@ -1,6 +1,6 @@
 import Stockdata from './App'
 
-export default function Mystash() {
+const Mystash = () => {
 
     
 
@@ -15,3 +15,5 @@ export default function Mystash() {
     )
 
 }
+
+export default Mystash

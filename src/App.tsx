@@ -155,6 +155,7 @@ const App = () => {
                     <br></br>
                     <h2>My Stock Stash</h2>
                     {myStashTable()}
+                    {/* <Mystash stockStash={stockStash} /> */}
                     <br></br>
                     <h2>{stockResults[0].symbol} Profile</h2>
                     {snapshotTable()}
