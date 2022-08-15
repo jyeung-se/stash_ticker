@@ -20,7 +20,7 @@ interface TableDataType {
   }
 
 
-const hourlyColumns: ColumnsType<TableDataType> = [
+const timePeriodColumns: ColumnsType<TableDataType> = [
     {
         title: 'Close',
         dataIndex: 'close',
@@ -53,4 +53,4 @@ const hourlyColumns: ColumnsType<TableDataType> = [
     }
     ];
 
-    export default hourlyColumns
+    export default timePeriodColumns

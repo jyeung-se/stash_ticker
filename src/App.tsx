@@ -11,7 +11,7 @@ import SearchBar from './SearchBar'
 import myStashColumns from './myStashColumns';
 import snapshotColumns from './snapshotColumns';
 import allStocksColumns from './allStocksColumns';
-import hourlyColumns from './hourlyColumns';
+import timePeriodColumns from './timePeriodColumns';
 
 
 
@@ -19,6 +19,7 @@ const App = () => {
 
 
   const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [stockTickers, setStockTickers] = useState<any>([])
   const [allStocks, setAllStocks] = useState<any>([])
   const [stockResults, setStockResults] = useState<any>([])
@@ -27,6 +28,7 @@ const App = () => {
   const [stockStash, setStockStash] = useState<any>([])
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
   const [time, setTime] = useState('1D')
+  const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
  
   
 
@@ -62,7 +64,8 @@ const App = () => {
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
     const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
     const allStocksTable = () => <Table className="flex-container" columns={allStocksColumns} dataSource={allStocks} />;
-    const hourlyStockTable = () => <Table className="flex-container" columns={hourlyColumns} dataSource={stockHourlyResults} />; 
+    const hourlyStockTable = () => <Table className="flex-container" columns={timePeriodColumns} dataSource={stockHourlyResults} />; 
+    const timePeriodStockTable = () => <Table className="flex-container" columns={timePeriodColumns} dataSource={stockTimePeriodResults} />; 
 
 
     const hourlyStockChart = () => {
@@ -97,6 +100,49 @@ const App = () => {
             <ResponsiveContainer width="99%" height={400}>
                 <AreaChart
                     data={abridgedHourlyStockData}
+                    margin={{
+                        top: 10,
+                        right: 30,
+                        left: 0,
+                        bottom: 0,
+                    }}
+                >
+                    <XAxis dataKey="date" />
+                    <YAxis type="number" domain={['auto', 'auto']} />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
+                    <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
+                </AreaChart> 
+            </ResponsiveContainer>
+        )
+    }
+
+
+
+    const timePeriodStockChart = () => {
+        // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
+        const abridgedTimePeriodStockData = 
+            stockTimePeriodResults.slice(0,7)
+            .map((timePeriodStat: any) => {
+            return (
+                {
+                    date: timePeriodStat.date,
+                    low: timePeriodStat.low,
+                    high: timePeriodStat.high,
+                    open: timePeriodStat.open,
+                    close: timePeriodStat.close,
+                    volume: timePeriodStat.volume
+                }
+            )
+        })
+        // console.log('abridgedTimePeriodStockData inside timePeriodStockChart() is: ', abridgedTimePeriodStockData)
+
+
+        return (
+            <ResponsiveContainer width="99%" height={400}>
+                <AreaChart
+                    data={abridgedTimePeriodStockData}
                     margin={{
                         top: 10,
                         right: 30,
@@ -212,13 +258,25 @@ const App = () => {
             }).catch((error) => {
                 console.error(error);
             });
+            
+            //Endpoint = Historical Price   (Days - historicals)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            .then(async (res) => {
+                const stockTimePeriodData = await res.data
+                // console.log('stockTimePeriodData:', stockTimePeriodData);
+                setStockTimePeriodResults(stockTimePeriodData.historical)      
+            }).catch((error) => {
+                console.error(error);
+            });            
 
             setAllStocksTableVisability(false)
             displayAllStocksTable()
 
+            setIsLoading(false)
             e.target.reset()
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
+            setIsLoading(false)
             e.target.reset()
         }
         
@@ -231,7 +289,20 @@ const App = () => {
     }
 
 
-    const oneDayButton = document.getElementById('1d')
+    const handleTimePeriodChange = (e: any) => {
+        setTime(e.target.value)
+        console.log('changed time period clicked.')
+        
+        //Endpoint = Historical Price   (Days - historicals)
+        axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+        .then(async (res) => {
+            const stockTimePeriodData = await res.data
+            console.log('stockTimePeriodData:', stockTimePeriodData);
+            setStockTimePeriodResults(stockTimePeriodData)      
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
 
 
 
@@ -247,7 +318,7 @@ const App = () => {
         
         const allButtons = chartTimePeriods.map((timePeriod) => {
             return (
-            <Radio.Group value={time} onChange={e => setTime(e.target.value)}>
+            <Radio.Group key={timePeriod} value={time} onChange={e => handleTimePeriodChange(e)}>
                 <Radio.Button value={timePeriod}>{timePeriod}</Radio.Button>
             </Radio.Group>
             )
@@ -273,6 +344,7 @@ const App = () => {
                             {chartButtons()}
                         </ul>
                         {hourlyStockChart()}
+                        {timePeriodStockChart()}
                     </div>
                     </Col>
                 </Row>
@@ -300,9 +372,9 @@ const App = () => {
             <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
             <br></br>
             <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
+            <br></br>
+            <br></br>
             {displayAllStocksTable()}
-            <br></br>
-            <br></br>
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null} 
             <br></br>
             {/* {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null}  */}
