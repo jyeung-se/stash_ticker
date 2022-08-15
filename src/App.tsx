@@ -4,7 +4,7 @@ import './App.css';
 import background from './BlueVectorBackground.jpg';
 import Homepage from './Homepage'
 import Mystash from './Mystash'
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
 import { Table } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './SearchBar'
@@ -231,29 +231,31 @@ const App = () => {
     }
 
 
+
     return (
          <div className="App">
-                <h1 className="StashTicker-header">StashTicker</h1>
-                <br></br>
-                <br></br>
-                <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
-                <br></br>
-                <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
-                {displayAllStocksTable()}
-                <br></br>
-                {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null} 
-                <br></br>
-                {/* <h2>All Companies</h2>
-                {allStocksTable()} */}
-                <br></br>
+            <h1 className="StashTicker-header">StashTicker</h1>
             <BrowserRouter>
+            <Link to="/mystash">My Stash</Link>
               <Routes>
                 <Route path="/" element={<Homepage />} />
                 {/* <Route path="/" element={<SearchBar />} /> */}
                 {/* <Route path="/search" element={<Stockdata />} /> */}
                 <Route path="/mystash" element={<Mystash />} />
               </Routes>
-            </BrowserRouter>            
+            </BrowserRouter>               
+            <br></br>
+            <br></br>
+            <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
+            <br></br>
+            <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
+            {displayAllStocksTable()}
+            <br></br>
+            {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null} 
+            <br></br>
+            {/* <h2>All Companies</h2>
+            {allStocksTable()} */}
+            <br></br>         
         </div>
     )
 
