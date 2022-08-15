@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  background-color: #282c34;
+  background-color: #ffffff;
 }
 
 .App-logo {
@@ -46,7 +46,7 @@ input, select, textarea{
 }
 
 h2 {
-  color:#ffffff;
+  color:#000000;
 }
 
 .StashTicker-header {
@@ -74,13 +74,12 @@ h2 {
 
 
 .flex-container {
-  background-color: #282c34;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 
@@ -112,3 +111,26 @@ h2 {
    background: yellowgreen;
    height: 20vh;
  }
+
+ .gutter-box {
+  padding: 8px 0;
+  background: #ffffff;
+}
+
+
+/* ul.nav {
+  padding-left: 0px;
+  text-align: center;
+}
+ul.nav > li {
+  display: inline-block;
+  padding: 10px 20px;
+}
+ul.nav > li:hover {
+  background-color: #2779BF;
+}
+ul.nav > li > a {
+  color: white;
+  text-decoration: none;
+} */
+

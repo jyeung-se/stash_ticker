@@ -5,7 +5,7 @@ import background from './BlueVectorBackground.jpg';
 import Homepage from './Homepage'
 import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
-import { Table } from 'antd';
+import { Table, Col, Divider, Row, Button, Radio } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './SearchBar'
 import myStashColumns from './myStashColumns';
@@ -26,6 +26,7 @@ const App = () => {
   const [mostRecentSearch, setMostRecentSearch] = useState('')
   const [stockStash, setStockStash] = useState<any>([])
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
+  const [time, setTime] = useState('1D')
  
   
 
@@ -153,9 +154,8 @@ const App = () => {
             return (
                 <div>
                     <br></br>
-                    <h2>My Stock Stash</h2>
+                    {<h2>My Stock Stash</h2>}
                     {myStashTable()}
-                    {/* <Mystash stockStash={stockStash} /> */}
                     <br></br>
                     <h2>{stockResults[0].symbol} Profile</h2>
                     {snapshotTable()}
@@ -231,12 +231,63 @@ const App = () => {
     }
 
 
+    const oneDayButton = document.getElementById('1d')
+
+
+
+    const chartButtons = () => {
+        const chartTimePeriods = [
+            '1D',
+            '1W',
+            '1M',
+            '6M',
+            '1Y'
+        ]
+
+        
+        const allButtons = chartTimePeriods.map((timePeriod) => {
+            return (
+            <Radio.Group value={time} onChange={e => setTime(e.target.value)}>
+                <Radio.Button value={timePeriod}>{timePeriod}</Radio.Button>
+            </Radio.Group>
+            )
+        })
+
+        return allButtons
+    }
+
+
+    const stockProfileColumns = () => {
+        return (
+            /* Antdesign grid columns */
+            <div>
+                <Divider orientation="left">Stock Profile</Divider>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                    <Col className="gutter-row" span={12}>
+                    {/* <h1>{stockResults[0].symbol}</h1> */}
+                    <div style={style}>{snapshotTable()}</div>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                    <div style={style}>
+                        <ul className="nav" role="tablist">
+                            {chartButtons()}
+                        </ul>
+                        {hourlyStockChart()}
+                    </div>
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
+
+
+    const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
 
     return (
          <div className="App">
             <h1 className="StashTicker-header">StashTicker</h1>
             <BrowserRouter>
-            <Link to="/mystash">My Stash</Link>
+            {/* <Link to="/mystash">My Stash</Link> */}
               <Routes>
                 <Route path="/" element={<Homepage />} />
                 {/* <Route path="/" element={<SearchBar />} /> */}
@@ -251,14 +302,16 @@ const App = () => {
             <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
             {displayAllStocksTable()}
             <br></br>
-            {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null} 
+            <br></br>
+            {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null} 
+            <br></br>
+            {/* {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null}  */}
             <br></br>
             {/* <h2>All Companies</h2>
             {allStocksTable()} */}
             <br></br>         
         </div>
     )
-
 }
 
 export default App
