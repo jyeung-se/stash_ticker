@@ -27,7 +27,7 @@ const App = () => {
   const [mostRecentSearch, setMostRecentSearch] = useState('')
   const [stockStash, setStockStash] = useState<any>([])
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
-  const [time, setTime] = useState('1D')
+  const [timePeriod, setTimePeriod] = useState('1D')
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
  
   
@@ -38,7 +38,7 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //Endpoint = Symbols List
-      axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+      axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
           const stockData = await res.data
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -80,7 +80,7 @@ const App = () => {
         }
 
         const abridgedHourlyStockData = 
-            stockHourlyResults.slice(0,12)
+            stockHourlyResults.slice(0,24)
             .map((hourStat: any) => {
             return (
                 {
@@ -121,9 +121,39 @@ const App = () => {
 
 
     const timePeriodStockChart = () => {
+
+        let endPeriod
+
+        switch (timePeriod) {
+            case '1D': {
+                endPeriod = 1
+                break
+            }
+            case '1W': {
+                endPeriod = 7
+                break
+            }
+            case '1M': {
+                endPeriod = 30
+                break
+            }
+            case '3M': {
+                endPeriod = 91
+                break
+            }
+            case '6M': {
+                endPeriod = 182
+                break
+            }
+            case '1Y': {
+                endPeriod = 365
+                break                
+            }
+        }
+
         // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
         const abridgedTimePeriodStockData = 
-            stockTimePeriodResults.slice(0,7)
+            stockTimePeriodResults.slice(0, endPeriod)
             .map((timePeriodStat: any) => {
             return (
                 {
@@ -189,7 +219,7 @@ const App = () => {
         }
         
         setStockStash([...stockStash, ...stockResults].sort(compareForSorting))
-        console.log('stockStash AFTER updating is: ', stockStash)
+        // console.log('stockStash AFTER updating is: ', stockStash)
     }
 
 
@@ -240,7 +270,7 @@ const App = () => {
         // console.log('stockTickers is: ', stockTickers)
         if (stockTickers.includes(mostRecentSearch)) {
             //Endpoint = Company Quote
-            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
             .then(async (res) => {
                 const stockData = await res.data
                 // console.log('stockData[0]:', stockData[0]);
@@ -250,7 +280,7 @@ const App = () => {
             });
 
             //Endpoint = Historical Price   (hour historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
             .then(async (res) => {
                 const stockHourlyData = await res.data
                 // console.log('stockHourlyData:', stockHourlyData);
@@ -260,7 +290,7 @@ const App = () => {
             });
             
             //Endpoint = Historical Price   (Days - historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
             .then(async (res) => {
                 const stockTimePeriodData = await res.data
                 // console.log('stockTimePeriodData:', stockTimePeriodData);
@@ -290,18 +320,9 @@ const App = () => {
 
 
     const handleTimePeriodChange = (e: any) => {
-        setTime(e.target.value)
-        console.log('changed time period clicked.')
-        
-        //Endpoint = Historical Price   (Days - historicals)
-        axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-        .then(async (res) => {
-            const stockTimePeriodData = await res.data
-            console.log('stockTimePeriodData:', stockTimePeriodData);
-            setStockTimePeriodResults(stockTimePeriodData)      
-        }).catch((error) => {
-            console.error(error);
-        });
+        setTimePeriod(e.target.value)
+        // console.log('e is:', e)
+        // console.log('changed time period clicked.')
     }
 
 
@@ -311,15 +332,16 @@ const App = () => {
             '1D',
             '1W',
             '1M',
+            '3M',
             '6M',
             '1Y'
         ]
 
         
-        const allButtons = chartTimePeriods.map((timePeriod) => {
+        const allButtons = chartTimePeriods.map((time) => {
             return (
-            <Radio.Group key={timePeriod} value={time} onChange={e => handleTimePeriodChange(e)}>
-                <Radio.Button value={timePeriod}>{timePeriod}</Radio.Button>
+            <Radio.Group key={time} value={timePeriod} onChange={e => handleTimePeriodChange(e)}>
+                <Radio.Button value={time}>{time}</Radio.Button>
             </Radio.Group>
             )
         })
