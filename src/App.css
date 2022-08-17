@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background-color: #ffffff;
 }
 
 .App-logo {
@@ -43,3 +44,93 @@
 input, select, textarea{
   color: #000000;
 }
+
+h2 {
+  color:#000000;
+}
+
+.StashTicker-header {
+  color:#000000;
+  background-color: #f4511e;
+  display: center;
+  font-size: calc(20px + 2vmin);
+}
+
+
+.addToStockStashButton {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 300px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+
+.flex-container {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+
+* {
+  box-sizing: border-box; 
+ }
+ body {
+   margin: 0;
+ }
+ #main {
+   display: flex;
+   min-height: calc(100vh - 40vh);
+ }
+ #main > article {
+   flex: 1;
+ }
+ #main > nav, 
+ #main > aside {
+   flex: 0 0 20vw;
+   background: beige;
+ }
+ #main > nav {
+   order: -1;
+ }
+ header, footer, article, nav, aside {
+   padding: 1em;
+ }
+ header, footer {
+   background: yellowgreen;
+   height: 20vh;
+ }
+
+ .gutter-box {
+  padding: 8px 0;
+  background: #ffffff;
+}
+
+
+/* ul.nav {
+  padding-left: 0px;
+  text-align: center;
+}
+ul.nav > li {
+  display: inline-block;
+  padding: 10px 20px;
+}
+ul.nav > li:hover {
+  background-color: #2779BF;
+}
+ul.nav > li > a {
+  color: white;
+  text-decoration: none;
+} */
+
