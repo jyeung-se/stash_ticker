@@ -350,6 +350,15 @@ const App = () => {
     }
 
 
+
+    const showSelectedPeriodChart = () => {
+        if (timePeriod === '1D') {
+            return hourlyStockChart()
+        }
+        return timePeriodStockChart()
+    }
+
+
     const stockProfileColumns = () => {
         return (
             /* Antdesign grid columns */
@@ -365,8 +374,9 @@ const App = () => {
                         <ul className="nav" role="tablist">
                             {chartButtons()}
                         </ul>
-                        {hourlyStockChart()}
-                        {timePeriodStockChart()}
+                        {showSelectedPeriodChart()}
+                        {/* {hourlyStockChart()}
+                        {timePeriodStockChart()} */}
                     </div>
                     </Col>
                 </Row>
