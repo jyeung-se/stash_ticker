@@ -29,6 +29,7 @@ const App = () => {
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
   const [timePeriod, setTimePeriod] = useState('1D')
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
+  const [companyDescription, setCompanyDescription] = useState('')
  
   
 
@@ -298,6 +299,13 @@ const App = () => {
             }).catch((error) => {
                 console.error(error);
             });            
+
+            //Company Description
+            //To add next
+
+            //Company or stock news articles
+            //To add next
+
 
             setAllStocksTableVisability(false)
             displayAllStocksTable()
