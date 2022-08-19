@@ -372,31 +372,41 @@ const App = () => {
             /* Antdesign grid columns */
             <div>
                 <Divider orientation="left"></Divider>
-                {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name}</h2> : null} 
+                {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name} ({stockResults[0].symbol})</h2> : null} 
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <Col className="gutter-row" span={6}>
                         <Divider orientation="left"></Divider>
-                        <h3>Open</h3>
+                        <h3 className="h3-left">Open</h3>
+                        <h3 className="h3-right">{stockResults[0].open}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>High</h3>
+                        <h3 className="h3-left">High</h3>
+                        <h3 className="h3-right">{stockResults[0].dayHigh}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>Low </h3>
+                        <h3 className="h3-left">Low</h3>
+                        <h3 className="h3-right">{stockResults[0].dayLow}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>Year High </h3>
+                        <h3 className="h3-left">Year High</h3>
+                        <h3 className="h3-right">{stockResults[0].yearHigh}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>Year Low </h3>
+                        <h3 className="h3-left">Year Low</h3>
+                        <h3 className="h3-right">{stockResults[0].yearLow}</h3>
                     </Col>
                     <Col className="gutter-row" span={6}>
                         <Divider orientation="left"></Divider>
-                        <h3>Previous Close</h3>
+                        <h3 className="h3-left">Previous Close</h3>
+                        <h3 className="h3-right">{stockResults[0].previousClose}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>Market Cap</h3>
+                        <h3 className="h3-left">Market Cap</h3>
+                        <h3 className="h3-right">{stockResults[0].marketCap}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>Volume </h3>
+                        <h3 className="h3-left">Volume</h3>
+                        <h3 className="h3-right">{stockResults[0].volume}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>EPS </h3>
+                        <h3 className="h3-left">EPS</h3>
+                        <h3 className="h3-right">{stockResults[0].eps}</h3>
                         <Divider orientation="left"></Divider>
-                        <h3>PE </h3>
+                        <h3 className="h3-left">P/E Ratio</h3>
+                        <h3 className="h3-right">{stockResults[0].pe}</h3>
                     </Col>
                     <Col className="gutter-row" span={12}>
                     <div style={style}>

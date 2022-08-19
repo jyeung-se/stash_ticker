@@ -49,6 +49,20 @@ h2 {
   color:#000000;
 }
 
+.h3-left {
+  color:#000000;
+  text-align:left;
+  float: left;
+  margin-left: 50px;
+}
+
+.h3-right {
+  color:#000000;
+  text-align: right;
+  float: right;
+  margin-right: 50px;
+}
+
 .header-center {
   color:#000000;
   text-align: center;
