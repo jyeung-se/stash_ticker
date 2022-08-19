@@ -49,6 +49,12 @@ h2 {
   color:#000000;
 }
 
+.header-center {
+  color:#000000;
+  text-align: center;
+  /* margin-left: 50px; */
+}
+
 .StashTicker-header {
   color:#000000;
   background-color: #f4511e;

@@ -367,6 +367,53 @@ const App = () => {
     }
 
 
+    const stockQuickStats = () => {
+        return (
+            /* Antdesign grid columns */
+            <div>
+                <Divider orientation="left"></Divider>
+                {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name}</h2> : null} 
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                    <Col className="gutter-row" span={6}>
+                        <Divider orientation="left"></Divider>
+                        <h3>Open</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>High</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>Low </h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>Year High </h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>Year Low </h3>
+                    </Col>
+                    <Col className="gutter-row" span={6}>
+                        <Divider orientation="left"></Divider>
+                        <h3>Previous Close</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>Market Cap</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>Volume </h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>EPS </h3>
+                        <Divider orientation="left"></Divider>
+                        <h3>PE </h3>
+                    </Col>
+                    <Col className="gutter-row" span={12}>
+                    <div style={style}>
+                        <ul className="nav" role="tablist">
+                            {chartButtons()}
+                        </ul>
+                        {showSelectedPeriodChart()}
+                        {/* {hourlyStockChart()}
+                        {timePeriodStockChart()} */}
+                    </div>
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
+    
+
     const stockProfileColumns = () => {
         return (
             /* Antdesign grid columns */
@@ -415,6 +462,7 @@ const App = () => {
             <br></br>
             <br></br>
             {displayAllStocksTable()}
+            {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null} 
             <br></br>
             {/* {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null}  */}
