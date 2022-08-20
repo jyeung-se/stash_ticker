@@ -17,7 +17,6 @@ import timePeriodColumns from './timePeriodColumns';
 
 const App = () => {
 
-
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [stockTickers, setStockTickers] = useState<any>([])
@@ -29,9 +28,8 @@ const App = () => {
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
   const [timePeriod, setTimePeriod] = useState('1D')
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
-  const [companyDescription, setCompanyDescription] = useState('')
- 
-  
+  const [companyProfile, setCompanyProfile] = useState('')
+
 
     // // API Calls for ALL stocks
     useEffect(() => {
@@ -300,8 +298,15 @@ const App = () => {
                 console.error(error);
             });            
 
-            //Company Description
-            //To add next
+            //Endpoint = Company Profile   (Description)
+            axios.get(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            .then(async (res) => {
+                const companyProfileData = await res.data
+                console.log('companyProfileData:', companyProfileData[0].description);
+                setCompanyProfile(companyProfileData[0].description)      
+            }).catch((error) => {
+                console.error(error);
+            });      
 
             //Company or stock news articles
             //To add next
@@ -377,24 +382,24 @@ const App = () => {
                     <Col className="gutter-row" span={6}>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Open</h3>
-                        <h3 className="h3-right">{stockResults[0].open}</h3>
+                        <h3 className="h3-right">${stockResults[0].open}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">High</h3>
-                        <h3 className="h3-right">{stockResults[0].dayHigh}</h3>
+                        <h3 className="h3-right">${stockResults[0].dayHigh}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Low</h3>
-                        <h3 className="h3-right">{stockResults[0].dayLow}</h3>
+                        <h3 className="h3-right">${stockResults[0].dayLow}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Year High</h3>
-                        <h3 className="h3-right">{stockResults[0].yearHigh}</h3>
+                        <h3 className="h3-right">${stockResults[0].yearHigh}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Year Low</h3>
-                        <h3 className="h3-right">{stockResults[0].yearLow}</h3>
+                        <h3 className="h3-right">${stockResults[0].yearLow}</h3>
                     </Col>
                     <Col className="gutter-row" span={6}>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Previous Close</h3>
-                        <h3 className="h3-right">{stockResults[0].previousClose}</h3>
+                        <h3 className="h3-right">${stockResults[0].previousClose}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Market Cap</h3>
                         <h3 className="h3-right">{stockResults[0].marketCap}</h3>
@@ -403,7 +408,7 @@ const App = () => {
                         <h3 className="h3-right">{stockResults[0].volume}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">EPS</h3>
-                        <h3 className="h3-right">{stockResults[0].eps}</h3>
+                        <h3 className="h3-right">${stockResults[0].eps}</h3>
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">P/E Ratio</h3>
                         <h3 className="h3-right">{stockResults[0].pe}</h3>
@@ -424,30 +429,46 @@ const App = () => {
     }
     
 
-    const stockProfileColumns = () => {
+    const stockProfile = () => {
         return (
-            /* Antdesign grid columns */
             <div>
-                <Divider orientation="left">Stock Profile</Divider>
+                <Divider orientation="left">Company Profile</Divider>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <Col className="gutter-row" span={12}>
-                    {/* <h1>{stockResults[0].symbol}</h1> */}
-                    <div style={style}>{snapshotTable()}</div>
-                    </Col>
-                    <Col className="gutter-row" span={12}>
-                    <div style={style}>
-                        <ul className="nav" role="tablist">
-                            {chartButtons()}
-                        </ul>
-                        {showSelectedPeriodChart()}
-                        {/* {hourlyStockChart()}
-                        {timePeriodStockChart()} */}
-                    </div>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">Description</h3>
+                        <h3 className="h3-right">{companyProfile}</h3>
                     </Col>
                 </Row>
             </div>
         )
     }
+
+
+    // const stockProfileColumns = () => {
+    //     return (
+    //         /* Antdesign grid columns */
+    //         <div>
+    //             <Divider orientation="left">Stock Profile</Divider>
+    //             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+    //                 <Col className="gutter-row" span={12}>
+    //                 {/* <h1>{stockResults[0].symbol}</h1> */}
+    //                 <div style={style}>{snapshotTable()}</div>
+    //                 </Col>
+    //                 <Col className="gutter-row" span={12}>
+    //                 <div style={style}>
+    //                     <ul className="nav" role="tablist">
+    //                         {chartButtons()}
+    //                     </ul>
+    //                     {showSelectedPeriodChart()}
+    //                     {/* {hourlyStockChart()}
+    //                     {timePeriodStockChart()} */}
+    //                 </div>
+    //                 </Col>
+    //             </Row>
+    //         </div>
+    //     )
+    // }
 
 
     const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
@@ -473,7 +494,8 @@ const App = () => {
             <br></br>
             {displayAllStocksTable()}
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
-            {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null} 
+            {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
+            {/* {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null}  */}
             <br></br>
             {/* {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null}  */}
             <br></br>
