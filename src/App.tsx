@@ -434,10 +434,10 @@ const App = () => {
             <div>
                 <Divider orientation="left">Company Profile</Divider>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col className="gutter-row" span={12}>
-                        <Divider orientation="left"></Divider>
-                        <h3 className="h3-left">Description</h3>
-                        <h3 className="h3-right">{companyProfile}</h3>
+                    <Col className="gutter-row" span={24}>
+                        {/* <Divider orientation="left"></Divider> */}
+                        {/* <h3 className="h3-left">Description</h3> */}
+                        <h3 className="h3-profile">{companyProfile}</h3>
                     </Col>
                 </Row>
             </div>
