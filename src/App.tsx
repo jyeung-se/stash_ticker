@@ -28,7 +28,7 @@ const App = () => {
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
   const [timePeriod, setTimePeriod] = useState('1D')
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
-  const [companyProfile, setCompanyProfile] = useState('')
+  const [companyProfile, setCompanyProfile] = useState<any>([])
 
 
     // // API Calls for ALL stocks
@@ -37,7 +37,7 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //Endpoint = Symbols List
-      axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+      axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
           const stockData = await res.data
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -269,7 +269,7 @@ const App = () => {
         // console.log('stockTickers is: ', stockTickers)
         if (stockTickers.includes(mostRecentSearch)) {
             //Endpoint = Company Quote
-            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockData = await res.data
                 // console.log('stockData[0]:', stockData[0]);
@@ -279,7 +279,7 @@ const App = () => {
             });
 
             //Endpoint = Historical Price   (hour historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockHourlyData = await res.data
                 // console.log('stockHourlyData:', stockHourlyData);
@@ -289,7 +289,7 @@ const App = () => {
             });
             
             //Endpoint = Historical Price   (Days - historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const stockTimePeriodData = await res.data
                 // console.log('stockTimePeriodData:', stockTimePeriodData);
@@ -299,11 +299,11 @@ const App = () => {
             });            
 
             //Endpoint = Company Profile   (Description)
-            axios.get(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            axios.get(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then(async (res) => {
                 const companyProfileData = await res.data
-                console.log('companyProfileData:', companyProfileData[0].description);
-                setCompanyProfile(companyProfileData[0].description)      
+                // console.log('companyProfileData:', companyProfileData);
+                setCompanyProfile(companyProfileData)      
             }).catch((error) => {
                 console.error(error);
             });      
@@ -378,6 +378,8 @@ const App = () => {
             <div>
                 <Divider orientation="left"></Divider>
                 {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name} ({stockResults[0].symbol})</h2> : null} 
+                <h2 className="stock-price">{companyProfile[0].price}</h2> {parseInt(companyProfile[0].changes) > 0 ? <h3 className="stock-change-up">({companyProfile[0].changes}) Today</h3> : <h3 className="stock-change-down">({companyProfile[0].changes}) Today</h3>}
+                <br />
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <Col className="gutter-row" span={6}>
                         <Divider orientation="left"></Divider>
@@ -419,8 +421,6 @@ const App = () => {
                             {chartButtons()}
                         </ul>
                         {showSelectedPeriodChart()}
-                        {/* {hourlyStockChart()}
-                        {timePeriodStockChart()} */}
                     </div>
                     </Col>
                 </Row>
@@ -437,7 +437,7 @@ const App = () => {
                     <Col className="gutter-row" span={24}>
                         {/* <Divider orientation="left"></Divider> */}
                         {/* <h3 className="h3-left">Description</h3> */}
-                        <h3 className="h3-profile">{companyProfile}</h3>
+                        <h3 className="h3-profile">{companyProfile[0].description}</h3>
                     </Col>
                 </Row>
             </div>

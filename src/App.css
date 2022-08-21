@@ -71,6 +71,27 @@ h2 {
   margin-right: 50px;
 }
 
+.stock-price {
+  color:#000000;
+  text-align:left;
+  float: left;
+  margin-left: 50px;
+}
+
+.stock-change-up {
+  color:#26cf42;
+  text-align:left;
+  float: left;
+  margin-left: 50px;
+}
+
+.stock-change-down {
+  color:#c92f2f;
+  text-align:left;
+  float: left;
+  margin-left: 50px;
+}
+
 .header-center {
   color:#000000;
   text-align: center;
