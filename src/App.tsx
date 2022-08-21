@@ -4,7 +4,7 @@ import background from './BlueVectorBackground.jpg';
 import Homepage from './Homepage'
 import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
-import { Table, Col, Divider, Row, Button, Radio } from 'antd';
+import { Table, Col, Divider, Row, Button, Radio, Space } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './SearchBar'
 import myStashColumns from './myStashColumns';
@@ -401,13 +401,13 @@ const App = () => {
         
         const allButtons = chartTimePeriods.map((time) => {
             return (
-            <Radio.Group key={time} value={timePeriod} onChange={e => handleTimePeriodChange(e)}>
-                <Radio.Button value={time}>{time}</Radio.Button>
-            </Radio.Group>
+                <Radio.Group key={time} value={timePeriod} onChange={e => handleTimePeriodChange(e)}>
+                    <Radio.Button value={time}>{time}</Radio.Button>
+                </Radio.Group>
             )
         })
 
-        return allButtons
+        return <Space size={[50, 10]} wrap>{allButtons}</Space>
     }
 
 
@@ -426,7 +426,18 @@ const App = () => {
             <div>
                 <Divider orientation="left"></Divider>
                 {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name} ({stockResults[0].symbol})</h2> : null} 
-                <h2 className="stock-price">{companyProfile[0].price}</h2> {parseInt(companyProfile[0].changes) > 0 ? <h3 className="stock-change-up">({companyProfile[0].changes}) Today</h3> : <h3 className="stock-change-down">({companyProfile[0].changes}) Today</h3>}
+                <h1 className="stock-price">${stockResults[0].price}</h1> 
+                <br />
+                {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+                <br />
+                <div style={style}>
+                {showSelectedPeriodChart()}
+                <br />
+                <br />
+                    <ul>
+                        {chartButtons()}
+                    </ul>
+                </div>
                 <br />
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <Col className="gutter-row" span={6}>
@@ -465,7 +476,7 @@ const App = () => {
                     </Col>
                     <Col className="gutter-row" span={12}>
                     <div style={style}>
-                        <ul className="nav" role="tablist">
+                        <ul>
                             {chartButtons()}
                         </ul>
                         {showSelectedPeriodChart()}
