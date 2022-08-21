@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import './App.css';
 import background from './BlueVectorBackground.jpg';
 import Homepage from './Homepage'
@@ -37,8 +36,8 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //Endpoint = Symbols List
-      axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
-          const stockData = await res.data
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+          const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
           const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
@@ -152,21 +151,20 @@ const App = () => {
 
         // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
         const abridgedTimePeriodStockData = 
-            stockTimePeriodResults.slice(0, endPeriod)
+            stockTimePeriodResults.historical.slice(0, endPeriod)
             .map((timePeriodStat: any) => {
-            return (
-                {
-                    date: timePeriodStat.date,
-                    low: timePeriodStat.low,
-                    high: timePeriodStat.high,
-                    open: timePeriodStat.open,
-                    close: timePeriodStat.close,
-                    volume: timePeriodStat.volume
-                }
-            )
-        })
+                return (
+                    {
+                        date: timePeriodStat.date,
+                        low: timePeriodStat.low,
+                        high: timePeriodStat.high,
+                        open: timePeriodStat.open,
+                        close: timePeriodStat.close,
+                        volume: timePeriodStat.volume
+                    }
+                )
+            })
         // console.log('abridgedTimePeriodStockData inside timePeriodStockChart() is: ', abridgedTimePeriodStockData)
-
 
         return (
             <ResponsiveContainer width="99%" height={400}>
@@ -259,59 +257,105 @@ const App = () => {
     }
 
 
-    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // const handleSubmit = (e: any) => {
+    //     e.preventDefault()
+    //     setMostRecentSearch(mostRecentSearch)
+    //     // console.log('searchQuery is: ', searchQuery)
+    //     // console.log('mostRecentSearch is: ', mostRecentSearch)
+
+    //     // console.log('stockTickers is: ', stockTickers)
+    //     if (stockTickers.includes(mostRecentSearch)) {
+    //         //Endpoint = Company Quote
+    //         fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         .then(async (res) => {
+    //             const stockData = await res.data
+    //             // console.log('stockData[0]:', stockData[0]);
+    //             setStockResults(stockData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });
+
+    //         //Endpoint = Historical Price   (hour historicals)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         .then(async (res) => {
+    //             const stockHourlyData = await res.data
+    //             // console.log('stockHourlyData:', stockHourlyData);
+    //             setStockHourlyResults(stockHourlyData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });
+            
+    //         //Endpoint = Historical Price   (Days - historicals)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         .then(async (res) => {
+    //             const stockTimePeriodData = await res.data
+    //             // console.log('stockTimePeriodData:', stockTimePeriodData);
+    //             setStockTimePeriodResults(stockTimePeriodData.historical)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });            
+
+    //         //Endpoint = Company Profile   (Description)
+    //         fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         .then(async (res) => {
+    //             const companyProfileData = await res.data
+    //             // console.log('companyProfileData:', companyProfileData);
+    //             setCompanyProfile(companyProfileData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });      
+
+    //         //Company or stock news articles
+    //         //To add next
+
+
+    //         setAllStocksTableVisability(false)
+    //         displayAllStocksTable()
+
+    //         setIsLoading(false)
+    //         e.target.reset()
+    //     } else {
+    //         alert("Please check to see if you have entered a correct stock symbol, then try again.")
+    //         setIsLoading(false)
+    //         e.target.reset()
+    //     }
+        
+    // }
+  
+
+
+    const fetchStockInfo = async () => {
+        const [stockData, stockHourlyData, stockTimePeriodData, companyProfileData] = await Promise.all([
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+        ])
+
+        const stocks = await stockData.json()
+        const stockHourly = await stockHourlyData.json()
+        const stockTimePeriod = await stockTimePeriodData.json()
+        const companyProfile = await companyProfileData.json()
+
+        return [stocks, stockHourly, stockTimePeriod, companyProfile]
+    }
+
+
     const handleSubmit = (e: any) => {
         e.preventDefault()
         setMostRecentSearch(mostRecentSearch)
-        // console.log('searchQuery is: ', searchQuery)
-        // console.log('mostRecentSearch is: ', mostRecentSearch)
 
-        // console.log('stockTickers is: ', stockTickers)
         if (stockTickers.includes(mostRecentSearch)) {
-            //Endpoint = Company Quote
-            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-            .then(async (res) => {
-                const stockData = await res.data
-                // console.log('stockData[0]:', stockData[0]);
-                setStockResults(stockData)      
-            }).catch((error) => {
-                console.error(error);
-            });
-
-            //Endpoint = Historical Price   (hour historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-            .then(async (res) => {
-                const stockHourlyData = await res.data
-                // console.log('stockHourlyData:', stockHourlyData);
-                setStockHourlyResults(stockHourlyData)      
-            }).catch((error) => {
-                console.error(error);
-            });
-            
-            //Endpoint = Historical Price   (Days - historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-            .then(async (res) => {
-                const stockTimePeriodData = await res.data
-                // console.log('stockTimePeriodData:', stockTimePeriodData);
-                setStockTimePeriodResults(stockTimePeriodData.historical)      
-            }).catch((error) => {
-                console.error(error);
-            });            
-
-            //Endpoint = Company Profile   (Description)
-            axios.get(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-            .then(async (res) => {
-                const companyProfileData = await res.data
-                // console.log('companyProfileData:', companyProfileData);
-                setCompanyProfile(companyProfileData)      
-            }).catch((error) => {
-                console.error(error);
-            });      
-
-            //Company or stock news articles
-            //To add next
-
-
+            fetchStockInfo()
+            .then(([stocks, stockHourly, stockTimePeriod, companyProfile]) => {
+                    setStockResults(stocks)
+                    setStockHourlyResults(stockHourly)
+                    setStockTimePeriodResults(stockTimePeriod)
+                    setCompanyProfile(companyProfile)
+                }).catch((error) => {
+                    console.error(error)
+                })
             setAllStocksTableVisability(false)
             displayAllStocksTable()
 
@@ -322,9 +366,13 @@ const App = () => {
             setIsLoading(false)
             e.target.reset()
         }
-        
     }
-  
+
+
+
+
+
+
 
 
     if(error) {
