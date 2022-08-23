@@ -49,6 +49,58 @@ h2 {
   color:#000000;
 }
 
+.h3-left {
+  color:#000000;
+  text-align:left;
+  float: left;
+  margin-left: 40px;
+}
+
+.h3-right {
+  color:#000000;
+  text-align: right;
+  float: right;
+  margin-right: 30px;
+}
+
+.h3-profile {
+  color:#000000;
+  text-align: left;
+  float: left;
+  margin-left: 23px;
+  margin-right: 23px;
+}
+
+.stock-price {
+  color:#000000;
+  text-align: left;
+  float: left;
+  margin-left: 50px;
+}
+
+.stock-change-up {
+  color:#26cf42;
+  text-align: left;
+  float: left;
+  margin-left: -100px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.stock-change-down {
+  color:#c92f2f;
+  text-align: left;
+  float: left;
+  margin-left: -100px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.header-center {
+  color:#000000;
+  text-align: center;
+}
+
 .StashTicker-header {
   color:#000000;
   background-color: #f4511e;
@@ -116,21 +168,3 @@ h2 {
   padding: 8px 0;
   background: #ffffff;
 }
-
-
-/* ul.nav {
-  padding-left: 0px;
-  text-align: center;
-}
-ul.nav > li {
-  display: inline-block;
-  padding: 10px 20px;
-}
-ul.nav > li:hover {
-  background-color: #2779BF;
-}
-ul.nav > li > a {
-  color: white;
-  text-decoration: none;
-} */
-

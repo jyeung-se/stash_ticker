@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import './App.css';
 import background from './BlueVectorBackground.jpg';
 import Homepage from './Homepage'
 import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
-import { Table, Col, Divider, Row, Button, Radio } from 'antd';
+import { Table, Col, Divider, Row, Button, Radio, Space } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './SearchBar'
 import myStashColumns from './myStashColumns';
@@ -16,7 +15,6 @@ import timePeriodColumns from './timePeriodColumns';
 
 
 const App = () => {
-
 
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -29,8 +27,8 @@ const App = () => {
   const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
   const [timePeriod, setTimePeriod] = useState('1D')
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
- 
-  
+  const [companyProfile, setCompanyProfile] = useState<any>([])
+
 
     // // API Calls for ALL stocks
     useEffect(() => {
@@ -38,8 +36,8 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //Endpoint = Symbols List
-      axios.get('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
-          const stockData = await res.data
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+          const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
           const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
@@ -153,21 +151,20 @@ const App = () => {
 
         // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
         const abridgedTimePeriodStockData = 
-            stockTimePeriodResults.slice(0, endPeriod)
+            stockTimePeriodResults.historical.slice(0, endPeriod)
             .map((timePeriodStat: any) => {
-            return (
-                {
-                    date: timePeriodStat.date,
-                    low: timePeriodStat.low,
-                    high: timePeriodStat.high,
-                    open: timePeriodStat.open,
-                    close: timePeriodStat.close,
-                    volume: timePeriodStat.volume
-                }
-            )
-        })
+                return (
+                    {
+                        date: timePeriodStat.date,
+                        low: timePeriodStat.low,
+                        high: timePeriodStat.high,
+                        open: timePeriodStat.open,
+                        close: timePeriodStat.close,
+                        volume: timePeriodStat.volume
+                    }
+                )
+            })
         // console.log('abridgedTimePeriodStockData inside timePeriodStockChart() is: ', abridgedTimePeriodStockData)
-
 
         return (
             <ResponsiveContainer width="99%" height={400}>
@@ -260,45 +257,105 @@ const App = () => {
     }
 
 
-    // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // const handleSubmit = (e: any) => {
+    //     e.preventDefault()
+    //     setMostRecentSearch(mostRecentSearch)
+    //     // console.log('searchQuery is: ', searchQuery)
+    //     // console.log('mostRecentSearch is: ', mostRecentSearch)
+
+    //     // console.log('stockTickers is: ', stockTickers)
+    //     if (stockTickers.includes(mostRecentSearch)) {
+    //         //Endpoint = Company Quote
+    //         fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         .then(async (res) => {
+    //             const stockData = await res.data
+    //             // console.log('stockData[0]:', stockData[0]);
+    //             setStockResults(stockData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });
+
+    //         //Endpoint = Historical Price   (hour historicals)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         .then(async (res) => {
+    //             const stockHourlyData = await res.data
+    //             // console.log('stockHourlyData:', stockHourlyData);
+    //             setStockHourlyResults(stockHourlyData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });
+            
+    //         //Endpoint = Historical Price   (Days - historicals)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         .then(async (res) => {
+    //             const stockTimePeriodData = await res.data
+    //             // console.log('stockTimePeriodData:', stockTimePeriodData);
+    //             setStockTimePeriodResults(stockTimePeriodData.historical)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });            
+
+    //         //Endpoint = Company Profile   (Description)
+    //         fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         .then(async (res) => {
+    //             const companyProfileData = await res.data
+    //             // console.log('companyProfileData:', companyProfileData);
+    //             setCompanyProfile(companyProfileData)      
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });      
+
+    //         //Company or stock news articles
+    //         //To add next
+
+
+    //         setAllStocksTableVisability(false)
+    //         displayAllStocksTable()
+
+    //         setIsLoading(false)
+    //         e.target.reset()
+    //     } else {
+    //         alert("Please check to see if you have entered a correct stock symbol, then try again.")
+    //         setIsLoading(false)
+    //         e.target.reset()
+    //     }
+        
+    // }
+  
+
+
+    const fetchStockInfo = async () => {
+        const [stockData, stockHourlyData, stockTimePeriodData, companyProfileData] = await Promise.all([
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        ])
+
+        const stocks = await stockData.json()
+        const stockHourly = await stockHourlyData.json()
+        const stockTimePeriod = await stockTimePeriodData.json()
+        const companyProfile = await companyProfileData.json()
+
+        return [stocks, stockHourly, stockTimePeriod, companyProfile]
+    }
+
+
     const handleSubmit = (e: any) => {
         e.preventDefault()
         setMostRecentSearch(mostRecentSearch)
-        // console.log('searchQuery is: ', searchQuery)
-        // console.log('mostRecentSearch is: ', mostRecentSearch)
 
-        // console.log('stockTickers is: ', stockTickers)
         if (stockTickers.includes(mostRecentSearch)) {
-            //Endpoint = Company Quote
-            axios.get(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
-            .then(async (res) => {
-                const stockData = await res.data
-                // console.log('stockData[0]:', stockData[0]);
-                setStockResults(stockData)      
-            }).catch((error) => {
-                console.error(error);
-            });
-
-            //Endpoint = Historical Price   (hour historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
-            .then(async (res) => {
-                const stockHourlyData = await res.data
-                // console.log('stockHourlyData:', stockHourlyData);
-                setStockHourlyResults(stockHourlyData)      
-            }).catch((error) => {
-                console.error(error);
-            });
-            
-            //Endpoint = Historical Price   (Days - historicals)
-            axios.get(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
-            .then(async (res) => {
-                const stockTimePeriodData = await res.data
-                // console.log('stockTimePeriodData:', stockTimePeriodData);
-                setStockTimePeriodResults(stockTimePeriodData.historical)      
-            }).catch((error) => {
-                console.error(error);
-            });            
-
+            fetchStockInfo()
+            .then(([stocks, stockHourly, stockTimePeriod, companyProfile]) => {
+                    setStockResults(stocks)
+                    setStockHourlyResults(stockHourly)
+                    setStockTimePeriodResults(stockTimePeriod)
+                    setCompanyProfile(companyProfile)
+                }).catch((error) => {
+                    console.error(error)
+                })
             setAllStocksTableVisability(false)
             displayAllStocksTable()
 
@@ -309,9 +366,13 @@ const App = () => {
             setIsLoading(false)
             e.target.reset()
         }
-        
     }
-  
+
+
+
+
+
+
 
 
     if(error) {
@@ -340,13 +401,13 @@ const App = () => {
         
         const allButtons = chartTimePeriods.map((time) => {
             return (
-            <Radio.Group key={time} value={timePeriod} onChange={e => handleTimePeriodChange(e)}>
-                <Radio.Button value={time}>{time}</Radio.Button>
-            </Radio.Group>
+                <Radio.Group key={time} value={timePeriod} onChange={e => handleTimePeriodChange(e)}>
+                    <Radio.Button value={time}>{time}</Radio.Button>
+                </Radio.Group>
             )
         })
 
-        return allButtons
+        return <Space size={[50, 10]} wrap>{allButtons}</Space>
     }
 
 
@@ -359,28 +420,144 @@ const App = () => {
     }
 
 
-    const stockProfileColumns = () => {
+    const stockQuickStats = () => {
         return (
             /* Antdesign grid columns */
             <div>
-                <Divider orientation="left">Stock Profile</Divider>
+                <Divider orientation="left"></Divider>
+                {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name} ({stockResults[0].symbol})</h2> : null} 
+                <h1 className="stock-price">${stockResults[0].price}</h1> 
+                <br />
+                {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+                <br />
+                <div style={style}>
+                {showSelectedPeriodChart()}
+                <br />
+                <br />
+                    <ul>
+                        {chartButtons()}
+                    </ul>
+                </div>
+                <br />
+
+                <Row>
+                     <Col className="gutter-row" span={11}>
+                        <Divider orientation="left">Stats</Divider>
+                     </Col>
+                     <Col className="gutter-row" span={1}>
+                     </Col>
+                     <Col className="gutter-row" span={11}>
+                        <Divider orientation="left">About</Divider>
+                     </Col>
+                </Row>
+
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col className="gutter-row" span={12}>
-                    {/* <h1>{stockResults[0].symbol}</h1> */}
-                    <div style={style}>{snapshotTable()}</div>
+                    <Col className="gutter-row" span={6}>
+                        <h3 className="h3-left">Open</h3>
+                        <h3 className="h3-right">${stockResults[0].open}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">High</h3>
+                        <h3 className="h3-right">${stockResults[0].dayHigh}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">Low</h3>
+                        <h3 className="h3-right">${stockResults[0].dayLow}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">Year High</h3>
+                        <h3 className="h3-right">${stockResults[0].yearHigh}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">Year Low</h3>
+                        <h3 className="h3-right">${stockResults[0].yearLow}</h3>
                     </Col>
-                    <Col className="gutter-row" span={12}>
+                    <Col className="gutter-row" span={6}>
+                        <h3 className="h3-left">Previous Close</h3>
+                        <h3 className="h3-right">${stockResults[0].previousClose}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">Market Cap</h3>
+                        <h3 className="h3-right">{stockResults[0].marketCap}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">Volume</h3>
+                        <h3 className="h3-right">{stockResults[0].volume}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">EPS</h3>
+                        <h3 className="h3-right">${stockResults[0].eps}</h3>
+                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-left">P/E Ratio</h3>
+                        <h3 className="h3-right">{stockResults[0].pe}</h3>
+                    </Col>
+                    {/* <Col className="gutter-row" span={12}>
                     <div style={style}>
-                        <ul className="nav" role="tablist">
+                        <ul>
                             {chartButtons()}
                         </ul>
                         {showSelectedPeriodChart()}
-                        {/* {hourlyStockChart()}
-                        {timePeriodStockChart()} */}
                     </div>
+                    </Col> */}
+                    <Col className="gutter-row" span={12}>
+                        <h3 className="h3-profile">{companyProfile[0].description}</h3>
                     </Col>
                 </Row>
             </div>
+        )
+    }
+    
+
+    const stockProfile = () => {
+        return (
+            <div>
+                <Divider orientation="left">Company Profile</Divider>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                    <Col className="gutter-row" span={24}>
+                        <h3 className="h3-profile">placeholder for company stats: CEO, sector, employees, image, ipo date etc.</h3>
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
+
+
+    // const stockProfileColumns = () => {
+    //     return (
+    //         /* Antdesign grid columns */
+    //         <div>
+    //             <Divider orientation="left">Stock Profile</Divider>
+    //             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+    //                 <Col className="gutter-row" span={12}>
+    //                 {/* <h1>{stockResults[0].symbol}</h1> */}
+    //                 <div style={style}>{snapshotTable()}</div>
+    //                 </Col>
+    //                 <Col className="gutter-row" span={12}>
+    //                 <div style={style}>
+    //                     <ul className="nav" role="tablist">
+    //                         {chartButtons()}
+    //                     </ul>
+    //                     {showSelectedPeriodChart()}
+    //                     {/* {hourlyStockChart()}
+    //                     {timePeriodStockChart()} */}
+    //                 </div>
+    //                 </Col>
+    //             </Row>
+    //         </div>
+    //     )
+    // }
+
+
+    const myStashLeftModule = () => {   
+        return (
+            <Col className="gutter-row" span={6}>
+                stock1
+            </Col>
+        )
+    }
+    
+
+    const showMainStockInfo = () => {
+        return (
+            <Col span={24}>
+                {/* <button onClick={toggleAllStocksTable}>Toggle List of All Companies1</button> */}
+                {displayAllStocksTable()}
+                {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
+                {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
+            </Col>
         )
     }
 
@@ -398,22 +575,46 @@ const App = () => {
                 {/* <Route path="/search" element={<Stockdata />} /> */}
                 <Route path="/mystash" element={<Mystash />} />
               </Routes>
-            </BrowserRouter>               
-            <br></br>
-            <br></br>
-            <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
-            <br></br>
-            <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
-            <br></br>
-            <br></br>
-            {displayAllStocksTable()}
-            {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null} 
-            <br></br>
-            {/* {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null}  */}
-            <br></br>
-            {/* <h2>All Companies</h2>
-            {allStocksTable()} */}
-            <br></br>         
+            </BrowserRouter>
+
+
+            <Row>
+            <Col flex="125px">
+                <Row>
+                    <Col >Menu Bar</Col>
+                </Row>
+                <Row>
+                    <Col >Buy Stocks</Col>
+                </Row>
+                <Row>
+                    <Col >Pending Orders</Col>
+                </Row>
+                <Row>
+                    <Col >Insights</Col>
+                </Row>
+                <Row>
+                    <Col >My Account</Col>
+                </Row>
+            </Col>
+
+            <Col span={4}>
+                <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
+                <br />
+                My Stash
+
+            </Col>
+            <Col span={16}>
+                <button onClick={toggleAllStocksTable}>Toggle List of All Companies2</button>
+                {allStocksTableVisability === false && stockResults.length === 0 || (allStocksTableVisability === false) && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()}
+            </Col>
+            {/* <Col span={16}>
+                {displayAllStocksTable()}
+                {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
+                {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
+            </Col> */}
+            </Row>
+
+      
         </div>
     )
 }
