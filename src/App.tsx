@@ -439,9 +439,21 @@ const App = () => {
                     </ul>
                 </div>
                 <br />
+
+                <Row>
+                     <Col className="gutter-row" span={11}>
+                        <Divider orientation="left">Stats</Divider>
+                     </Col>
+                     <Col className="gutter-row" span={1}>
+                     </Col>
+                     <Col className="gutter-row" span={11}>
+                        <Divider orientation="left">About</Divider>
+                     </Col>
+
+                </Row>
+
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <Col className="gutter-row" span={6}>
-                        <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Open</h3>
                         <h3 className="h3-right">${stockResults[0].open}</h3>
                         <Divider orientation="left"></Divider>
@@ -458,7 +470,6 @@ const App = () => {
                         <h3 className="h3-right">${stockResults[0].yearLow}</h3>
                     </Col>
                     <Col className="gutter-row" span={6}>
-                        <Divider orientation="left"></Divider>
                         <h3 className="h3-left">Previous Close</h3>
                         <h3 className="h3-right">${stockResults[0].previousClose}</h3>
                         <Divider orientation="left"></Divider>
@@ -474,13 +485,16 @@ const App = () => {
                         <h3 className="h3-left">P/E Ratio</h3>
                         <h3 className="h3-right">{stockResults[0].pe}</h3>
                     </Col>
-                    <Col className="gutter-row" span={12}>
+                    {/* <Col className="gutter-row" span={12}>
                     <div style={style}>
                         <ul>
                             {chartButtons()}
                         </ul>
                         {showSelectedPeriodChart()}
                     </div>
+                    </Col> */}
+                    <Col className="gutter-row" span={12}>
+                        <h3 className="h3-profile">{companyProfile[0].description}</h3>
                     </Col>
                 </Row>
             </div>
@@ -494,9 +508,7 @@ const App = () => {
                 <Divider orientation="left">Company Profile</Divider>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <Col className="gutter-row" span={24}>
-                        {/* <Divider orientation="left"></Divider> */}
-                        {/* <h3 className="h3-left">Description</h3> */}
-                        <h3 className="h3-profile">{companyProfile[0].description}</h3>
+                        <h3 className="h3-profile">placeholder for company stats: CEO, sector, employees, image, ipo date etc.</h3>
                     </Col>
                 </Row>
             </div>
@@ -530,6 +542,15 @@ const App = () => {
     // }
 
 
+    const myStashLeftModule = () => {   
+        return (
+            <Col className="gutter-row" span={6}>
+                stock1
+            </Col>
+        )
+    }
+    
+
     const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
 
     return (
@@ -543,17 +564,45 @@ const App = () => {
                 {/* <Route path="/search" element={<Stockdata />} /> */}
                 <Route path="/mystash" element={<Mystash />} />
               </Routes>
-            </BrowserRouter>               
-            <br></br>
-            <br></br>
-            <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
-            <br></br>
-            <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
-            <br></br>
-            <br></br>
-            {displayAllStocksTable()}
-            {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
-            {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
+            </BrowserRouter>
+
+
+            <Row>
+            <Col flex="125px">
+                <Row>
+                    <Col >Menu Bar</Col>
+                </Row>
+                <Row>
+                    <Col >Buy Stocks</Col>
+                </Row>
+                <Row>
+                    <Col >Pending Orders</Col>
+                </Row>
+                <Row>
+                    <Col >Insights</Col>
+                </Row>
+                <Row>
+                    <Col >My Account</Col>
+                </Row>
+            </Col>
+
+            <Col span={4}>
+                <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
+                <br />
+                My Stash
+
+            </Col>
+            <Col span={16}>
+                <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button>
+                {displayAllStocksTable()}
+                {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
+                {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
+            </Col>
+            </Row>
+
+
+        
+
             {/* {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfileColumns() : null}  */}
             <br></br>
             {/* {(stockResults.length || stockHourlyResults.length !== 0) ? tablesShownPostSearch() : null}  */}

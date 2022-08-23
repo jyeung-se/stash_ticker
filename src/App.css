@@ -53,22 +53,22 @@ h2 {
   color:#000000;
   text-align:left;
   float: left;
-  margin-left: 50px;
+  margin-left: 40px;
 }
 
 .h3-right {
   color:#000000;
   text-align: right;
   float: right;
-  margin-right: 50px;
+  margin-right: 30px;
 }
 
 .h3-profile {
   color:#000000;
   text-align: left;
   float: left;
-  margin-left: 50px;
-  margin-right: 50px;
+  margin-left: 23px;
+  margin-right: 23px;
 }
 
 .stock-price {
