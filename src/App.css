@@ -195,3 +195,30 @@ h2 {
   align-items: center;
 }
 
+
+
+/* search bar css */
+.form {
+  display: flex;
+  flex-direction: row;
+}
+.search-field {
+  width: 400px;
+  padding: 10px 35px 10px 15px;
+  border-radius: 100px;
+  outline-color: rgb(5, 209, 15);
+  border: 1px solid #000000;
+}
+
+.search-button {
+  background: transparent;
+  border: none;
+  outline: none;
+  margin-left: -33px;
+}
+
+.search-button img {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+}
