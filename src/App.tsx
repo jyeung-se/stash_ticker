@@ -38,7 +38,7 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //Endpoint = Symbols List
-      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
           const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -260,7 +260,7 @@ const App = () => {
     //     // console.log('stockTickers is: ', stockTickers)
     //     if (stockTickers.includes(mostRecentSearch)) {
     //         //Endpoint = Company Quote
-    //         fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     //         .then(async (res) => {
     //             const stockData = await res.data
     //             // console.log('stockData[0]:', stockData[0]);
@@ -270,7 +270,7 @@ const App = () => {
     //         });
 
     //         //Endpoint = Historical Price   (hour historicals)
-    //         fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     //         .then(async (res) => {
     //             const stockHourlyData = await res.data
     //             // console.log('stockHourlyData:', stockHourlyData);
@@ -280,7 +280,7 @@ const App = () => {
     //         });
             
     //         //Endpoint = Historical Price   (Days - historicals)
-    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     //         .then(async (res) => {
     //             const stockTimePeriodData = await res.data
     //             // console.log('stockTimePeriodData:', stockTimePeriodData);
@@ -290,7 +290,7 @@ const App = () => {
     //         });            
 
     //         //Endpoint = Company Profile   (Description)
-    //         fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     //         .then(async (res) => {
     //             const companyProfileData = await res.data
     //             // console.log('companyProfileData:', companyProfileData);
@@ -320,10 +320,10 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, stockTimePeriodData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         ])
 
         const stocks = await stockData.json()
@@ -408,6 +408,7 @@ const App = () => {
     }
 
 
+
     const stockQuickStats = () => {
         return (
             /* Antdesign grid columns */
@@ -425,33 +426,34 @@ const App = () => {
                 </div>
                 <br />
 
-                {/* <Row>
-                     <Col className="gutter-row" span={11}>
-                        <Divider orientation="left">Stats</Divider>
-                     </Col>
-                     <Col className="gutter-row" span={1}>
-                     </Col>
-                     <Col className="gutter-row" span={11}>
-                        <Divider orientation="left">About</Divider>
-                     </Col>
-                </Row> */}
+
                 <Row>
-
-                <Divider orientation="left">About</Divider>
-                    {/* <Col className="gutter-row" span={12}> */}
-                    <Col className="h3-about" span={12} offset={6}>
-                    <h3 className="h3-about">{companyProfile[0].description}</h3>
-                </Col>
+                    <Col span={10} offset={7}>
+                    <Divider orientation="left">About</Divider>
+                        <h3 className="h3-about">{companyProfile[0].description}</h3>
+                    </Col>
                 </Row>
-                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-
-                <Divider orientation="left">Company Profile</Divider>
-                        <Col className="gutter-row" span={24}>
-                            <h3 className="h3-company-profile">placeholder for company stats: CEO, sector, employees, image, ipo date etc.</h3>
-                </Col>
-
-                <Divider orientation="left">Stats</Divider>
-                    <Col className="gutter-row" span={6}>
+                <br />
+                <br />
+                <Row>
+                    <Col span={10} offset={7}>
+                    <Divider orientation="left">Company Profile</Divider>
+                        <h3 className="h3-company-profile">
+                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~ 
+                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
+                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
+                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
+                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
+                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
+                        </h3>
+                    </Col>
+                </Row>
+                <br />
+                <br />
+                <Col span={10} offset={7}>
+                <Row>
+                    <Divider orientation="left">Stats</Divider>
+                    <Col span={9} offset={2}>
                         <h3 className="h3-left">Open</h3>
                         <h3 className="h3-right">${stockResults[0].open}</h3>
                         <Divider orientation="left"></Divider>
@@ -467,7 +469,8 @@ const App = () => {
                         <h3 className="h3-left">Year Low</h3>
                         <h3 className="h3-right">${stockResults[0].yearLow}</h3>
                     </Col>
-                    <Col className="gutter-row" span={6}>
+                    <Col span={2}></Col>
+                    <Col span={9}>
                         <h3 className="h3-left">Previous Close</h3>
                         <h3 className="h3-right">${stockResults[0].previousClose}</h3>
                         <Divider orientation="left"></Divider>
@@ -484,6 +487,12 @@ const App = () => {
                         <h3 className="h3-right">{stockResults[0].pe}</h3>
                     </Col>
                 </Row>
+                </Col>
+                <br />
+                <br />
+                <br />
+                <br />
+
             </div>
         )
     }

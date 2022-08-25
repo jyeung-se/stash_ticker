@@ -66,14 +66,17 @@ h2 {
 
 .h3-about {
   color:#000000;
-  text-align: center;
-  float: center;
+  text-align: left;
 }
 
 .h3-company-profile {
   color:#000000;
+  text-align: left;
+}
+
+.stats {
+  color:#000000;
   text-align: center;
-  float: center;
 }
 
 .stock-name {
@@ -101,6 +104,7 @@ h2 {
   color:#c92f2f;
   text-align: left;
   margin-top: -20px;
+  margin-left: 560px;
 }
 
 .header-left {
