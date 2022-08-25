@@ -12,8 +12,11 @@
     "@types/react-dom": "^18.0.3",
     "antd": "^4.21.5",
     "axios": "^0.27.2",
+    "bloodhound-js": "^1.2.3",
     "flexboxgrid": "^6.3.1",
+    "handlebars": "^4.7.7",
     "react": "^18.1.0",
+    "react-bootstrap-typeahead": "^6.0.0-rc.3",
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
@@ -44,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.14"
   }
 }

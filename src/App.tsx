@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
+import Typeahead from 'react-bootstrap-typeahead';
 import background from './BlueVectorBackground.jpg';
 import Homepage from './Homepage'
 import Mystash from './Mystash'
 import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
-import { Table, Col, Divider, Row, Button, Radio, Space } from 'antd';
+import { Table, Col, Divider, Row, Button, Radio, Space , Input, Card} from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './SearchBar'
 import myStashColumns from './myStashColumns';
@@ -28,6 +29,7 @@ const App = () => {
   const [timePeriod, setTimePeriod] = useState('1D')
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
   const [companyProfile, setCompanyProfile] = useState<any>([])
+  const [filteredStockTickers, setFilteredStockTickers] = useState<any>([])
 
 
     // // API Calls for ALL stocks
@@ -48,15 +50,6 @@ const App = () => {
       });
   }, [])
   
-
-
-
-    const unstash = () => {
-        stockStash.filter((stock: any) => {
-            return stock.symbol !== stock.symbol
-        })
-    }
-
 
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
@@ -100,8 +93,8 @@ const App = () => {
                     data={abridgedHourlyStockData}
                     margin={{
                         top: 10,
-                        right: 30,
-                        left: 0,
+                        right: 500,
+                        left: 500,
                         bottom: 0,
                     }}
                 >
@@ -167,13 +160,13 @@ const App = () => {
         // console.log('abridgedTimePeriodStockData inside timePeriodStockChart() is: ', abridgedTimePeriodStockData)
 
         return (
-            <ResponsiveContainer width="99%" height={400}>
+            <ResponsiveContainer width="99%" height={400}>     
                 <AreaChart
                     data={abridgedTimePeriodStockData}
                     margin={{
                         top: 10,
-                        right: 30,
-                        left: 0,
+                        right: 500,
+                        left: 500,
                         bottom: 0,
                     }}
                 >
@@ -370,11 +363,6 @@ const App = () => {
 
 
 
-
-
-
-
-
     if(error) {
         return <div>Error: {error}</div>
     }
@@ -425,15 +413,13 @@ const App = () => {
             /* Antdesign grid columns */
             <div>
                 <Divider orientation="left"></Divider>
-                {(stockResults.length || stockHourlyResults.length !== 0) ? <h2 className="header-center">{stockResults[0].name} ({stockResults[0].symbol})</h2> : null} 
+                {(stockResults.length || stockHourlyResults.length !== 0) ? <h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1> : null} 
                 <h1 className="stock-price">${stockResults[0].price}</h1> 
-                <br />
-                {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
-                <br />
-                <div style={style}>
-                {showSelectedPeriodChart()}
-                <br />
-                <br />
+                {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+                <div className="chart-visual">
+                    {showSelectedPeriodChart()}
+                    <br />
+                    <br />
                     <ul>
                         {chartButtons()}
                     </ul>
@@ -484,14 +470,6 @@ const App = () => {
                         <h3 className="h3-left">P/E Ratio</h3>
                         <h3 className="h3-right">{stockResults[0].pe}</h3>
                     </Col>
-                    {/* <Col className="gutter-row" span={12}>
-                    <div style={style}>
-                        <ul>
-                            {chartButtons()}
-                        </ul>
-                        {showSelectedPeriodChart()}
-                    </div>
-                    </Col> */}
                     <Col className="gutter-row" span={12}>
                         <h3 className="h3-profile">{companyProfile[0].description}</h3>
                     </Col>
@@ -553,7 +531,6 @@ const App = () => {
     const showMainStockInfo = () => {
         return (
             <Col span={24}>
-                {/* <button onClick={toggleAllStocksTable}>Toggle List of All Companies1</button> */}
                 {displayAllStocksTable()}
                 {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
                 {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
@@ -562,23 +539,23 @@ const App = () => {
     }
 
 
+
     const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
 
     return (
          <div className="App">
-            <h1 className="StashTicker-header">StashTicker</h1>
-            <BrowserRouter>
-            {/* <Link to="/mystash">My Stash</Link> */}
+            {/* <h1 className="StashTicker-header">StashTicker</h1> */}
+            <br /><br />
+            {/* <BrowserRouter>
+            <Link to="/mystash">My Stash</Link>
               <Routes>
                 <Route path="/" element={<Homepage />} />
-                {/* <Route path="/" element={<SearchBar />} /> */}
-                {/* <Route path="/search" element={<Stockdata />} /> */}
+                <Route path="/" element={<SearchBar />} />
                 <Route path="/mystash" element={<Mystash />} />
               </Routes>
-            </BrowserRouter>
+            </BrowserRouter> */}
 
-
-            <Row>
+            {/* <Row>
             <Col flex="125px">
                 <Row>
                     <Col >Menu Bar</Col>
@@ -598,23 +575,28 @@ const App = () => {
             </Col>
 
             <Col span={4}>
-                <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
+                {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
+
+                
+
+{/* 
                 <br />
                 My Stash
 
             </Col>
             <Col span={16}>
-                <button onClick={toggleAllStocksTable}>Toggle List of All Companies2</button>
-                {allStocksTableVisability === false && stockResults.length === 0 || (allStocksTableVisability === false) && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()}
             </Col>
-            {/* <Col span={16}>
-                {displayAllStocksTable()}
-                {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
-                {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
-            </Col> */}
-            </Row>
+            </Row> */}
 
-      
+
+
+            <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
+
+
+            {/* <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button> */}
+            {/* {allStocksTableVisability === false && stockResults.length === 0 || (allStocksTableVisability === false) && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()} */}
+            <Row>{showMainStockInfo()}</Row>
+            {/* {stockResults && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()} */}
         </div>
     )
 }

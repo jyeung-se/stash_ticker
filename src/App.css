@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   background-color: #ffffff;
+  font-family: 'Avenir Next', cursive;
 }
 
 .App-logo {
@@ -71,34 +72,34 @@ h2 {
   margin-right: 23px;
 }
 
+.stock-name {
+  color:#000000;
+  text-align: left;
+  margin-bottom: -108px;
+}
+
 .stock-price {
   color:#000000;
   text-align: left;
-  float: left;
-  margin-left: 50px;
+  margin-top: 100px;
 }
 
 .stock-change-up {
   color:#26cf42;
   text-align: left;
-  float: left;
-  margin-left: -100px;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-top: -20px;
 }
 
 .stock-change-down {
   color:#c92f2f;
   text-align: left;
-  float: left;
-  margin-left: -100px;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-top: -20px;
 }
 
-.header-center {
+.header-left {
   color:#000000;
-  text-align: center;
+  text-align: left;
+  float: left;
 }
 
 .StashTicker-header {
@@ -168,3 +169,18 @@ h2 {
   padding: 8px 0;
   background: #ffffff;
 }
+
+
+#custom-templates .empty-message {
+  padding: 5px 10px;
+  text-align: center;
+}
+
+.chart-visual {
+  align-items: center;
+}
+
+.chart-container {
+  align-items: center;
+}
+

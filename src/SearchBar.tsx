@@ -8,7 +8,7 @@ const SearchBar = ({handleSubmit, mostRecentSearch, setMostRecentSearch}: {handl
                 <input type="text" value={mostRecentSearch} onChange={(e) => {
                     setMostRecentSearch(e.target.value.toLocaleUpperCase())}}
                     placeholder="Stock Symbol"/>
-                <input type="submit" value="Search" />
+                {/* <input type="submit" value="Search" /> */}
             </form>                
         </div>
     )
