@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-color: #ffffff;
-  font-family: 'Avenir Next'
+  font-family: 'Avenir Next';
 }
 
 .App-logo {
@@ -221,4 +221,17 @@ h2 {
   width: 20px;
   height: 20px;
   object-fit: cover;
+}
+
+
+/* ReadMore button */
+.read-more{
+  display: inline;
+  width: 100%;
+}
+  
+.read-or-hide{
+  color: rgb(36, 2, 156);
+  cursor: pointer;
+  
 }

@@ -30,7 +30,23 @@ const App = () => {
   const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
   const [companyProfile, setCompanyProfile] = useState<any>([])
   const [filteredStockTickers, setFilteredStockTickers] = useState<any>([])
+  const [isReadMore, setIsReadMore] = useState(true);
 
+
+  const ReadMore = ({ children }: any) => {
+    const text = children;
+    const toggleReadMore = () => {
+      setIsReadMore(!isReadMore);
+    };
+    return (
+      <h3 className="read-more">
+        {isReadMore ? text.slice(0, 350) : text}
+        <span onClick={toggleReadMore} className="read-or-hide">
+          {isReadMore ? "...read more" : " show less"}
+        </span>
+      </h3>
+    );
+  };
 
     // // API Calls for ALL stocks
     useEffect(() => {
@@ -430,7 +446,13 @@ const App = () => {
                 <Row>
                     <Col span={10} offset={7}>
                     <Divider orientation="left">About</Divider>
-                        <h3 className="h3-about">{companyProfile[0].description}</h3>
+                        <h3 className="h3-about">
+                        <ReadMore>
+                            {companyProfile[0].description}
+                        </ReadMore>
+                        </h3>
+
+                        
                     </Col>
                 </Row>
                 <br />
