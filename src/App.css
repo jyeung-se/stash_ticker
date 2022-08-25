@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-color: #ffffff;
-  font-family: 'Avenir Next', cursive;
+  font-family: 'Avenir Next'
 }
 
 .App-logo {
@@ -76,18 +76,21 @@ h2 {
   color:#000000;
   text-align: left;
   margin-bottom: -108px;
+  margin-left: 560px;
 }
 
 .stock-price {
   color:#000000;
   text-align: left;
   margin-top: 100px;
+  margin-left: 560px;
 }
 
 .stock-change-up {
   color:#26cf42;
   text-align: left;
   margin-top: -20px;
+  margin-left: 560px;
 }
 
 .stock-change-down {

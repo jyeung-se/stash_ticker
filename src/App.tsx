@@ -419,7 +419,6 @@ const App = () => {
                 <div className="chart-visual">
                     {showSelectedPeriodChart()}
                     <br />
-                    <br />
                     <ul>
                         {chartButtons()}
                     </ul>
