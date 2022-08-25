@@ -33,20 +33,30 @@ const App = () => {
   const [isReadMore, setIsReadMore] = useState(true);
 
 
-  const ReadMore = ({ children }: any) => {
-    const text = children;
-    const toggleReadMore = () => {
-      setIsReadMore(!isReadMore);
+  
+    const ReadMore = ({ children }: any) => {
+        const text = children;
+        const toggleReadMore = () => {
+        setIsReadMore(!isReadMore);
+        };
+        return (
+        <h3 className="read-more">
+            {isReadMore ? text.slice(0, 350) : text}
+            <span onClick={toggleReadMore} className="read-or-hide">
+            {isReadMore ? "...read more" : " show less"}
+            </span>
+        </h3>
+        );
     };
-    return (
-      <h3 className="read-more">
-        {isReadMore ? text.slice(0, 350) : text}
-        <span onClick={toggleReadMore} className="read-or-hide">
-          {isReadMore ? "...read more" : " show less"}
-        </span>
-      </h3>
-    );
-  };
+
+    const toTitleCase = (str: string) => {
+        return str.replace(
+          /\w\S*/g,
+          function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          }
+        );
+      }
 
     // // API Calls for ALL stocks
     useEffect(() => {
@@ -367,13 +377,12 @@ const App = () => {
                 })
             setAllStocksTableVisability(false)
             displayAllStocksTable()
+            setIsReadMore(true)
 
             setIsLoading(false)
-            e.target.reset()
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
             setIsLoading(false)
-            e.target.reset()
         }
     }
 
@@ -441,7 +450,7 @@ const App = () => {
                     </ul>
                 </div>
                 <br />
-
+                <br />
 
                 <Row>
                     <Col span={10} offset={7}>
@@ -450,66 +459,72 @@ const App = () => {
                         <ReadMore>
                             {companyProfile[0].description}
                         </ReadMore>
-                        </h3>
-
-                        
+                        </h3>  
                     </Col>
                 </Row>
                 <br />
                 <br />
                 <Row>
-                    <Col span={10} offset={7}>
-                    <Divider orientation="left">Company Profile</Divider>
-                        <h3 className="h3-company-profile">
-                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~ 
-                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
-                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
-                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
-                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
-                            Placeholder for company stats: CEO, # employees, IPO date, and more. ~~~~~
-                        </h3>
+                    <Col span={3} offset={7}>
+                        <h3 className="h3-left">CEO</h3>
+                        <h3 className="h3-about-data">{companyProfile[0].ceo}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Employees</h3>
+                        <h3 className="h3-about-data">{companyProfile[0].fullTimeEmployees}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Headquarters</h3>
+                        <h3 className="h3-about-data">{companyProfile[0].city}, {toTitleCase(companyProfile[0].state)}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">IPO Date</h3>
+                        <h3 className="h3-about-data">{companyProfile[0].ipoDate}</h3>
                     </Col>
                 </Row>
                 <br />
                 <br />
+                <br />
+                <Row>
                 <Col span={10} offset={7}>
+                    <Divider orientation="left">Key Statistics</Divider>
+                </Col>
+                </Row>
                 <Row>
-                    <Divider orientation="left">Stats</Divider>
-                    <Col span={9} offset={2}>
+                    <Col span={3} offset={9}>
                         <h3 className="h3-left">Open</h3>
-                        <h3 className="h3-right">${stockResults[0].open}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">${stockResults[0].open}</h3>
+                        <br/>
                         <h3 className="h3-left">High</h3>
-                        <h3 className="h3-right">${stockResults[0].dayHigh}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">${stockResults[0].dayHigh}</h3>
+                        <br/>
                         <h3 className="h3-left">Low</h3>
-                        <h3 className="h3-right">${stockResults[0].dayLow}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">${stockResults[0].dayLow}</h3>
+                        <br/>
                         <h3 className="h3-left">Year High</h3>
-                        <h3 className="h3-right">${stockResults[0].yearHigh}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">${stockResults[0].yearHigh}</h3>
+                        <br/>
                         <h3 className="h3-left">Year Low</h3>
-                        <h3 className="h3-right">${stockResults[0].yearLow}</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearLow}</h3>
                     </Col>
-                    <Col span={2}></Col>
-                    <Col span={9}>
+                    <Col span={1}></Col>
+                    <Col span={3}>
                         <h3 className="h3-left">Previous Close</h3>
-                        <h3 className="h3-right">${stockResults[0].previousClose}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">${stockResults[0].previousClose}</h3>
+                        <br/>
                         <h3 className="h3-left">Market Cap</h3>
-                        <h3 className="h3-right">{stockResults[0].marketCap}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">{stockResults[0].marketCap}</h3>
+                        <br/>
                         <h3 className="h3-left">Volume</h3>
-                        <h3 className="h3-right">{stockResults[0].volume}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">{stockResults[0].volume}</h3>
+                        <br/>
                         <h3 className="h3-left">EPS</h3>
-                        <h3 className="h3-right">${stockResults[0].eps}</h3>
-                        <Divider orientation="left"></Divider>
+                        <h3 className="h3-about-data">${stockResults[0].eps}</h3>
+                        <br/>
                         <h3 className="h3-left">P/E Ratio</h3>
-                        <h3 className="h3-right">{stockResults[0].pe}</h3>
+                        <h3 className="h3-about-data">{stockResults[0].pe}</h3>
                     </Col>
                 </Row>
-                </Col>
                 <br />
                 <br />
                 <br />
