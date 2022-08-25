@@ -425,7 +425,7 @@ const App = () => {
                 </div>
                 <br />
 
-                <Row>
+                {/* <Row>
                      <Col className="gutter-row" span={11}>
                         <Divider orientation="left">Stats</Divider>
                      </Col>
@@ -434,9 +434,23 @@ const App = () => {
                      <Col className="gutter-row" span={11}>
                         <Divider orientation="left">About</Divider>
                      </Col>
-                </Row>
+                </Row> */}
+                <Row>
 
+                <Divider orientation="left">About</Divider>
+                    {/* <Col className="gutter-row" span={12}> */}
+                    <Col className="h3-about" span={12} offset={6}>
+                    <h3 className="h3-about">{companyProfile[0].description}</h3>
+                </Col>
+                </Row>
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+
+                <Divider orientation="left">Company Profile</Divider>
+                        <Col className="gutter-row" span={24}>
+                            <h3 className="h3-company-profile">placeholder for company stats: CEO, sector, employees, image, ipo date etc.</h3>
+                </Col>
+
+                <Divider orientation="left">Stats</Divider>
                     <Col className="gutter-row" span={6}>
                         <h3 className="h3-left">Open</h3>
                         <h3 className="h3-right">${stockResults[0].open}</h3>
@@ -468,9 +482,6 @@ const App = () => {
                         <Divider orientation="left"></Divider>
                         <h3 className="h3-left">P/E Ratio</h3>
                         <h3 className="h3-right">{stockResults[0].pe}</h3>
-                    </Col>
-                    <Col className="gutter-row" span={12}>
-                        <h3 className="h3-profile">{companyProfile[0].description}</h3>
                     </Col>
                 </Row>
             </div>
@@ -532,7 +543,6 @@ const App = () => {
             <Col span={24}>
                 {displayAllStocksTable()}
                 {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
-                {(stockResults.length || stockHourlyResults.length !== 0) ? stockProfile() : null} 
             </Col>
         )
     }

@@ -64,12 +64,16 @@ h2 {
   margin-right: 30px;
 }
 
-.h3-profile {
+.h3-about {
   color:#000000;
-  text-align: left;
-  float: left;
-  margin-left: 23px;
-  margin-right: 23px;
+  text-align: center;
+  float: center;
+}
+
+.h3-company-profile {
+  color:#000000;
+  text-align: center;
+  float: center;
 }
 
 .stock-name {
