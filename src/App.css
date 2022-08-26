@@ -193,12 +193,17 @@ h2 {
   text-align: center;
 }
 
-.chart-visual {
-  align-items: center;
+
+
+.chart-wrapper {
+  width: 800px;
+  position: relative;
+  display: inline-block;
 }
 
-.chart-container {
-  align-items: center;
+.chart-buttons {
+  
+  margin-right: 370px;
 }
 
 
@@ -210,17 +215,18 @@ h2 {
 }
 .search-field {
   width: 400px;
-  padding: 10px 35px 10px 15px;
-  border-radius: 100px;
+  padding: 10px 15px 10px 45px;
+  border-radius: 5px;
   outline-color: rgb(5, 209, 15);
   border: 1px solid #000000;
+  margin-left: -390px;
 }
 
 .search-button {
   background: transparent;
   border: none;
   outline: none;
-  margin-left: -33px;
+  margin-left: -390px;
 }
 
 .search-button img {

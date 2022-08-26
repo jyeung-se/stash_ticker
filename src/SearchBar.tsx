@@ -7,7 +7,8 @@ const SearchBar = ({handleSubmit, mostRecentSearch, setMostRecentSearch}: {handl
             <form onSubmit={(e) => handleSubmit(e)}>
                 <input className="search-field" type="text" value={mostRecentSearch} onChange={(e) => {
                     setMostRecentSearch(e.target.value.toLocaleUpperCase())}}
-                    placeholder="Search Stock Symbol"/>
+                    placeholder="Search Stock Symbol"
+                />
                 <button type="submit" className="search-button">
                     <img src="search.png"/>
                 </button>

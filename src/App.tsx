@@ -130,24 +130,26 @@ const App = () => {
 
 
         return (
-            <ResponsiveContainer width="99%" height={400}>
-                <AreaChart
-                    data={abridgedHourlyStockData}
-                    margin={{
-                        top: 10,
-                        right: 500,
-                        left: 500,
-                        bottom: 0,
-                    }}
-                >
-                    <XAxis dataKey="date" />
-                    <YAxis type="number" domain={['auto', 'auto']} />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
-                    <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
-                </AreaChart> 
-            </ResponsiveContainer>
+            <div className="chart-wrapper">
+                <ResponsiveContainer width="99%" height={400}>
+                    <AreaChart
+                        data={abridgedHourlyStockData}
+                        margin={{
+                            top: 0,
+                            right: 0,
+                            left: 0,
+                            bottom: 0,
+                        }}
+                    >
+                        <XAxis dataKey="date" />
+                        <YAxis type="number" domain={['auto', 'auto']} />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip />
+                        <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
+                        <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
+                    </AreaChart> 
+                </ResponsiveContainer>
+            </div>
         )
     }
 
@@ -202,24 +204,27 @@ const App = () => {
         // console.log('abridgedTimePeriodStockData inside timePeriodStockChart() is: ', abridgedTimePeriodStockData)
 
         return (
-            <ResponsiveContainer width="99%" height={400}>     
-                <AreaChart
-                    data={abridgedTimePeriodStockData}
-                    margin={{
-                        top: 10,
-                        right: 500,
-                        left: 500,
-                        bottom: 0,
-                    }}
-                >
-                    <XAxis dataKey="date" />
-                    <YAxis type="number" domain={['auto', 'auto']} />
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
-                    <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
-                </AreaChart> 
-            </ResponsiveContainer>
+            <div className="chart-wrapper">
+                <ResponsiveContainer width="99%" height={400}>     
+                    <AreaChart
+                        data={abridgedTimePeriodStockData}
+                        margin={{
+                            top: 0,
+                            right: 0,
+                            left: 0,
+                            bottom: 0,
+                        }}
+                        width={0}
+                    >
+                        <XAxis dataKey="date" />
+                        <YAxis type="number" domain={['auto', 'auto']} />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip />
+                        <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
+                        <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
+                    </AreaChart> 
+                </ResponsiveContainer>                 
+            </div>
         )
     }
 
@@ -436,7 +441,8 @@ const App = () => {
             )
         })
 
-        return <Space size={[50, 10]} wrap>{allButtons}</Space>
+        // include 'wrap' as a prop after size prop in <Space> if you want the buttons to wrap upon shrinking window size.
+        return <Space size={[10, 10]}>{allButtons}</Space>
     }
 
 
@@ -457,16 +463,13 @@ const App = () => {
                 {(stockResults.length || stockHourlyResults.length !== 0) ? <h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1> : null} 
                 <h1 className="stock-price">${stockResults[0].price}</h1> 
                 {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
-                <div className="chart-visual">
                     {showSelectedPeriodChart()}
                     <br />
-                    <ul>
+                    <ul className="chart-buttons">
                         {chartButtons()}
                     </ul>
-                </div>
                 <br />
                 <br />
-
                 <Row>
                     <Col span={10} offset={7}>
                     <Divider orientation="left">About</Divider>
@@ -659,7 +662,9 @@ const App = () => {
 
             {/* <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button> */}
             {/* {allStocksTableVisability === false && stockResults.length === 0 || (allStocksTableVisability === false) && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()} */}
-            <Row>{showMainStockInfo()}</Row>
+            {/* {showMainStockInfo()} */}
+            {displayAllStocksTable()}
+            {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null}
             {/* {stockResults && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()} */}
         </div>
     )
