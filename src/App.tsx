@@ -433,7 +433,6 @@ const App = () => {
     }
 
 
-
     const stockQuickStats = () => {
         return (
             /* Antdesign grid columns */
@@ -489,40 +488,34 @@ const App = () => {
                 <Col span={10} offset={7}>
                     <Divider orientation="left">Key Statistics</Divider>
                 </Col>
-                </Row>
-                <Row>
-                    <Col span={3} offset={9}>
-                        <h3 className="h3-left">Open</h3>
-                        <h3 className="h3-about-data">${stockResults[0].open}</h3>
-                        <br/>
-                        <h3 className="h3-left">High</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayHigh}</h3>
-                        <br/>
-                        <h3 className="h3-left">Low</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayLow}</h3>
-                        <br/>
-                        <h3 className="h3-left">Year High</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearHigh}</h3>
-                        <br/>
-                        <h3 className="h3-left">Year Low</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearLow}</h3>
-                    </Col>
-                    <Col span={1}></Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Previous Close</h3>
-                        <h3 className="h3-about-data">${stockResults[0].previousClose}</h3>
-                        <br/>
+                    <Col span={3} offset={7}>
                         <h3 className="h3-left">Market Cap</h3>
                         <h3 className="h3-about-data">{stockResults[0].marketCap}</h3>
-                        <br/>
+                        <h3 className="h3-left">High today</h3>
+                        <h3 className="h3-about-data">${stockResults[0].dayHigh}</h3>
+                        <h3 className="h3-left">52 Week high</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearHigh}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Price-Earnings ratio</h3>
+                        <h3 className="h3-about-data">{stockResults[0].pe}</h3>
+                        <h3 className="h3-left">Low today</h3>
+                        <h3 className="h3-about-data">${stockResults[0].dayLow}</h3>
+                        <h3 className="h3-left">52 Week low</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearLow}</h3>
+
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Dividend yield</h3>
+                        <h3 className="h3-about-data">{companyProfile[0] && companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv}</h3>
+                        <h3 className="h3-left">Open price</h3>
+                        <h3 className="h3-about-data">${stockResults[0].open}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Average volume</h3>
+                        <h3 className="h3-about-data">${stockResults[0].avgVolume}</h3>
                         <h3 className="h3-left">Volume</h3>
                         <h3 className="h3-about-data">{stockResults[0].volume}</h3>
-                        <br/>
-                        <h3 className="h3-left">EPS</h3>
-                        <h3 className="h3-about-data">${stockResults[0].eps}</h3>
-                        <br/>
-                        <h3 className="h3-left">P/E Ratio</h3>
-                        <h3 className="h3-about-data">{stockResults[0].pe}</h3>
                     </Col>
                 </Row>
                 <br />
