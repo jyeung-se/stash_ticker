@@ -58,6 +58,22 @@ const App = () => {
         );
       }
 
+
+    const numberFormat = (num: number) => {
+        if(num > 999 && num < 1000000){
+            return (num/1000).toFixed(2) + 'K'
+        }else if(num > 1000000000000){
+            return (num/1000000000000).toFixed(2) + 'T'
+        }else if(num > 1000000000){
+            return (num/1000000000).toFixed(2) + 'B'
+        }else if(num > 1000000){
+            return (num/1000000).toFixed(2) + 'M'
+        }else if(num < 900){
+            return num
+        }
+    }
+    
+
     // // API Calls for ALL stocks
     useEffect(() => {
       //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
@@ -490,32 +506,32 @@ const App = () => {
                 </Col>
                     <Col span={3} offset={7}>
                         <h3 className="h3-left">Market Cap</h3>
-                        <h3 className="h3-about-data">{stockResults[0].marketCap}</h3>
+                        <h3 className="h3-about-data">{numberFormat(stockResults[0].marketCap)}</h3>
                         <h3 className="h3-left">High today</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayHigh}</h3>
+                        <h3 className="h3-about-data">${stockResults[0].dayHigh.toFixed(2)}</h3>
                         <h3 className="h3-left">52 Week high</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearHigh}</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearHigh.toFixed(2)}</h3>
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Price-Earnings ratio</h3>
-                        <h3 className="h3-about-data">{stockResults[0].pe}</h3>
+                        <h3 className="h3-about-data">{stockResults[0].pe.toFixed(2)}</h3>
                         <h3 className="h3-left">Low today</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayLow}</h3>
+                        <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
                         <h3 className="h3-left">52 Week low</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearLow}</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearLow.toFixed(2)}</h3>
 
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Dividend yield</h3>
-                        <h3 className="h3-about-data">{companyProfile[0] && companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv}</h3>
+                        <h3 className="h3-about-data">{companyProfile[0] && companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
                         <h3 className="h3-left">Open price</h3>
-                        <h3 className="h3-about-data">${stockResults[0].open}</h3>
+                        <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Average volume</h3>
-                        <h3 className="h3-about-data">${stockResults[0].avgVolume}</h3>
+                        <h3 className="h3-about-data">{numberFormat(stockResults[0].avgVolume)}</h3>
                         <h3 className="h3-left">Volume</h3>
-                        <h3 className="h3-about-data">{stockResults[0].volume}</h3>
+                        <h3 className="h3-about-data">{numberFormat(stockResults[0].volume)}</h3>
                     </Col>
                 </Row>
                 <br />
