@@ -85,32 +85,42 @@ h2 {
   text-align: center;
 }
 
+.stock-header {
+  align-items: left;
+}
+
 .stock-name {
   color:#000000;
+  width: 800px;
+  display: inline-block;
   text-align: left;
-  margin-bottom: -108px;
-  margin-left: 560px;
+  margin-bottom: -200px;
+  margin-right: -120px;
 }
 
 .stock-price {
   color:#000000;
+  width: 800px;
+  display: inline-block;
   text-align: left;
-  margin-top: 100px;
-  margin-left: 560px;
+  margin-bottom: -200px;
+  margin-right: -120px;
 }
 
 .stock-change-up {
   color:#26cf42;
+  width: 800px;
+  display: inline-block;
   text-align: left;
-  margin-top: -20px;
-  margin-left: 560px;
+  margin-right: -120px;
 }
 
 .stock-change-down {
   color:#c92f2f;
+  width: 800px;
+  display: inline-block;
   text-align: left;
-  margin-top: -20px;
-  margin-left: 560px;
+  margin-right: -120px;
 }
 
 .header-left {
@@ -202,7 +212,6 @@ h2 {
 }
 
 .chart-buttons {
-  
   margin-right: 370px;
 }
 

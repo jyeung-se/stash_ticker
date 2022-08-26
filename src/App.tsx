@@ -214,7 +214,6 @@ const App = () => {
                             left: 0,
                             bottom: 0,
                         }}
-                        width={0}
                     >
                         <XAxis dataKey="date" />
                         <YAxis type="number" domain={['auto', 'auto']} />
@@ -459,10 +458,14 @@ const App = () => {
         return (
             /* Antdesign grid columns */
             <div>
-                <Divider orientation="left"></Divider>
-                {(stockResults.length || stockHourlyResults.length !== 0) ? <h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1> : null} 
-                <h1 className="stock-price">${stockResults[0].price}</h1> 
-                {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+                <div className="stock-header">
+                    <Divider orientation="left"></Divider>
+                    {(stockResults.length || stockHourlyResults.length !== 0) ? <h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1> : null} 
+                    <br />
+                    <h1 className="stock-price">${stockResults[0].price}</h1> 
+                    <br />
+                    {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+                </div>
                     {showSelectedPeriodChart()}
                     <br />
                     <ul className="chart-buttons">
