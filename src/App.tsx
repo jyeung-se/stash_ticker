@@ -80,7 +80,7 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //Endpoint = Symbols List
-      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
           const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -306,7 +306,7 @@ const App = () => {
     //     // console.log('stockTickers is: ', stockTickers)
     //     if (stockTickers.includes(mostRecentSearch)) {
     //         //Endpoint = Company Quote
-    //         fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
     //         .then(async (res) => {
     //             const stockData = await res.data
     //             // console.log('stockData[0]:', stockData[0]);
@@ -316,7 +316,7 @@ const App = () => {
     //         });
 
     //         //Endpoint = Historical Price   (hour historicals)
-    //         fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
     //         .then(async (res) => {
     //             const stockHourlyData = await res.data
     //             // console.log('stockHourlyData:', stockHourlyData);
@@ -326,7 +326,7 @@ const App = () => {
     //         });
             
     //         //Endpoint = Historical Price   (Days - historicals)
-    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
     //         .then(async (res) => {
     //             const stockTimePeriodData = await res.data
     //             // console.log('stockTimePeriodData:', stockTimePeriodData);
@@ -336,7 +336,7 @@ const App = () => {
     //         });            
 
     //         //Endpoint = Company Profile   (Description)
-    //         fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
     //         .then(async (res) => {
     //             const companyProfileData = await res.data
     //             // console.log('companyProfileData:', companyProfileData);
@@ -366,10 +366,10 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, stockTimePeriodData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         ])
 
         const stocks = await stockData.json()
@@ -496,7 +496,7 @@ const App = () => {
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Headquarters</h3>
-                        <h3 className="h3-about-data">{companyProfile[0].city}, {toTitleCase(companyProfile[0].state)}</h3>
+                        <h3 className="h3-about-data">{companyProfile[0].city},<br></br> {toTitleCase(companyProfile[0].state)}</h3>
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">IPO Date</h3>
@@ -548,20 +548,7 @@ const App = () => {
             </div>
         )
     }
-    
-
-    const stockProfile = () => {
-        return (
-            <div>
-                <Divider orientation="left">Company Profile</Divider>
-                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col className="gutter-row" span={24}>
-                        <h3 className="h3-profile">placeholder for company stats: CEO, sector, employees, image, ipo date etc.</h3>
-                    </Col>
-                </Row>
-            </div>
-        )
-    }
+        
 
 
     // const stockProfileColumns = () => {
