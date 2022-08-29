@@ -54,26 +54,25 @@ const App = () => {
         return str.replace(
           /\w\S*/g,
           function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
           }
         );
       }
 
 
     const numberFormat = (num: number) => {
-        if(num > 999 && num < 1000000){
-            return (num/1000).toFixed(2) + 'K'
-        }else if(num > 1000000000000){
-            return (num/1000000000000).toFixed(2) + 'T'
-        }else if(num > 1000000000){
-            return (num/1000000000).toFixed(2) + 'B'
-        }else if(num > 1000000){
-            return (num/1000000).toFixed(2) + 'M'
-        }else if(num < 900){
+        if(num < 1000){
             return num
+        } else if (num < 1000000) {
+            return (num/1000000).toFixed(2) + 'K'
+        } else if (num < 1000000000) {
+            return (num/1000000000).toFixed(2) + 'M'
+        } else if (num < 1000000000000) {
+            return (num/1000000000000).toFixed(2) + 'B'
+        } else if (num >= 1000000000000) {
+            return (num/1000000000000).toFixed(2) + 'T'
         }
     }
-    
 
     // // API Calls for ALL stocks
     useEffect(() => {
@@ -432,7 +431,7 @@ const App = () => {
                     <br />
                     <h1 className="stock-price">${stockResults[0].price}</h1> 
                     <br />
-                    {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+                    {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{(Math.round((stockResults[0].change + Number.EPSILON).toFixed * 100) / 100).toFixed(2)} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${(Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100).toFixed(2)} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
                 </div>
                     {showSelectedPeriodChart()}
                     <br />
