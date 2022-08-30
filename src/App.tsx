@@ -13,6 +13,7 @@ import myStashColumns from './myStashColumns';
 import snapshotColumns from './snapshotColumns';
 import allStocksColumns from './allStocksColumns';
 import timePeriodColumns from './timePeriodColumns';
+// import staticData from "./staticData";
 
 
 
@@ -32,6 +33,7 @@ const App = () => {
   const [companyProfile, setCompanyProfile] = useState<any>([])
   const [filteredStockTickers, setFilteredStockTickers] = useState<any>([])
   const [isReadMore, setIsReadMore] = useState(true);
+  const [dateFrom ,setDateFrom] = useState('')
 
 
   
@@ -79,8 +81,11 @@ const App = () => {
       //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
+      //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
+
+
       //Endpoint = Symbols List
-      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
           const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -92,6 +97,45 @@ const App = () => {
       });
   }, [])
   
+
+    useEffect(() => {
+       
+        const dateTo = moment(new Date())
+
+        switch (timePeriod) {
+            // case '1D': {
+            //     const startDate = dateTo.clone().subtract(1, 'day').format('YYYY-MM-DD')
+            //     setDateFrom(startDate)
+            //     break
+            // }
+            case '1W': {
+                const startDate = dateTo.clone().subtract(1, 'week').format('YYYY-MM-DD')
+                fetchTimePeriodStats(startDate, dateTo)
+                break
+            }
+            case '1M': {
+                const startDate = dateTo.clone().subtract(1, 'month').format('YYYY-MM-DD')
+                fetchTimePeriodStats(startDate, dateTo)
+                break
+            }
+            case '3M': {
+                const startDate = dateTo.clone().subtract(3, 'month').format('YYYY-MM-DD')
+                fetchTimePeriodStats(startDate, dateTo)
+                break
+            }
+            case '6M': {
+                const startDate = dateTo.clone().subtract(6, 'month').format('YYYY-MM-DD')
+                fetchTimePeriodStats(startDate, dateTo)
+                break
+            }
+            case '1Y': {
+                const startDate = dateTo.clone().subtract(1, 'year').format('YYYY-MM-DD')
+                fetchTimePeriodStats(startDate, dateTo)
+                break
+            }
+        }
+    }, [timePeriod])
+
 
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
@@ -113,7 +157,7 @@ const App = () => {
         }
 
         const abridgedHourlyStockData = 
-            stockHourlyResults.slice(0,24)
+            stockHourlyResults.slice(0,24).reverse()
             .map((hourStat: any) => {
             return (
                 {
@@ -154,92 +198,26 @@ const App = () => {
     }
 
     {
-        // testing momentjs
-        // let today = new Date().getTime()
-        // console.log((today - 7).)
-
-        var a = moment('2016-01-01'); 
-        var b = a.add(1, 'week'); 
-        console.log(a.format())
-        // "2016-01-08T00:00:00-06:00"
+        // var endDate = moment(new Date())
+        // var startDate = endDate.clone().subtract(1, 'week')
+        // console.log(startDate.format('YYYY-MM-DD'))
+        // console.log(typeof startDate.format('YYYY-MM-DD'))
+        // console.log(endDate.format('YYYY-MM-DD'))
+        // const startDate = moment(new Date()).subtract(1, 'week').format('YYYY-MM-DD')
+        // console.log('startDate is: ', startDate)
     }
 
-
-    const fetchTimePeriodStats = (start: any) => {
-        const today = new Date()
-        // setStartDate(start)
-
-        // TBC: edit below fetch for interval range stock data api call
-
-        // fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?from=${startDate}&to=${endDate}&apikey=4672ed38f1e727b95f8a9cbd22574eed`).then(async (res) => {
-        //     const timePeriodStockData = await res.json()
-        //     // console.log('timePeriodStockData[0]:', timePeriodStockData[0]);
-        //     setAllStocks(timePeriodStockData)
-        //     const listOfStockTickers = timePeriodStockData.map((ticker: any) => ticker.symbol)
-        //     // console.log('list of stock tickers is: ', listOfStockTickers)
-        //     setStockTickers(listOfStockTickers)
-        // }).catch((error) => {
-        //     console.error(error);
-        // });
-    }
 
 
     const timePeriodStockChart = () => {
 
-        let endPeriod
-
-        switch (timePeriod) {
-            case '1D': {
-                endPeriod = 1
-                break
-            }
-            case '1W': {
-
-
-
-                endPeriod = 7
-                break
-            }
-            case '1M': {
-                endPeriod = 30
-                break
-            }
-            case '3M': {
-                endPeriod = 91
-                break
-            }
-            case '6M': {
-                endPeriod = 182
-                break
-            }
-            case '1Y': {
-                endPeriod = 365
-                break                
-            }
-        }
-
-        // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
-        const abridgedTimePeriodStockData = 
-            stockTimePeriodResults.historical.slice(0, endPeriod)
-            .map((timePeriodStat: any) => {
-                return (
-                    {
-                        date: timePeriodStat.date,
-                        low: timePeriodStat.low,
-                        high: timePeriodStat.high,
-                        open: timePeriodStat.open,
-                        close: timePeriodStat.close,
-                        volume: timePeriodStat.volume
-                    }
-                )
-            })
-        // console.log('abridgedTimePeriodStockData inside timePeriodStockChart() is: ', abridgedTimePeriodStockData)
-
+        // console.log('stockTimePeriodResults right before rendering is: ', stockTimePeriodResults)
+        
         return (
             <div className="chart-wrapper">
                 <ResponsiveContainer width="99%" height={400}>     
                     <AreaChart
-                        data={abridgedTimePeriodStockData}
+                        data={stockTimePeriodResults}
                         margin={{
                             top: 0,
                             right: 0,
@@ -332,19 +310,17 @@ const App = () => {
 
 
     const fetchStockInfo = async () => {
-        const [stockData, stockHourlyData, stockTimePeriodData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         ])
 
         const stocks = await stockData.json()
         const stockHourly = await stockHourlyData.json()
-        const stockTimePeriod = await stockTimePeriodData.json()
         const companyProfile = await companyProfileData.json()
 
-        return [stocks, stockHourly, stockTimePeriod, companyProfile]
+        return [stocks, stockHourly, companyProfile]
     }
 
 
@@ -354,10 +330,9 @@ const App = () => {
 
         if (stockTickers.includes(mostRecentSearch)) {
             fetchStockInfo()
-            .then(([stocks, stockHourly, stockTimePeriod, companyProfile]) => {
+            .then(([stocks, stockHourly, companyProfile]) => {
                     setStockResults(stocks)
                     setStockHourlyResults(stockHourly)
-                    setStockTimePeriodResults(stockTimePeriod)
                     setCompanyProfile(companyProfile)
                 }).catch((error) => {
                     console.error(error)
@@ -380,12 +355,27 @@ const App = () => {
     }
 
 
-    const handleTimePeriodChange = (e: any) => {
-        setTimePeriod(e.target.value)
-        // console.log('e is:', e)
-        // console.log('changed time period clicked.')
+
+    const fetchTimePeriodStats = (startDate: string, dateTo: any) => {
+
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?from=${startDate}&to=${dateTo.format('YYYY-MM-DD')}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+        .then((res) => {
+            return res.json()
+        })
+        .then((data) => {
+            console.log('data is: ', data)
+            setStockTimePeriodResults(data.historical.reverse())
+            // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
+            return stockTimePeriodResults
+        }).catch((error) => {
+            console.error(error)
+        })
     }
 
+
+    const handleTimePeriodChange = (e: any) => {
+        setTimePeriod(e.target.value)
+    }
 
 
     const chartButtons = () => {
@@ -397,7 +387,6 @@ const App = () => {
             '6M',
             '1Y'
         ]
-
         
         const allButtons = chartTimePeriods.map((time) => {
             return (
@@ -410,7 +399,6 @@ const App = () => {
         // include 'wrap' as a prop after size prop in <Space> if you want the buttons to wrap upon shrinking window size.
         return <Space size={[10, 10]}>{allButtons}</Space>
     }
-
 
 
     const showSelectedPeriodChart = () => {
