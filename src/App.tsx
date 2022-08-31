@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import './App.css';
 import Typeahead from 'react-bootstrap-typeahead';
-import background from './BlueVectorBackground.jpg';
-import Homepage from './Homepage'
-import Mystash from './Mystash'
-import { BrowserRouter, Routes, Route, Link} from "react-router-dom";
 import { Table, Col, Divider, Row, Button, Radio, Space , Input, Card} from 'antd';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Legend, Line } from 'recharts';
 import SearchBar from './SearchBar'
 import myStashColumns from './myStashColumns';
 import snapshotColumns from './snapshotColumns';
@@ -33,10 +29,10 @@ const App = () => {
   const [companyProfile, setCompanyProfile] = useState<any>([])
   const [filteredStockTickers, setFilteredStockTickers] = useState<any>([])
   const [isReadMore, setIsReadMore] = useState(true);
-  const [dateFrom ,setDateFrom] = useState('')
+  const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
+  const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
 
 
-  
     const ReadMore = ({ children }: any) => {
         const text = children;
         const toggleReadMore = () => {
@@ -85,7 +81,7 @@ const App = () => {
 
 
       //Endpoint = Symbols List
-      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
           const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -95,47 +91,81 @@ const App = () => {
       }).catch((error) => {
           console.error(error);
       });
-  }, [])
+    }, [])
   
 
+    // useEffect(() => {
+
+
+
+        // const dateTo = moment(new Date())
+
+        // switch (timePeriod) {
+        //     case '1W': {
+        //         const startDate = dateTo.clone().subtract(1, 'week').format('YYYY-MM-DD')
+        //         fetchTimePeriodStats(startDate, dateTo)
+        //         setStockPriceDollarChange(calcStockPriceDollarChange())
+        //         setStockPricePercentChange(calcStockPricePercentChange())
+        //         break
+        //     }
+        //     case '1M': {
+        //         const startDate = dateTo.clone().subtract(1, 'month').format('YYYY-MM-DD')
+        //         fetchTimePeriodStats(startDate, dateTo)
+        //         setStockPriceDollarChange(calcStockPriceDollarChange())
+        //         setStockPricePercentChange(calcStockPricePercentChange())
+        //         break
+        //     }
+        //     case '3M': {
+        //         const startDate = dateTo.clone().subtract(3, 'month').format('YYYY-MM-DD')
+        //         fetchTimePeriodStats(startDate, dateTo)
+        //         setStockPriceDollarChange(calcStockPriceDollarChange())
+        //         setStockPricePercentChange(calcStockPricePercentChange())
+        //         break
+        //     }
+        //     case '6M': {
+        //         const startDate = dateTo.clone().subtract(6, 'month').format('YYYY-MM-DD')
+        //         fetchTimePeriodStats(startDate, dateTo)
+        //         break
+        //     }
+        //     case '1Y': {
+        //         const startDate = dateTo.clone().subtract(1, 'year').format('YYYY-MM-DD')
+        //         fetchTimePeriodStats(startDate, dateTo)
+        //         break
+        //     }
+        // }
+    // }, [timePeriod])
+
+
     useEffect(() => {
-       
-        const dateTo = moment(new Date())
 
         switch (timePeriod) {
-            // case '1D': {
-            //     const startDate = dateTo.clone().subtract(1, 'day').format('YYYY-MM-DD')
-            //     setDateFrom(startDate)
-            //     break
-            // }
             case '1W': {
-                const startDate = dateTo.clone().subtract(1, 'week').format('YYYY-MM-DD')
-                fetchTimePeriodStats(startDate, dateTo)
+                setStockPriceDollarChange(calcStockPriceDollarChange())
+                setStockPricePercentChange(calcStockPricePercentChange())
                 break
             }
             case '1M': {
-                const startDate = dateTo.clone().subtract(1, 'month').format('YYYY-MM-DD')
-                fetchTimePeriodStats(startDate, dateTo)
+                setStockPriceDollarChange(calcStockPriceDollarChange())
+                setStockPricePercentChange(calcStockPricePercentChange())
                 break
             }
             case '3M': {
-                const startDate = dateTo.clone().subtract(3, 'month').format('YYYY-MM-DD')
-                fetchTimePeriodStats(startDate, dateTo)
+                setStockPriceDollarChange(calcStockPriceDollarChange())
+                setStockPricePercentChange(calcStockPricePercentChange())
                 break
             }
             case '6M': {
-                const startDate = dateTo.clone().subtract(6, 'month').format('YYYY-MM-DD')
-                fetchTimePeriodStats(startDate, dateTo)
+                setStockPriceDollarChange(calcStockPriceDollarChange())
+                setStockPricePercentChange(calcStockPricePercentChange())
                 break
             }
             case '1Y': {
-                const startDate = dateTo.clone().subtract(1, 'year').format('YYYY-MM-DD')
-                fetchTimePeriodStats(startDate, dateTo)
+                setStockPriceDollarChange(calcStockPriceDollarChange())
+                setStockPricePercentChange(calcStockPricePercentChange())
                 break
             }
         }
-    }, [timePeriod])
-
+    }, [stockPriceDollarChange, stockPricePercentChange])
 
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
@@ -157,7 +187,7 @@ const App = () => {
         }
 
         const abridgedHourlyStockData = 
-            stockHourlyResults.slice(0,24).reverse()
+            stockHourlyResults.slice(0,8).reverse()
             .map((hourStat: any) => {
             return (
                 {
@@ -170,8 +200,6 @@ const App = () => {
                 }
             )
         })
-        // console.log('abridgedHourlyStockData inside hourlyStockChart() is: ', abridgedHourlyStockData)
-
 
         return (
             <div className="chart-wrapper">
@@ -189,30 +217,15 @@ const App = () => {
                         <YAxis type="number" domain={['auto', 'auto']} />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip />
-                        <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
-                        <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
+                        <Area type="monotone" dataKey="close" stroke="#f7b825" fill="#f7b825" />
                     </AreaChart> 
                 </ResponsiveContainer>
             </div>
         )
     }
 
-    {
-        // var endDate = moment(new Date())
-        // var startDate = endDate.clone().subtract(1, 'week')
-        // console.log(startDate.format('YYYY-MM-DD'))
-        // console.log(typeof startDate.format('YYYY-MM-DD'))
-        // console.log(endDate.format('YYYY-MM-DD'))
-        // const startDate = moment(new Date()).subtract(1, 'week').format('YYYY-MM-DD')
-        // console.log('startDate is: ', startDate)
-    }
-
-
 
     const timePeriodStockChart = () => {
-
-        // console.log('stockTimePeriodResults right before rendering is: ', stockTimePeriodResults)
-        
         return (
             <div className="chart-wrapper">
                 <ResponsiveContainer width="99%" height={400}>     
@@ -238,7 +251,6 @@ const App = () => {
     }
 
 
-
     const compareForSorting = (a: any, b: any) => {
         // console.log("compareForSorting fires off")
         if ( a.symbol < b.symbol ){
@@ -251,7 +263,6 @@ const App = () => {
     }
 
 
-
     const addToStockStash = () => {
         // console.log('stockResults is: ', stockResults)
         // console.log('stockStash before updating is: ', stockStash)
@@ -262,12 +273,10 @@ const App = () => {
         }
         if (listOfStockSymbolsInStash().includes(stockResults[0].symbol)) {
             return alert('The stock has already been added to your Stash before. Please add a different stock instead.')
-        }
-        
+        }   
         setStockStash([...stockStash, ...stockResults].sort(compareForSorting))
         // console.log('stockStash AFTER updating is: ', stockStash)
     }
-
 
 
     const tablesShownPostSearch = () => {
@@ -294,7 +303,6 @@ const App = () => {
         }
     }   
 
-    
 
     const toggleAllStocksTable = () => {
       setAllStocksTableVisability(!allStocksTableVisability)
@@ -306,14 +314,11 @@ const App = () => {
     }
 
 
-
-
-
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         ])
 
         const stocks = await stockData.json()
@@ -321,6 +326,63 @@ const App = () => {
         const companyProfile = await companyProfileData.json()
 
         return [stocks, stockHourly, companyProfile]
+    }
+
+    
+    const getHistoricalStockPrice = (): any => {
+        // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
+        // return stockTimePeriodResults[0].close
+        // Need to fix this above line of code issue: stockTimePeriodResults === [] at this point. After full load and state update and chart rerender, it becomes non empty.
+    }
+
+
+    const calcStockPriceDollarChange = () => {
+        // console.log('stockResults[0] is: ', stockResults[0])
+        // console.log('getHistoricalStockPrice() is: ', getHistoricalStockPrice())
+        return stockResults[0].price - getHistoricalStockPrice()
+    }
+
+
+    const calcStockPricePercentChange = () => {
+        return calcStockPriceDollarChange() / getHistoricalStockPrice()
+    }
+    
+
+    const handleTimePeriodChange = (e: any) => {
+        setTimePeriod(e.target.value)
+        console.log('e.target.value is: ', e.target.value)
+
+        const chartButtonDays =  
+            [
+                {period: '1W', days: 7},
+                {period: '1M', days: 30},
+                {period: '3M', days: 90},
+                {period: '6M', days: 180},
+                {period: '1Y', days: 365}
+            ]
+            
+
+            let targetDays
+            
+            const findDaysValue = chartButtonDays.map((time) => {
+                if (time.period === e.target.value) {
+                    targetDays = time.days
+                    // console.log('targetDays is: ', targetDays)
+                }
+            })
+
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        .then((res) => {
+            return res.json()
+        })
+        .then((data) => {
+            console.log('data is: ', data)
+            setStockTimePeriodResults(data.historical.reverse())
+            // return stockTimePeriodResults
+        })
+        .catch((error: string) => {
+            console.error(error)
+        })
     }
 
 
@@ -349,32 +411,31 @@ const App = () => {
     }
 
 
-
     if(error) {
         return <div>Error: {error}</div>
     }
 
 
+    const fetchTimePeriodStats = () => {
 
-    const fetchTimePeriodStats = (startDate: string, dateTo: any) => {
-
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?from=${startDate}&to=${dateTo.format('YYYY-MM-DD')}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-        .then((res) => {
-            return res.json()
-        })
-        .then((data) => {
-            console.log('data is: ', data)
-            setStockTimePeriodResults(data.historical.reverse())
-            // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
-            return stockTimePeriodResults
-        }).catch((error) => {
-            console.error(error)
-        })
-    }
-
-
-    const handleTimePeriodChange = (e: any) => {
-        setTimePeriod(e.target.value)
+        // const fetchTimePeriodStats = (startDate: string, dateTo: any) => {
+        // fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?from=${startDate}&to=${dateTo.format('YYYY-MM-DD')}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        // .then((res) => {
+        //     return res.json()
+        // })
+        // .then((data) => {
+        //     // console.log('data is: ', data)
+        //     setStockTimePeriodResults(data.historical.reverse())
+        //     // return stockTimePeriodResults
+        //     return data
+        // })
+        // .then((data: any) => {
+        //     console.log(data)
+        //     // setStockPriceDollarChange(calcStockPriceDollarChange())
+        //     // setStockPricePercentChange(calcStockPricePercentChange())
+        // }).catch((error: string) => {
+        //     console.error(error)
+        // })
     }
 
 
@@ -409,9 +470,17 @@ const App = () => {
     }
 
 
+    const chartHeaderPriceStats = () => {
+        if (timePeriod === '1D') {
+            return stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{stockResults[0].change.toFixed(2)} ({stockResults[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockResults[0].change.toFixed(2)} ({stockResults[0].changesPercentage.toFixed(2)}%) Today</h2>
+        } else {
+            return calcStockPriceDollarChange() > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Toda</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
+        }
+    }
+
+
     const stockQuickStats = () => {
         return (
-            /* Antdesign grid columns */
             <div>
                 <div className="stock-header">
                     <Divider orientation="left"></Divider>
@@ -419,13 +488,53 @@ const App = () => {
                     <br />
                     <h1 className="stock-price">${stockResults[0].price}</h1> 
                     <br />
-                    {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{(Math.round((stockResults[0].change + Number.EPSILON).toFixed * 100) / 100).toFixed(2)} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${(Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100).toFixed(2)} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>}
+
+                    {chartHeaderPriceStats()}
+                    {/* <h1 className="stock-price">${stockResults[0].price}</h1> 
+                    <br />
+                    {stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{(Math.round((stockResults[0].change + Number.EPSILON).toFixed * 100) / 100).toFixed(2)} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2> : <h2 className="stock-change-down">${(Math.round((stockResults[0].change + Number.EPSILON) * 100) / 100).toFixed(2)} ({Math.round((stockResults[0].changesPercentage + Number.EPSILON) * 100) / 100}%) Today</h2>} */}
+
                 </div>
                     {showSelectedPeriodChart()}
                     <br />
                     <ul className="chart-buttons">
                         {chartButtons()}
                     </ul>
+                <br />
+                <br />
+                <Row>
+                <Col span={10} offset={7}>
+                    <Divider orientation="left">Key Statistics</Divider>
+                </Col>
+                    <Col span={3} offset={7}>
+                        <h3 className="h3-left">Market Cap</h3>
+                        <h3 className="h3-about-data">{numberFormat(stockResults[0].marketCap)}</h3>
+                        <h3 className="h3-left">High today</h3>
+                        <h3 className="h3-about-data">${stockResults[0].dayHigh.toFixed(2)}</h3>
+                        <h3 className="h3-left">52 Week high</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearHigh.toFixed(2)}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Price-Earnings ratio</h3>
+                        <h3 className="h3-about-data">{stockResults[0].pe.toFixed(2)}</h3>
+                        <h3 className="h3-left">Low today</h3>
+                        <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
+                        <h3 className="h3-left">52 Week low</h3>
+                        <h3 className="h3-about-data">${stockResults[0].yearLow.toFixed(2)}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Dividend yield</h3>
+                        <h3 className="h3-about-data">{companyProfile[0] && companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
+                        <h3 className="h3-left">Open price</h3>
+                        <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
+                    </Col>
+                    <Col span={3}>
+                        <h3 className="h3-left">Average volume</h3>
+                        <h3 className="h3-about-data">{numberFormat(stockResults[0].avgVolume)}</h3>
+                        <h3 className="h3-left">Volume</h3>
+                        <h3 className="h3-about-data">{numberFormat(stockResults[0].volume)}</h3>
+                    </Col>
+                </Row>
                 <br />
                 <br />
                 <Row>
@@ -461,86 +570,20 @@ const App = () => {
                 <br />
                 <br />
                 <br />
-                <Row>
-                <Col span={10} offset={7}>
-                    <Divider orientation="left">Key Statistics</Divider>
-                </Col>
-                    <Col span={3} offset={7}>
-                        <h3 className="h3-left">Market Cap</h3>
-                        <h3 className="h3-about-data">{numberFormat(stockResults[0].marketCap)}</h3>
-                        <h3 className="h3-left">High today</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayHigh.toFixed(2)}</h3>
-                        <h3 className="h3-left">52 Week high</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearHigh.toFixed(2)}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Price-Earnings ratio</h3>
-                        <h3 className="h3-about-data">{stockResults[0].pe.toFixed(2)}</h3>
-                        <h3 className="h3-left">Low today</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
-                        <h3 className="h3-left">52 Week low</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearLow.toFixed(2)}</h3>
-
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Dividend yield</h3>
-                        <h3 className="h3-about-data">{companyProfile[0] && companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
-                        <h3 className="h3-left">Open price</h3>
-                        <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Average volume</h3>
-                        <h3 className="h3-about-data">{numberFormat(stockResults[0].avgVolume)}</h3>
-                        <h3 className="h3-left">Volume</h3>
-                        <h3 className="h3-about-data">{numberFormat(stockResults[0].volume)}</h3>
-                    </Col>
-                </Row>
                 <br />
-                <br />
-                <br />
-                <br />
-
             </div>
         )
     }
-        
 
 
-    const myStashLeftModule = () => {   
-        return (
-            <Col className="gutter-row" span={6}>
-                stock1
-            </Col>
-        )
-    }
-    
-
-    const showMainStockInfo = () => {
-        return (
-            <Col span={24}>
-                {displayAllStocksTable()}
-                {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null} 
-            </Col>
-        )
-    }
-
-
-
-    const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
+    // const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
 
     return (
          <div className="App">
-
             <br />
             <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
-
-
-            {/* <button onClick={toggleAllStocksTable}>Toggle List of All Companies</button> */}
-            {/* {allStocksTableVisability === false && stockResults.length === 0 || (allStocksTableVisability === false) && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()} */}
-            {/* {showMainStockInfo()} */}
             {displayAllStocksTable()}
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null}
-            {/* {stockResults && stockResults.length > 0 ? <Row>{showMainStockInfo()}</Row> : displayAllStocksTable()} */}
         </div>
     )
 }
