@@ -217,7 +217,7 @@ const App = () => {
                         <YAxis type="number" domain={['auto', 'auto']} />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip />
-                        <Area type="monotone" dataKey="close" stroke="#f7b825" fill="#f7b825" />
+                        <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
                     </AreaChart> 
                 </ResponsiveContainer>
             </div>
@@ -242,8 +242,7 @@ const App = () => {
                         <YAxis type="number" domain={['auto', 'auto']} />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip />
-                        <Area type="monotone" dataKey="high" stroke="#7d4ebf" fill="#7d4ebf" />
-                        <Area type="monotone" dataKey="low" stroke="#9aeb67" fill="#9aeb67" />
+                        <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
                     </AreaChart> 
                 </ResponsiveContainer>                 
             </div>
