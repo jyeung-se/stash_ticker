@@ -78,10 +78,12 @@ const App = () => {
       //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
       //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
       //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
+      //API key#3: 0fbc3128ecb93418721f51d266327cd4 -jaysolarlee
+
 
 
       //Endpoint = Symbols List
-      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=0fbc3128ecb93418721f51d266327cd4').then(async (res) => {
           const stockData = await res.json()
           // console.log('stockData[0]:', stockData[0]);
           setAllStocks(stockData)
@@ -136,36 +138,36 @@ const App = () => {
     // }, [timePeriod])
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        switch (timePeriod) {
-            case '1W': {
-                setStockPriceDollarChange(calcStockPriceDollarChange())
-                setStockPricePercentChange(calcStockPricePercentChange())
-                break
-            }
-            case '1M': {
-                setStockPriceDollarChange(calcStockPriceDollarChange())
-                setStockPricePercentChange(calcStockPricePercentChange())
-                break
-            }
-            case '3M': {
-                setStockPriceDollarChange(calcStockPriceDollarChange())
-                setStockPricePercentChange(calcStockPricePercentChange())
-                break
-            }
-            case '6M': {
-                setStockPriceDollarChange(calcStockPriceDollarChange())
-                setStockPricePercentChange(calcStockPricePercentChange())
-                break
-            }
-            case '1Y': {
-                setStockPriceDollarChange(calcStockPriceDollarChange())
-                setStockPricePercentChange(calcStockPricePercentChange())
-                break
-            }
-        }
-    }, [stockPriceDollarChange, stockPricePercentChange])
+    //     switch (timePeriod) {
+    //         case '1W': {
+    //             setStockPriceDollarChange(calcStockPriceDollarChange())
+    //             setStockPricePercentChange(calcStockPricePercentChange())
+    //             break
+    //         }
+    //         case '1M': {
+    //             setStockPriceDollarChange(calcStockPriceDollarChange())
+    //             setStockPricePercentChange(calcStockPricePercentChange())
+    //             break
+    //         }
+    //         case '3M': {
+    //             setStockPriceDollarChange(calcStockPriceDollarChange())
+    //             setStockPricePercentChange(calcStockPricePercentChange())
+    //             break
+    //         }
+    //         case '6M': {
+    //             setStockPriceDollarChange(calcStockPriceDollarChange())
+    //             setStockPricePercentChange(calcStockPricePercentChange())
+    //             break
+    //         }
+    //         case '1Y': {
+    //             setStockPriceDollarChange(calcStockPriceDollarChange())
+    //             setStockPricePercentChange(calcStockPricePercentChange())
+    //             break
+    //         }
+    //     }
+    // }, [stockPriceDollarChange, stockPricePercentChange])
 
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
@@ -315,9 +317,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`)
         ])
 
         const stocks = await stockData.json()
@@ -328,23 +330,23 @@ const App = () => {
     }
 
     
-    const getHistoricalStockPrice = (): any => {
-        // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
-        // return stockTimePeriodResults[0].close
-        // Need to fix this above line of code issue: stockTimePeriodResults === [] at this point. After full load and state update and chart rerender, it becomes non empty.
-    }
+    // const getHistoricalStockPrice = () => {
+    //     // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
+    //     return stockTimePeriodResults[0].close
+    //     // Need to fix this above line of code issue: stockTimePeriodResults === [] at this point. After full load and state update and chart rerender, it becomes non empty.
+    // }
 
 
-    const calcStockPriceDollarChange = () => {
-        // console.log('stockResults[0] is: ', stockResults[0])
-        // console.log('getHistoricalStockPrice() is: ', getHistoricalStockPrice())
-        return stockResults[0].price - getHistoricalStockPrice()
-    }
+    // const calcStockPriceDollarChange = () => {
+    //     // console.log('stockResults[0] is: ', stockResults[0])
+    //     // console.log('getHistoricalStockPrice() is: ', getHistoricalStockPrice())
+    //     return stockResults[0].price - getHistoricalStockPrice()
+    // }
 
 
-    const calcStockPricePercentChange = () => {
-        return calcStockPriceDollarChange() / getHistoricalStockPrice()
-    }
+    // const calcStockPricePercentChange = () => {
+    //     return calcStockPriceDollarChange() / getHistoricalStockPrice()
+    // }
     
 
     const handleTimePeriodChange = (e: any) => {
@@ -360,24 +362,32 @@ const App = () => {
                 {period: '1Y', days: 365}
             ]
             
+        let targetDays
+        
+        chartButtonDays.map((time) => {
+            if (time.period === e.target.value) {
+                targetDays = time.days
+                // console.log('targetDays is: ', targetDays)
+            }
+        })
 
-            let targetDays
-            
-            const findDaysValue = chartButtonDays.map((time) => {
-                if (time.period === e.target.value) {
-                    targetDays = time.days
-                    // console.log('targetDays is: ', targetDays)
-                }
-            })
-
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
         .then((res) => {
             return res.json()
         })
         .then((data) => {
             console.log('data is: ', data)
             setStockTimePeriodResults(data.historical.reverse())
-            // return stockTimePeriodResults
+            console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
+            return data.historical
+        })
+        .then((reversedData) => {
+            console.log('reversedData is: ', reversedData)
+            console.log('data.reverse()[0].close is: ', reversedData[0].close)
+            console.log('stockResults[0].price is: ', stockResults[0].price)
+            console.log('stockResults[0].price - data.reverse()[0].close is: ', stockResults[0].price - reversedData[0].close)
+            setStockPriceDollarChange(stockResults[0].price - reversedData[0].close)
+            setStockPricePercentChange((stockResults[0].price - reversedData[0].close) / reversedData[0].close)
         })
         .catch((error: string) => {
             console.error(error)
@@ -419,29 +429,6 @@ const App = () => {
     }
 
 
-    const fetchTimePeriodStats = () => {
-
-        // const fetchTimePeriodStats = (startDate: string, dateTo: any) => {
-        // fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?from=${startDate}&to=${dateTo.format('YYYY-MM-DD')}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
-        // .then((res) => {
-        //     return res.json()
-        // })
-        // .then((data) => {
-        //     // console.log('data is: ', data)
-        //     setStockTimePeriodResults(data.historical.reverse())
-        //     // return stockTimePeriodResults
-        //     return data
-        // })
-        // .then((data: any) => {
-        //     console.log(data)
-        //     // setStockPriceDollarChange(calcStockPriceDollarChange())
-        //     // setStockPricePercentChange(calcStockPricePercentChange())
-        // }).catch((error: string) => {
-        //     console.error(error)
-        // })
-    }
-
-
     const chartButtons = () => {
         const chartTimePeriods = [
             '1D',
@@ -477,7 +464,7 @@ const App = () => {
         if (timePeriod === '1D') {
             return stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{stockResults[0].change.toFixed(2)} ({stockResults[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockResults[0].change.toFixed(2)} ({stockResults[0].changesPercentage.toFixed(2)}%) Today</h2>
         } else {
-            return calcStockPriceDollarChange() > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Toda</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
+            return stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
         }
     }
 
