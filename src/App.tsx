@@ -62,11 +62,11 @@ const App = () => {
         if(num < 1000){
             return num
         } else if (num < 1000000) {
-            return (num/1000000).toFixed(2) + 'K'
+            return (num/1000).toFixed(2) + 'K'
         } else if (num < 1000000000) {
-            return (num/1000000000).toFixed(2) + 'M'
+            return (num/1000000).toFixed(2) + 'M'
         } else if (num < 1000000000000) {
-            return (num/1000000000000).toFixed(2) + 'B'
+            return (num/1000000000).toFixed(2) + 'B'
         } else if (num >= 1000000000000) {
             return (num/1000000000000).toFixed(2) + 'T'
         }
@@ -403,6 +403,10 @@ const App = () => {
             displayAllStocksTable()
             setIsReadMore(true)
 
+        console.log('stockResults[0] is: ', stockResults[0])
+        console.log('companyProfile is: ', companyProfile)
+
+
             setIsLoading(false)
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
@@ -516,7 +520,7 @@ const App = () => {
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Price-Earnings ratio</h3>
-                        <h3 className="h3-about-data">{stockResults[0].pe.toFixed(2)}</h3>
+                        <h3 className="h3-about-data">{stockResults[0].pe}</h3>
                         <h3 className="h3-left">Low today</h3>
                         <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
                         <h3 className="h3-left">52 Week low</h3>
