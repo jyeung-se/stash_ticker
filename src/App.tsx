@@ -9,6 +9,8 @@ import myStashColumns from './myStashColumns';
 import snapshotColumns from './snapshotColumns';
 import allStocksColumns from './allStocksColumns';
 import timePeriodColumns from './timePeriodColumns';
+import { format } from "path";
+import { time } from "console";
 // import staticData from "./staticData";
 
 
@@ -16,7 +18,6 @@ import timePeriodColumns from './timePeriodColumns';
 const App = () => {
 
   const [error, setError] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
   const [stockTickers, setStockTickers] = useState<any>([])
   const [allStocks, setAllStocks] = useState<any>([])
   const [stockResults, setStockResults] = useState<any>([])
@@ -31,6 +32,7 @@ const App = () => {
   const [isReadMore, setIsReadMore] = useState(true);
   const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
   const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
+  const [lastSearch, setLastSearch] = useState('')
 
 
     const ReadMore = ({ children }: any) => {
@@ -72,103 +74,59 @@ const App = () => {
         }
     }
 
-    // // API Calls for ALL stocks
-    useEffect(() => {
-      //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
-      //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
-      //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
-      //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
-      //API key#3: 0fbc3128ecb93418721f51d266327cd4 -jaysolarlee
+
+    //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
+    //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
+    //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
+    //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
+    //API key#4: 0fbc3128ecb93418721f51d266327cd4 -jaysolarlee
 
 
-
-      //Endpoint = Symbols List
-      fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=0fbc3128ecb93418721f51d266327cd4').then(async (res) => {
-          const stockData = await res.json()
-          // console.log('stockData[0]:', stockData[0]);
-          setAllStocks(stockData)
-          const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
-          // console.log('list of stock tickers is: ', listOfStockTickers)
-          setStockTickers(listOfStockTickers)
-      }).catch((error) => {
-          console.error(error);
-      });
+    useEffect(() => {   
+        // API Calls for ALL stocks
+        //Endpoint = Symbols List
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+            const stockData = await res.json()
+            // console.log('stockData[0]:', stockData[0]);
+            setAllStocks(stockData)
+            const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
+            // console.log('list of stock tickers is: ', listOfStockTickers)
+            setStockTickers(listOfStockTickers)
+        }).catch((error) => {
+            console.error(error);
+        });
     }, [])
   
 
-    // useEffect(() => {
+    useEffect(() => {
+        const chartButtonDays =  
+        [
+            {period: '1W', days: 7},
+            {period: '1M', days: 30},
+            {period: '3M', days: 90},
+            {period: '6M', days: 180},
+            {period: '1Y', days: 365}
+        ]
+        
+        let targetDays
+        
+        chartButtonDays.map((time) => {
+            if (time.period === timePeriod) {
+                targetDays = time.days
+                // console.log('targetDays is: ', targetDays)
+            }
+        })
 
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        .then((res) => {
+            return res.json()
+        })
+        .then((data) => {
+            setStockTimePeriodResults(data.historical.reverse())
+        })
+    }, [lastSearch])
 
-
-        // const dateTo = moment(new Date())
-
-        // switch (timePeriod) {
-        //     case '1W': {
-        //         const startDate = dateTo.clone().subtract(1, 'week').format('YYYY-MM-DD')
-        //         fetchTimePeriodStats(startDate, dateTo)
-        //         setStockPriceDollarChange(calcStockPriceDollarChange())
-        //         setStockPricePercentChange(calcStockPricePercentChange())
-        //         break
-        //     }
-        //     case '1M': {
-        //         const startDate = dateTo.clone().subtract(1, 'month').format('YYYY-MM-DD')
-        //         fetchTimePeriodStats(startDate, dateTo)
-        //         setStockPriceDollarChange(calcStockPriceDollarChange())
-        //         setStockPricePercentChange(calcStockPricePercentChange())
-        //         break
-        //     }
-        //     case '3M': {
-        //         const startDate = dateTo.clone().subtract(3, 'month').format('YYYY-MM-DD')
-        //         fetchTimePeriodStats(startDate, dateTo)
-        //         setStockPriceDollarChange(calcStockPriceDollarChange())
-        //         setStockPricePercentChange(calcStockPricePercentChange())
-        //         break
-        //     }
-        //     case '6M': {
-        //         const startDate = dateTo.clone().subtract(6, 'month').format('YYYY-MM-DD')
-        //         fetchTimePeriodStats(startDate, dateTo)
-        //         break
-        //     }
-        //     case '1Y': {
-        //         const startDate = dateTo.clone().subtract(1, 'year').format('YYYY-MM-DD')
-        //         fetchTimePeriodStats(startDate, dateTo)
-        //         break
-        //     }
-        // }
-    // }, [timePeriod])
-
-
-    // useEffect(() => {
-
-    //     switch (timePeriod) {
-    //         case '1W': {
-    //             setStockPriceDollarChange(calcStockPriceDollarChange())
-    //             setStockPricePercentChange(calcStockPricePercentChange())
-    //             break
-    //         }
-    //         case '1M': {
-    //             setStockPriceDollarChange(calcStockPriceDollarChange())
-    //             setStockPricePercentChange(calcStockPricePercentChange())
-    //             break
-    //         }
-    //         case '3M': {
-    //             setStockPriceDollarChange(calcStockPriceDollarChange())
-    //             setStockPricePercentChange(calcStockPricePercentChange())
-    //             break
-    //         }
-    //         case '6M': {
-    //             setStockPriceDollarChange(calcStockPriceDollarChange())
-    //             setStockPricePercentChange(calcStockPricePercentChange())
-    //             break
-    //         }
-    //         case '1Y': {
-    //             setStockPriceDollarChange(calcStockPriceDollarChange())
-    //             setStockPricePercentChange(calcStockPricePercentChange())
-    //             break
-    //         }
-    //     }
-    // }, [stockPriceDollarChange, stockPricePercentChange])
-
+    
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
     const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
@@ -317,9 +275,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         ])
 
         const stocks = await stockData.json()
@@ -353,6 +311,11 @@ const App = () => {
         setTimePeriod(e.target.value)
         console.log('e.target.value is: ', e.target.value)
 
+        // use the below for calculating business days between 2 dates. then interpolate into fetch url: targetDays.
+        const moment = require('moment-business-days')
+        let diff = moment('12-01-2021', 'MM-DD-YYYY').businessDiff(moment('12-31-2021','MM-DD-YYYY'))
+        console.log(diff)
+
         const chartButtonDays =  
             [
                 {period: '1W', days: 7},
@@ -371,7 +334,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         .then((res) => {
             return res.json()
         })
@@ -398,6 +361,7 @@ const App = () => {
     const handleSubmit = (e: any) => {
         e.preventDefault()
         setMostRecentSearch(mostRecentSearch)
+        setLastSearch(mostRecentSearch)
 
         if (stockTickers.includes(mostRecentSearch)) {
             fetchStockInfo()
@@ -411,15 +375,8 @@ const App = () => {
             setAllStocksTableVisability(false)
             displayAllStocksTable()
             setIsReadMore(true)
-
-        console.log('stockResults[0] is: ', stockResults[0])
-        console.log('companyProfile is: ', companyProfile)
-
-
-            setIsLoading(false)
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
-            setIsLoading(false)
         }
     }
 
@@ -565,8 +522,6 @@ const App = () => {
         )
     }
 
-
-    // const style: React.CSSProperties = { background: '#ffffff', padding: '8px 0' };
 
     return (
          <div className="App">
