@@ -178,6 +178,30 @@ h2 {
 
 
 
+/* async search bar css */
+.async-search-field {
+  width: 400px;
+  padding: 10px 15px 10px 45px;
+  border-radius: 5px;
+  outline-color: rgb(5, 209, 15);
+  /* border: 1px solid #000000; */
+  display: inline-block;
+  margin-right: 278px;
+}
+
+.async-search-button {
+  width: 30px;
+  background: transparent;
+  border: none;
+  outline: none;
+  display: inline-block;
+  margin-top: 9px;
+  margin-left: -112px;
+  position: absolute;
+}
+
+
+
 /* search bar css */
 .form {
   display: inline-block;

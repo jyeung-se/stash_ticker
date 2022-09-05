@@ -95,7 +95,7 @@ const App = () => {
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=0fbc3128ecb93418721f51d266327cd4').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -128,7 +128,7 @@ const App = () => {
         })
 
         if (lastSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
             .then((res) => {
                 return res.json()
             })
@@ -286,9 +286,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         ])
 
         const stocks = await stockData.json()
@@ -297,35 +297,16 @@ const App = () => {
 
         return [stocks, stockHourly, companyProfile]
     }
-
-    
-    // const getHistoricalStockPrice = () => {
-    //     // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
-    //     return stockTimePeriodResults[0].close
-    //     // Need to fix this above line of code issue: stockTimePeriodResults === [] at this point. After full load and state update and chart rerender, it becomes non empty.
-    // }
-
-
-    // const calcStockPriceDollarChange = () => {
-    //     // console.log('stockResults[0] is: ', stockResults[0])
-    //     // console.log('getHistoricalStockPrice() is: ', getHistoricalStockPrice())
-    //     return stockResults[0].price - getHistoricalStockPrice()
-    // }
-
-
-    // const calcStockPricePercentChange = () => {
-    //     return calcStockPriceDollarChange() / getHistoricalStockPrice()
-    // }
     
 
     const handleTimePeriodChange = (e: any) => {
         setTimePeriod(e.target.value)
-        console.log('e.target.value is: ', e.target.value)
+        // console.log('e.target.value is: ', e.target.value)
 
         // use the below for calculating business days between 2 dates. then interpolate into fetch url: targetDays.
         const moment = require('moment-business-days')
         let diff = moment('12-01-2021', 'MM-DD-YYYY').businessDiff(moment('12-31-2021','MM-DD-YYYY'))
-        console.log(diff)
+        // console.log(diff)
 
         const chartButtonDays =  
             [
@@ -345,21 +326,21 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         .then((res) => {
             return res.json()
         })
         .then((data) => {
-            console.log('data is: ', data)
+            // console.log('data is: ', data)
             setStockTimePeriodResults(data.historical.reverse())
-            console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
+            // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
             return data.historical
         })
         .then((reversedData) => {
-            console.log('reversedData is: ', reversedData)
-            console.log('data.reverse()[0].close is: ', reversedData[0].close)
-            console.log('stockResults[0].price is: ', stockResults[0].price)
-            console.log('stockResults[0].price - data.reverse()[0].close is: ', stockResults[0].price - reversedData[0].close)
+            // console.log('reversedData is: ', reversedData)
+            // console.log('data.reverse()[0].close is: ', reversedData[0].close)
+            // console.log('stockResults[0].price is: ', stockResults[0].price)
+            // console.log('stockResults[0].price - data.reverse()[0].close is: ', stockResults[0].price - reversedData[0].close)
             setStockPriceDollarChange(stockResults[0].price - reversedData[0].close)
             setStockPricePercentChange((stockResults[0].price - reversedData[0].close) / reversedData[0].close)
         })
@@ -370,10 +351,10 @@ const App = () => {
 
 
     const handleSubmit = (e: any) => {
-        console.log(e)
-
         e.preventDefault()
-        setMostRecentSearch(mostRecentSearch)
+        console.log(mostRecentSearch)
+        console.log(lastSearch)
+
         setLastSearch(mostRecentSearch)
 
         if (stockTickers.includes(mostRecentSearch)) {
@@ -394,55 +375,15 @@ const App = () => {
     }
 
 
-
-
-    // To continue working on for type ahead / autocomplete-
-    // need to implement submission of input for api call
-
-    // const stockTickersObject = 
-    //     stockTickers.map((ticker: string) => {
-    //         return (
-    //             {label: ticker}
-    //         )
-    //     })
-        
-    // interface stockTick {
-    //     label: string
-    // }
-
-    // const autocompleteOnSubmit = (value: any) => {
-    //     setMostRecentSearch(value)
-    // }
-
-
-    // const ComboBox = () => {
-    //     return (
-    //     <Autocomplete
-    //         disablePortal
-    //         id="combo-box-demo"
-    //         // getOptionLabel={(option: any) => option.label}
-    //         options={stockTickersObject.slice(0,59)}
-    //         getOptionLabel={(option: any) => option.label}
-    //         value={stockTickersObject.label as stockTick}
-    //         isOptionEqualToValue={(option, value) =>
-    //             option.label === value.label
-    //         }
-    //         onChange={onChangeHandle()}
-    //         sx={{ width: 300 }}
-    //         renderInput={(params) => <TextField {...params} label="Stock Tickers" />}
-    //     />
-    //     )
-    // }
-
-    const asynchronous = () => {
+    const asyncSearchBar = () => {
         
         const onChangeHandle = (value: any) => {
             // console.log('value is:', value)
-            setMostRecentSearch(value)
+            setMostRecentSearch(value.toUpperCase())
             console.log(mostRecentSearch)
 
             setTimeout(async () => {
-                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&exchange=NASDAQ&apikey=0fbc3128ecb93418721f51d266327cd4`)
+                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&exchange=NASDAQ&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
                 .then((res) => {
                     return res.json()
                 })
@@ -458,9 +399,9 @@ const App = () => {
         }
 
         return (
-            <form onSubmit={(value) => onChangeHandle(value)}>
-                <button type="submit" className="search-button">
-                    <img src="search.png"/>
+            <form onSubmit={(e) => handleSubmit(e)} className="async-search-field">
+                <button type="submit" className="async-search-button">
+                    <img src="search.png" className="async-search-button"/>
                 </button>
                 <Autocomplete
                     id="asynchronous-demo"
@@ -479,10 +420,10 @@ const App = () => {
                     renderInput={params => (
                         <TextField
                         {...params}
-                        label="Asynchronous"
-                        variant="outlined"
+                        label="Search Stock Symbol"
+                        variant="standard"
                         onChange={e => {
-                            // dont fire API if the user delete or not entered anything
+                            // dont fire API if the input is blank or empty
                             if (e.target.value !== "" || e.target.value !== null) {
                             onChangeHandle(e.target.value);
                             }
@@ -491,9 +432,9 @@ const App = () => {
                             ...params.InputProps,
                             endAdornment: (
                             <React.Fragment>
-                                {/* {loading ? (
+                                {loading ? (
                                 <CircularProgress color="inherit" size={20} />
-                                ) : null} */}
+                                ) : null}
                                 {params.InputProps.endAdornment}
                             </React.Fragment>
                             )
@@ -506,27 +447,6 @@ const App = () => {
 
 
     }
-
-    
-
-    // const onChangeHandle = async value => {
-    //     fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${mostRecentSearch}&limit=10&exchange=NASDAQ&apikey=0fbc3128ecb93418721f51d266327cd4`)
-    //     .then((res) => {
-    //         return res.json()
-    //     })
-    //     .then((data) => {
-    //         console.log('data is: ', data)
-    //         setOptions(data.map((stockObject: any) => {
-    //             return {stockObject}
-    //         }))
-    //     })
-    // }
-
-    // useEffect(() => {
-    //     if (!open) {
-    //         setOptions([])
-    //     }
-    // }, [open])
 
 
 
@@ -675,9 +595,8 @@ const App = () => {
     return (
          <div className="App">
             <br />
-            {/* {ComboBox()} */}
-            {asynchronous()}
-            <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
+            {asyncSearchBar()}
+            {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
             {displayAllStocksTable()}
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null}
         </div>
