@@ -14,6 +14,7 @@ import { format } from "path";
 import { time } from "console";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // import staticData from "./staticData";
 
@@ -37,6 +38,11 @@ const App = () => {
   const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
   const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
   const [lastSearch, setLastSearch] = useState('')
+
+  const [open, setOpen] = useState(false)
+  const [options, setOptions] = useState([])
+  const loading = open && options.length === 0
+  
 
 
     const ReadMore = ({ children }: any) => {
@@ -89,7 +95,7 @@ const App = () => {
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=0fbc3128ecb93418721f51d266327cd4').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -122,7 +128,7 @@ const App = () => {
         })
 
         if (lastSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
             .then((res) => {
                 return res.json()
             })
@@ -280,9 +286,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`)
         ])
 
         const stocks = await stockData.json()
@@ -339,7 +345,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
         .then((res) => {
             return res.json()
         })
@@ -364,6 +370,8 @@ const App = () => {
 
 
     const handleSubmit = (e: any) => {
+        console.log(e)
+
         e.preventDefault()
         setMostRecentSearch(mostRecentSearch)
         setLastSearch(mostRecentSearch)
@@ -391,42 +399,134 @@ const App = () => {
     // To continue working on for type ahead / autocomplete-
     // need to implement submission of input for api call
 
-    const stockTickersObject = 
-        stockTickers.map((ticker: string) => {
-            return (
-                {label: ticker}
-            )
-        })
+    // const stockTickersObject = 
+    //     stockTickers.map((ticker: string) => {
+    //         return (
+    //             {label: ticker}
+    //         )
+    //     })
         
-    interface stockTick {
-        label: string
-    }
+    // interface stockTick {
+    //     label: string
+    // }
 
-    const autocompleteOnSubmit = (value: any) => {
-        setMostRecentSearch(value)
-    }
+    // const autocompleteOnSubmit = (value: any) => {
+    //     setMostRecentSearch(value)
+    // }
 
 
-    const ComboBox = () => {
+    // const ComboBox = () => {
+    //     return (
+    //     <Autocomplete
+    //         disablePortal
+    //         id="combo-box-demo"
+    //         // getOptionLabel={(option: any) => option.label}
+    //         options={stockTickersObject.slice(0,59)}
+    //         getOptionLabel={(option: any) => option.label}
+    //         value={stockTickersObject.label as stockTick}
+    //         isOptionEqualToValue={(option, value) =>
+    //             option.label === value.label
+    //         }
+    //         onChange={onChangeHandle()}
+    //         sx={{ width: 300 }}
+    //         renderInput={(params) => <TextField {...params} label="Stock Tickers" />}
+    //     />
+    //     )
+    // }
+
+    const asynchronous = () => {
+        
+        const onChangeHandle = (value: any) => {
+            // console.log('value is:', value)
+            setMostRecentSearch(value)
+            console.log(mostRecentSearch)
+
+            setTimeout(async () => {
+                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&exchange=NASDAQ&apikey=0fbc3128ecb93418721f51d266327cd4`)
+                .then((res) => {
+                    return res.json()
+                })
+                .then((data) => {
+                    console.log('data is: ', data)
+                    setOptions(data)
+                })
+                console.log("DelayED for 1.5 second.");
+              }, 1500)
+
+              console.log(mostRecentSearch)
+
+        }
+
         return (
-        <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            // getOptionLabel={(option: any) => option.label}
-            options={stockTickersObject.slice(0,59)}
-            getOptionLabel={(option: any) => option.label}
-            value={stockTickersObject.label as stockTick}
-            isOptionEqualToValue={(option, value) =>
-                option.label === value.label
-            }
-            onChange={handleSubmit}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Stock Tickers" />}
-        />
-        );
+            <form onSubmit={(value) => onChangeHandle(value)}>
+                <button type="submit" className="search-button">
+                    <img src="search.png"/>
+                </button>
+                <Autocomplete
+                    id="asynchronous-demo"
+                    style={{ width: 300 }}
+                    open={open}
+                    onOpen={() => {
+                        setOpen(true);
+                    }}
+                    onClose={() => {
+                        setOpen(false);
+                    }}
+                    isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
+                    getOptionLabel={option => option.symbol}
+                    options={options}
+                    loading={loading}
+                    renderInput={params => (
+                        <TextField
+                        {...params}
+                        label="Asynchronous"
+                        variant="outlined"
+                        onChange={e => {
+                            // dont fire API if the user delete or not entered anything
+                            if (e.target.value !== "" || e.target.value !== null) {
+                            onChangeHandle(e.target.value);
+                            }
+                        }}
+                        InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                            <React.Fragment>
+                                {/* {loading ? (
+                                <CircularProgress color="inherit" size={20} />
+                                ) : null} */}
+                                {params.InputProps.endAdornment}
+                            </React.Fragment>
+                            )
+                        }}
+                        />
+                    )}
+                />
+            </form>
+        )
+
+
     }
 
+    
 
+    // const onChangeHandle = async value => {
+    //     fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${mostRecentSearch}&limit=10&exchange=NASDAQ&apikey=0fbc3128ecb93418721f51d266327cd4`)
+    //     .then((res) => {
+    //         return res.json()
+    //     })
+    //     .then((data) => {
+    //         console.log('data is: ', data)
+    //         setOptions(data.map((stockObject: any) => {
+    //             return {stockObject}
+    //         }))
+    //     })
+    // }
+
+    // useEffect(() => {
+    //     if (!open) {
+    //         setOptions([])
+    //     }
+    // }, [open])
 
 
 
@@ -575,7 +675,8 @@ const App = () => {
     return (
          <div className="App">
             <br />
-            {ComboBox()}
+            {/* {ComboBox()} */}
+            {asynchronous()}
             <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
             {displayAllStocksTable()}
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null}
