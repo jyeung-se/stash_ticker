@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import './App.css';
-import Typeahead from 'react-bootstrap-typeahead';
+// import { Typeahead } from 'react-bootstrap-typeahead';
+// import Form from 'react-bootstrap/Form';
 import { Table, Col, Divider, Row, Button, Radio, Space , Input, Card} from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Legend, Line } from 'recharts';
 import SearchBar from './SearchBar'
@@ -11,6 +12,9 @@ import allStocksColumns from './allStocksColumns';
 import timePeriodColumns from './timePeriodColumns';
 import { format } from "path";
 import { time } from "console";
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
 // import staticData from "./staticData";
 
 
@@ -85,7 +89,7 @@ const App = () => {
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -117,16 +121,17 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
-        .then((res) => {
-            return res.json()
-        })
-        .then((data) => {
-            setStockTimePeriodResults(data.historical.reverse())
-        })
+        if (lastSearch !== '') {
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                setStockTimePeriodResults(data.historical.reverse())
+            })
+        }
     }, [lastSearch])
 
-    
       
     const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
     const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
@@ -275,9 +280,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         ])
 
         const stocks = await stockData.json()
@@ -334,7 +339,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         .then((res) => {
             return res.json()
         })
@@ -379,6 +384,50 @@ const App = () => {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
         }
     }
+
+
+
+
+    // To continue working on for type ahead / autocomplete-
+    // need to implement submission of input for api call
+
+    const stockTickersObject = 
+        stockTickers.map((ticker: string) => {
+            return (
+                {label: ticker}
+            )
+        })
+        
+    interface stockTick {
+        label: string
+    }
+
+    const autocompleteOnSubmit = (value: any) => {
+        setMostRecentSearch(value)
+    }
+
+
+    const ComboBox = () => {
+        return (
+        <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            // getOptionLabel={(option: any) => option.label}
+            options={stockTickersObject.slice(0,59)}
+            getOptionLabel={(option: any) => option.label}
+            value={stockTickersObject.label as stockTick}
+            isOptionEqualToValue={(option, value) =>
+                option.label === value.label
+            }
+            onChange={handleSubmit}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Stock Tickers" />}
+        />
+        );
+    }
+
+
+
 
 
     if(error) {
@@ -526,6 +575,7 @@ const App = () => {
     return (
          <div className="App">
             <br />
+            {ComboBox()}
             <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} />
             {displayAllStocksTable()}
             {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null}
