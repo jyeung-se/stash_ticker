@@ -369,6 +369,7 @@ const App = () => {
             setAllStocksTableVisability(false)
             displayAllStocksTable()
             setIsReadMore(true)
+            setMostRecentSearch('')
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
         }
@@ -378,9 +379,9 @@ const App = () => {
     const asyncSearchBar = () => {
         
         const onChangeHandle = (value: any) => {
-            // console.log('value is:', value)
+            console.log('value is:', value)
             setMostRecentSearch(value.toUpperCase())
-            console.log(mostRecentSearch)
+            // console.log(mostRecentSearch)
 
             setTimeout(async () => {
                 await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
@@ -391,12 +392,10 @@ const App = () => {
                     console.log('data is: ', data)
                     setOptions(data)
                 })
-                console.log("DelayED for 1.5 second.");
+                // console.log("DelayED for 1.5 second.");
               }, 1500)
-
-              console.log(mostRecentSearch)
-
         }
+
 
         return (
             <form onSubmit={(e) => handleSubmit(e)} className="async-search-field">
@@ -415,7 +414,7 @@ const App = () => {
                     }}
                     isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
                     getOptionLabel={option => option.symbol}
-                    options={options}
+                    options={mostRecentSearch !== "" ? options : [{symbol: '-'}]}
                     loading={loading}
                     renderInput={params => (
                         <TextField
@@ -424,17 +423,15 @@ const App = () => {
                         variant="standard"
                         onChange={e => {
                             // dont fire API if the input is blank or empty
-                            if (e.target.value !== "" || e.target.value !== null) {
-                            onChangeHandle(e.target.value);
+                            if (e.target.value !== "" || e.target.value !== null || mostRecentSearch !== "" || mostRecentSearch !== null) {
+                            onChangeHandle(e.target.value)
                             }
                         }}
                         InputProps={{
                             ...params.InputProps,
                             endAdornment: (
                             <React.Fragment>
-                                {loading ? (
-                                <CircularProgress color="inherit" size={20} />
-                                ) : null}
+                                {mostRecentSearch !== "" ? (loading ? <CircularProgress color="inherit" size={20} /> : null) : null}
                                 {params.InputProps.endAdornment}
                             </React.Fragment>
                             )
