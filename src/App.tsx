@@ -383,7 +383,7 @@ const App = () => {
             console.log(mostRecentSearch)
 
             setTimeout(async () => {
-                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&exchange=NASDAQ&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
                 .then((res) => {
                     return res.json()
                 })
