@@ -56,6 +56,7 @@ const App = () => {
         );
     };
 
+
     const toTitleCase = (str: string) => {
         return str.replace(
           /\w\S*/g,
@@ -92,7 +93,7 @@ const App = () => {
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=0fbc3128ecb93418721f51d266327cd4').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=9d711c9bbba5f849bc33c4e46d3a775c').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -125,7 +126,7 @@ const App = () => {
         })
 
         if (mostRecentSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
             .then((res) => {
                 return res.json()
             })
@@ -136,32 +137,50 @@ const App = () => {
     }, [lastSearch])
 
 
-    useEffect(() => {
-        setMostRecentSearch(inputValue)
-        setLastSearch(inputValue)
+    // useEffect(() => {
+    //     setIsLoading(true)
+    //     setTimeout(async () => {
+    //         if (stockTickers.includes(inputValue)) {
+    //             await fetchStockInfo()
+    //             .then(([stocks, stockHourly, companyProfile]) => {
+    //                 setMostRecentSearch(inputValue)
+    //                 setLastSearch(inputValue)
+    //                 setStockResults(stocks)
+    //                 setStockHourlyResults(stockHourly)
+    //                 setCompanyProfile(companyProfile)
+    //             }).catch((error) => {
+    //                 console.error(error)
+    //             })
+    //             setAllStocksTableVisability(false)
+    //             displayAllStocksTable()
+    //             setIsReadMore(true)
+    //             }
+    //         }, 100)
+    //         setTimeout(() => {
+    //             setIsLoading(false)
+    //             console.log('stockResults in after inputValue useEffect rerender', stockResults)
+    //         }, 2000)
 
-        if (stockTickers.includes(inputValue)) {
-            setIsLoading(true)
-            fetchStockInfo()
-            .then(([stocks, stockHourly, companyProfile]) => {
-                    setStockResults(stocks)
-                    setStockHourlyResults(stockHourly)
-                    setCompanyProfile(companyProfile)
-
-                }).catch((error) => {
-                    console.error(error)
-                })
-                console.log(stockResults)
-                setAllStocksTableVisability(false)
-                displayAllStocksTable()
-                setIsReadMore(true)
-
-            setTimeout(() => {
-                setIsLoading(false)
-            }, 2000)
-        }
-    }, [inputValue])
+    // }, [inputValue])
     
+
+    useEffect(() => {
+        setTimeout(async () => {
+            await fetchStockInfo()
+            .then(([stocks, stockHourly, companyProfile]) => {
+                setMostRecentSearch(inputValue)
+                setLastSearch(inputValue)
+                setStockResults(stocks)
+                setStockHourlyResults(stockHourly)
+                setCompanyProfile(companyProfile)
+            })
+        }, 100)
+
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 1500)
+    }, [inputValue])
+
       
     // const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
     // const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
@@ -311,9 +330,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=9d711c9bbba5f849bc33c4e46d3a775c`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=9d711c9bbba5f849bc33c4e46d3a775c`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
         ])
 
         const stocks = await stockData.json()
@@ -351,7 +370,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
         .then((res) => {
             return res.json()
         })
@@ -385,27 +404,25 @@ const App = () => {
 
     const handleSubmit = (e: any) => {
         e.preventDefault()
-        setSearchStatesToText(e)
-        setInputValue(e.target.innerText)
 
-        
-        if (stockTickers.includes(e.target.innerText)) {
+        if (isLoading === false) {
             setIsLoading(true)
-            fetchStockInfo()
-            .then(([stocks, stockHourly, companyProfile]) => {
-                    setStockResults(stocks)
-                    setStockHourlyResults(stockHourly)
-                    setCompanyProfile(companyProfile)
-                }).catch((error) => {
-                    console.error(error)
-                })
-            setAllStocksTableVisability(false)
-            displayAllStocksTable()
-            setIsReadMore(true)
+            setTimeout(async () => {
+                await fetchStockInfo()
+                .then(([stocks, stockHourly, companyProfile]) => {
+                        setInputValue(e.target.innerText)
+                        setSearchStatesToText(e)
+                        setStockResults(stocks)
+                        setStockHourlyResults(stockHourly)
+                        setCompanyProfile(companyProfile)
+                    }).catch((error) => {
+                        console.error(error)
+                    })
+                setAllStocksTableVisability(false)
+                displayAllStocksTable()
+                setIsReadMore(true)            
+            }, 100)
 
-            setTimeout(() => {
-                setIsLoading(false)
-            }, 1500)
         } else if (e.target.innerText === '' || e.target.innerText === null) {
             return false
         } else {
@@ -422,7 +439,7 @@ const App = () => {
             // console.log(mostRecentSearch)
 
             setTimeout(async () => {
-                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=0fbc3128ecb93418721f51d266327cd4`)
+                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
                 .then((res) => {
                     return res.json()
                 })
@@ -541,14 +558,18 @@ const App = () => {
 
 
     const stockQuickStats = () => {
-        if (isLoading === false) {
+        if (isLoading === true) {
+            return <LoadingSpinner />
+            
+        } else if (stockResults.length > 0 && stockHourlyResults.length > 0) {
+            console.log('stockResults in stockQuickStats', stockResults)
             return (
                 <div>
                     <div className="stock-header">
                         <Divider orientation="left"></Divider>
                         {<h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1>} 
                         <br />
-                        <h1 className="stock-price">${stockResults[0].price}</h1> 
+                        <h1 className="stock-price">${stockResults[0].price.toFixed(2)}</h1> 
                         <br />
                         {chartHeaderPriceStats()}
                     </div>
@@ -642,7 +663,8 @@ const App = () => {
             {asyncSearchBar()}
             {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
             {displayAllStocksTable()}
-            {isLoading ? <LoadingSpinner /> : ((stockResults.length > 0 && stockHourlyResults.length > 0) ? stockQuickStats() : null)}
+            {stockQuickStats()}
+            {/* {isLoading ? <LoadingSpinner /> : ((stockResults.length > 0 && stockHourlyResults.length > 0) ? stockQuickStats() : null)} */}
         </div>
     )
 }
