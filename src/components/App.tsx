@@ -11,11 +11,13 @@ import allStocksColumns from '../datatypes/allStocksColumns';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import LoadingSpinner from "./LoadingSpinner";
 
 
 const App = () => {
 
   const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [stockTickers, setStockTickers] = useState<any>([])
   const [allStocks, setAllStocks] = useState<any>([])
   const [stockResults, setStockResults] = useState<any>([])
@@ -90,7 +92,7 @@ const App = () => {
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=0fbc3128ecb93418721f51d266327cd4').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -123,7 +125,7 @@ const App = () => {
         })
 
         if (mostRecentSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
             .then((res) => {
                 return res.json()
             })
@@ -138,21 +140,25 @@ const App = () => {
         setMostRecentSearch(inputValue)
         setLastSearch(inputValue)
 
-        if (lastSearch !== '') {
-            if (stockTickers.includes(inputValue)) {
-                fetchStockInfo()
-                .then(([stocks, stockHourly, companyProfile]) => {
-                        setStockResults(stocks)
-                        setStockHourlyResults(stockHourly)
-                        setCompanyProfile(companyProfile)
-                    }).catch((error) => {
-                        console.error(error)
-                    })
-                    console.log(stockResults)
+        if (stockTickers.includes(inputValue)) {
+            setIsLoading(true)
+            fetchStockInfo()
+            .then(([stocks, stockHourly, companyProfile]) => {
+                    setStockResults(stocks)
+                    setStockHourlyResults(stockHourly)
+                    setCompanyProfile(companyProfile)
+
+                }).catch((error) => {
+                    console.error(error)
+                })
+                console.log(stockResults)
                 setAllStocksTableVisability(false)
                 displayAllStocksTable()
                 setIsReadMore(true)
-            }
+
+            setTimeout(() => {
+                setIsLoading(false)
+            }, 2000)
         }
     }, [inputValue])
     
@@ -305,9 +311,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=0fbc3128ecb93418721f51d266327cd4`)
         ])
 
         const stocks = await stockData.json()
@@ -345,7 +351,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
         .then((res) => {
             return res.json()
         })
@@ -384,6 +390,7 @@ const App = () => {
 
         
         if (stockTickers.includes(e.target.innerText)) {
+            setIsLoading(true)
             fetchStockInfo()
             .then(([stocks, stockHourly, companyProfile]) => {
                     setStockResults(stocks)
@@ -395,6 +402,10 @@ const App = () => {
             setAllStocksTableVisability(false)
             displayAllStocksTable()
             setIsReadMore(true)
+
+            setTimeout(() => {
+                setIsLoading(false)
+            }, 1500)
         } else if (e.target.innerText === '' || e.target.innerText === null) {
             return false
         } else {
@@ -411,7 +422,7 @@ const App = () => {
             // console.log(mostRecentSearch)
 
             setTimeout(async () => {
-                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=0fbc3128ecb93418721f51d266327cd4`)
                 .then((res) => {
                     return res.json()
                 })
@@ -530,94 +541,98 @@ const App = () => {
 
 
     const stockQuickStats = () => {
-        return (
-            <div>
-                <div className="stock-header">
-                    <Divider orientation="left"></Divider>
-                    {<h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1>} 
+        if (isLoading === false) {
+            return (
+                <div>
+                    <div className="stock-header">
+                        <Divider orientation="left"></Divider>
+                        {<h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1>} 
+                        <br />
+                        <h1 className="stock-price">${stockResults[0].price}</h1> 
+                        <br />
+                        {chartHeaderPriceStats()}
+                    </div>
+                    {showSelectedPeriodChart()}
                     <br />
-                    <h1 className="stock-price">${stockResults[0].price}</h1> 
+                    <ul className="chart-buttons">
+                        {chartButtons()}
+                    </ul>
                     <br />
-                    {chartHeaderPriceStats()}
-                </div>
-                {showSelectedPeriodChart()}
-                <br />
-                <ul className="chart-buttons">
-                    {chartButtons()}
-                </ul>
-                <br />
-                <br />
-                <Row>
-                <Col span={10} offset={7}>
-                    <Divider orientation="left">Key Statistics</Divider>
-                </Col>
-                    <Col span={3} offset={7}>
-                        <h3 className="h3-left">Market Cap</h3>
-                        <h3 className="h3-about-data">{numberFormat(stockResults[0].marketCap)}</h3>
-                        <h3 className="h3-left">High today</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayHigh.toFixed(2)}</h3>
-                        <h3 className="h3-left">52 Week high</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearHigh.toFixed(2)}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Price-Earnings ratio</h3>
-                        <h3 className="h3-about-data">{stockResults[0].pe === null ? 0 : stockResults[0].pe.toFixed(2)}</h3>
-                        <h3 className="h3-left">Low today</h3>
-                        <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
-                        <h3 className="h3-left">52 Week low</h3>
-                        <h3 className="h3-about-data">${stockResults[0].yearLow.toFixed(2)}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Dividend yield</h3>
-                        <h3 className="h3-about-data">{companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
-                        <h3 className="h3-left">Open price</h3>
-                        <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Average volume</h3>
-                        <h3 className="h3-about-data">{numberFormat(stockResults[0].avgVolume)}</h3>
-                        <h3 className="h3-left">Volume</h3>
-                        <h3 className="h3-about-data">{numberFormat(stockResults[0].volume)}</h3>
-                    </Col>
-                </Row>
-                <br />
-                <br />
-                <Row>
+                    <br />
+                    <Row>
                     <Col span={10} offset={7}>
-                    <Divider orientation="left">About</Divider>
-                        <h3 className="h3-about">
-                        <ReadMore>
-                            {companyProfile[0].description}
-                        </ReadMore>
-                        </h3>  
+                        <Divider orientation="left">Key Statistics</Divider>
                     </Col>
-                </Row>
-                <br />
-                <br />
-                <Row>
-                    <Col span={3} offset={7}>
-                        <h3 className="h3-left">CEO</h3>
-                        <h3 className="h3-about-data">{companyProfile[0].ceo}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Employees</h3>
-                        <h3 className="h3-about-data">{companyProfile[0].fullTimeEmployees}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">Headquarters</h3>
-                        <h3 className="h3-about-data">{companyProfile[0].city},<br></br> {toTitleCase(companyProfile[0].state)}</h3>
-                    </Col>
-                    <Col span={3}>
-                        <h3 className="h3-left">IPO Date</h3>
-                        <h3 className="h3-about-data">{companyProfile[0].ipoDate}</h3>
-                    </Col>
-                </Row>
-                <br />
-                <br />
-                <br />
-                <br />
-            </div>
-        )
+                        <Col span={3} offset={7}>
+                            <h3 className="h3-left">Market Cap</h3>
+                            <h3 className="h3-about-data">{numberFormat(stockResults[0].marketCap)}</h3>
+                            <h3 className="h3-left">High today</h3>
+                            <h3 className="h3-about-data">${stockResults[0].dayHigh.toFixed(2)}</h3>
+                            <h3 className="h3-left">52 Week high</h3>
+                            <h3 className="h3-about-data">${stockResults[0].yearHigh.toFixed(2)}</h3>
+                        </Col>
+                        <Col span={3}>
+                            <h3 className="h3-left">Price-Earnings ratio</h3>
+                            <h3 className="h3-about-data">{stockResults[0].pe === null ? 0 : stockResults[0].pe.toFixed(2)}</h3>
+                            <h3 className="h3-left">Low today</h3>
+                            <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
+                            <h3 className="h3-left">52 Week low</h3>
+                            <h3 className="h3-about-data">${stockResults[0].yearLow.toFixed(2)}</h3>
+                        </Col>
+                        <Col span={3}>
+                            <h3 className="h3-left">Dividend yield</h3>
+                            <h3 className="h3-about-data">{companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
+                            <h3 className="h3-left">Open price</h3>
+                            <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
+                        </Col>
+                        <Col span={3}>
+                            <h3 className="h3-left">Average volume</h3>
+                            <h3 className="h3-about-data">{numberFormat(stockResults[0].avgVolume)}</h3>
+                            <h3 className="h3-left">Volume</h3>
+                            <h3 className="h3-about-data">{numberFormat(stockResults[0].volume)}</h3>
+                        </Col>
+                    </Row>
+                    <br />
+                    <br />
+                    <Row>
+                        <Col span={10} offset={7}>
+                        <Divider orientation="left">About</Divider>
+                            <h3 className="h3-about">
+                            <ReadMore>
+                                {companyProfile[0].description}
+                            </ReadMore>
+                            </h3>  
+                        </Col>
+                    </Row>
+                    <br />
+                    <br />
+                    <Row>
+                        <Col span={3} offset={7}>
+                            <h3 className="h3-left">CEO</h3>
+                            <h3 className="h3-about-data">{companyProfile[0].ceo}</h3>
+                        </Col>
+                        <Col span={3}>
+                            <h3 className="h3-left">Employees</h3>
+                            <h3 className="h3-about-data">{companyProfile[0].fullTimeEmployees}</h3>
+                        </Col>
+                        <Col span={3}>
+                            <h3 className="h3-left">Headquarters</h3>
+                            <h3 className="h3-about-data">{companyProfile[0].city},<br></br> {toTitleCase(companyProfile[0].state)}</h3>
+                        </Col>
+                        <Col span={3}>
+                            <h3 className="h3-left">IPO Date</h3>
+                            <h3 className="h3-about-data">{companyProfile[0].ipoDate}</h3>
+                        </Col>
+                    </Row>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            )
+        } else {
+            return null
+        }
     }
 
 
@@ -627,7 +642,7 @@ const App = () => {
             {asyncSearchBar()}
             {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
             {displayAllStocksTable()}
-            {(stockResults.length > 0 && stockHourlyResults.length > 0) ? stockQuickStats() : null}
+            {isLoading ? <LoadingSpinner /> : ((stockResults.length > 0 && stockHourlyResults.length > 0) ? stockQuickStats() : null)}
         </div>
     )
 }
