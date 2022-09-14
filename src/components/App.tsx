@@ -152,8 +152,9 @@ const App = () => {
                 setAllStocksTableVisability(false)
                 displayAllStocksTable()
                 setIsReadMore(true)
+            }
         }
-    }}, [inputValue])
+    }, [inputValue])
     
       
     // const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
@@ -394,6 +395,8 @@ const App = () => {
             setAllStocksTableVisability(false)
             displayAllStocksTable()
             setIsReadMore(true)
+        } else if (e.target.innerText === '' || e.target.innerText === null) {
+            return false
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
         }
@@ -445,6 +448,7 @@ const App = () => {
                     getOptionLabel={option => option.symbol}
                     options={mostRecentSearch !== "" ? options : [{symbol: '-'}]}
                     loading={loading}
+                    disableClearable
                     renderInput={params => (
                         <TextField
                         {...params}
