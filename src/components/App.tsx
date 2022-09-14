@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import './App.css';
-// import { Typeahead } from 'react-bootstrap-typeahead';
-// import Form from 'react-bootstrap/Form';
 import { Table, Col, Divider, Row, Button, Radio, Space , Input, Card} from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Legend, Line } from 'recharts';
-import SearchBar from './SearchBar'
-import myStashColumns from './myStashColumns';
-import snapshotColumns from './snapshotColumns';
-import allStocksColumns from './allStocksColumns';
-import timePeriodColumns from './timePeriodColumns';
-import { format } from "path";
-import { time } from "console";
+import SearchBar from './searchbar/SearchBar';
+// import myStashColumns from '../datatypes/myStashColumns';
+// import snapshotColumns from '../datatypes/snapshotColumns';
+// import timePeriodColumns from '../datatypes/timePeriodColumns';
+import allStocksColumns from '../datatypes/allStocksColumns';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-
-// import staticData from "./staticData";
-
 
 
 const App = () => {
@@ -38,6 +31,7 @@ const App = () => {
   const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
   const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
   const [lastSearch, setLastSearch] = useState('')
+  const [inputValue, setInputValue] = useState('')
 
   const [open, setOpen] = useState(false)
   const [options, setOptions] = useState([])
@@ -90,12 +84,13 @@ const App = () => {
     //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
     //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
     //API key#4: 0fbc3128ecb93418721f51d266327cd4 -jaysolarlee
+    //API key#4: 9d711c9bbba5f849bc33c4e46d3a775c -solarlee27
 
 
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=f2fd9f5601de912d73c808de0f575e3f').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -106,7 +101,7 @@ const App = () => {
             console.error(error);
         });
     }, [])
-  
+    
 
     useEffect(() => {
         const chartButtonDays =  
@@ -127,8 +122,8 @@ const App = () => {
             }
         })
 
-        if (lastSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=f2fd9f5601de912d73c808de0f575e3f`)
+        if (mostRecentSearch !== '') {
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then((res) => {
                 return res.json()
             })
@@ -138,6 +133,28 @@ const App = () => {
         }
     }, [lastSearch])
 
+
+    useEffect(() => {
+        setMostRecentSearch(inputValue)
+        setLastSearch(inputValue)
+
+        if (lastSearch !== '') {
+            if (stockTickers.includes(inputValue)) {
+                fetchStockInfo()
+                .then(([stocks, stockHourly, companyProfile]) => {
+                        setStockResults(stocks)
+                        setStockHourlyResults(stockHourly)
+                        setCompanyProfile(companyProfile)
+                    }).catch((error) => {
+                        console.error(error)
+                    })
+                    console.log(stockResults)
+                setAllStocksTableVisability(false)
+                displayAllStocksTable()
+                setIsReadMore(true)
+        }
+    }}, [inputValue])
+    
       
     // const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
     // const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
@@ -287,9 +304,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=f2fd9f5601de912d73c808de0f575e3f`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=f2fd9f5601de912d73c808de0f575e3f`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=f2fd9f5601de912d73c808de0f575e3f`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         ])
 
         const stocks = await stockData.json()
@@ -327,7 +344,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${mostRecentSearch}?timeseries=${targetDays}&apikey=f2fd9f5601de912d73c808de0f575e3f`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         .then((res) => {
             return res.json()
         })
@@ -351,14 +368,21 @@ const App = () => {
     }
 
 
+  
+    const setSearchStatesToText = (e: any) => {
+        console.log(e.target.innerText)
+        setMostRecentSearch(e.target.innerText)
+        setLastSearch(e.target.innerText)
+    }
+
+
     const handleSubmit = (e: any) => {
         e.preventDefault()
-        console.log(mostRecentSearch)
-        console.log(lastSearch)
+        setSearchStatesToText(e)
+        setInputValue(e.target.innerText)
 
-        setLastSearch(mostRecentSearch)
-
-        if (stockTickers.includes(mostRecentSearch)) {
+        
+        if (stockTickers.includes(e.target.innerText)) {
             fetchStockInfo()
             .then(([stocks, stockHourly, companyProfile]) => {
                     setStockResults(stocks)
@@ -378,13 +402,13 @@ const App = () => {
 
     const asyncSearchBar = () => {
         
-        const onChangeHandle = (value: any) => {
-            console.log('value is:', value)
-            setMostRecentSearch(value.toUpperCase())
+        const onChangeHandle = (e: any) => {
+            console.log('value is:', e.target.value)
+            setMostRecentSearch(e.target.value.toUpperCase())
             // console.log(mostRecentSearch)
 
             setTimeout(async () => {
-                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${value}&limit=10&apikey=f2fd9f5601de912d73c808de0f575e3f`)
+                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
                 .then((res) => {
                     return res.json()
                 })
@@ -396,6 +420,7 @@ const App = () => {
               }, 1500)
         }
 
+        //save a reference to the TextField component, and use this ref to focus once another element is clicked (once some event was triggered).
         let inputRef
 
         return (
@@ -413,6 +438,9 @@ const App = () => {
                     onClose={() => {
                         setOpen(false)
                     }}
+                    onChange={(e) => {
+                        handleSubmit(e)
+                    }}
                     isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
                     getOptionLabel={option => option.symbol}
                     options={mostRecentSearch !== "" ? options : [{symbol: '-'}]}
@@ -424,8 +452,8 @@ const App = () => {
                         variant="standard"
                         onChange={e => {
                             // dont fire API if the input is blank or empty
-                            if (e.target.value !== "" || e.target.value !== null || mostRecentSearch !== "" || mostRecentSearch !== null) {
-                                onChangeHandle(e.target.value)
+                            if (e.target.value !== '') {
+                                onChangeHandle(e)
                             }
                         }}
                         inputRef={input => {
@@ -502,7 +530,7 @@ const App = () => {
             <div>
                 <div className="stock-header">
                     <Divider orientation="left"></Divider>
-                    {(stockResults.length !== 0 || stockHourlyResults.length !== 0) ? <h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1> : null} 
+                    {<h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1>} 
                     <br />
                     <h1 className="stock-price">${stockResults[0].price}</h1> 
                     <br />
@@ -529,7 +557,7 @@ const App = () => {
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Price-Earnings ratio</h3>
-                        <h3 className="h3-about-data">{stockResults[0].pe.toFixed(2)}</h3>
+                        <h3 className="h3-about-data">{stockResults[0].pe === null ? 0 : stockResults[0].pe.toFixed(2)}</h3>
                         <h3 className="h3-left">Low today</h3>
                         <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
                         <h3 className="h3-left">52 Week low</h3>
@@ -537,7 +565,7 @@ const App = () => {
                     </Col>
                     <Col span={3}>
                         <h3 className="h3-left">Dividend yield</h3>
-                        <h3 className="h3-about-data">{companyProfile[0] && companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
+                        <h3 className="h3-about-data">{companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
                         <h3 className="h3-left">Open price</h3>
                         <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
                     </Col>
@@ -595,7 +623,7 @@ const App = () => {
             {asyncSearchBar()}
             {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
             {displayAllStocksTable()}
-            {(stockResults.length || stockHourlyResults.length !== 0) ? stockQuickStats() : null}
+            {(stockResults.length > 0 && stockHourlyResults.length > 0) ? stockQuickStats() : null}
         </div>
     )
 }
