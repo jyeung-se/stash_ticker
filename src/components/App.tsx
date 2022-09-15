@@ -49,49 +49,6 @@ const App = () => {
   const loading = open && options.length === 0
   
 
-    // ~~~~MOVED TO ReadMore.tsx~~~~
-    // const ReadMore = ({ children }: any) => {
-    //     const text = children;
-    //     const toggleReadMore = () => {
-    //     setIsReadMore(!isReadMore)
-    //     }
-    //     return (
-    //     <h3 className="read-more">
-    //         {isReadMore ? text.slice(0, 350) : text}
-    //         <span onClick={toggleReadMore} className="read-or-hide">
-    //         {isReadMore ? "...read more" : " show less"}
-    //         </span>
-    //     </h3>
-    //     )
-    // }
-
-    // ~~~~MOVED TO UTILS FOLDER~~~~
-    // const toTitleCase = (str: string) => {
-    //     return str.replace(
-    //       /\w\S*/g,
-    //       function(txt) {
-    //         return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-    //       }
-    //     );
-    //   }
-
-    // ~~~~MOVED TO UTILS FOLDER~~~~
-    // const numberFormat = (num: number) => {
-    //     if(num < 1000){
-    //         return num
-    //     } else if (num < 1000000) {
-    //         return (num/1000).toFixed(2) + 'K'
-    //     } else if (num < 1000000000) {
-    //         return (num/1000000).toFixed(2) + 'M'
-    //     } else if (num < 1000000000000) {
-    //         return (num/1000000000).toFixed(2) + 'B'
-    //     } else if (num >= 1000000000000) {
-    //         return (num/1000000000000).toFixed(2) + 'T'
-    //     }
-    // }
-
-
-
 
     //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
     //API key#1: 4672ed38f1e727b95f8a9cbd22574eed -gmail
@@ -194,28 +151,6 @@ const App = () => {
         }
     }, [inputValue])
 
-      
-    // const snapshotTable = () => <Table className="flex-container" columns={snapshotColumns} dataSource={stockResults} />;
-    // const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
-    // const hourlyStockTable = () => <Table className="flex-container" columns={timePeriodColumns} dataSource={stockHourlyResults} />; 
-    // const timePeriodStockTable = () => <Table className="flex-container" columns={timePeriodColumns} dataSource={stockTimePeriodResults} />; 
-
-
-    // ~~~~MOVED TO AllStocksTable.tsx~~~~
-    // const allStocksTable = () => <Table className="flex-container" columns={allStocksColumns} dataSource={allStocks} />
-
-
-    // ~~~~MOVED TO UTILS FOLDER~~~~
-    // const dayOrNight = (hourInStringFormat: string) => {
-    //     if (Number(hourInStringFormat) === 12) {
-    //        return "12PM"
-    //     } else if (Number(hourInStringFormat) > 12) { 
-    //        return (Number(hourInStringFormat) - 12).toString() + "PM"
-    //     } else {
-    //        return Number(hourInStringFormat).toString() + "AM"
-    //     }
-    // }
-
 
     const abridgedHourlyStockData = 
         stockHourlyResults.slice(0,8).reverse()
@@ -231,117 +166,6 @@ const App = () => {
             }
         )
     })
-
-
-    // ~~~~MOVED TO HourlyStockChart.tsx~~~~
-    // const hourlyStockChart = () => {
-    //     return (
-    //         <div className="chart-wrapper">
-    //             <ResponsiveContainer width="99%" height={400}>
-    //                 <AreaChart
-    //                     data={abridgedHourlyStockData}
-    //                     margin={{
-    //                         top: 0,
-    //                         right: 0,
-    //                         left: 0,
-    //                         bottom: 0,
-    //                     }}
-    //                 >
-    //                     <XAxis dataKey="date" />
-    //                     <YAxis type="number" domain={['auto', 'auto']} />
-    //                     <CartesianGrid strokeDasharray="3 3" />
-    //                     <Tooltip />
-    //                     <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
-    //                 </AreaChart> 
-    //             </ResponsiveContainer>
-    //         </div>
-    //     )
-    // }
-
-
-    // ~~~~MOVED TO TimePeriodStockChart.tsx~~~~
-    // const timePeriodStockChart = () => {
-    //     return (
-    //         <div className="chart-wrapper">
-    //             <ResponsiveContainer width="99%" height={400}>     
-    //                 <AreaChart
-    //                     data={stockTimePeriodResults}
-    //                     margin={{
-    //                         top: 0,
-    //                         right: 0,
-    //                         left: 0,
-    //                         bottom: 0,
-    //                     }}
-    //                 >
-    //                     <XAxis dataKey="date" />
-    //                     <YAxis type="number" domain={['auto', 'auto']} />
-    //                     <CartesianGrid strokeDasharray="3 3" />
-    //                     <Tooltip />
-    //                     <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
-    //                 </AreaChart> 
-    //             </ResponsiveContainer>                 
-    //         </div>
-    //     )
-    // }
-
-
-    // const compareForSorting = (a: any, b: any) => {
-    //     // console.log("compareForSorting fires off")
-    //     if ( a.symbol < b.symbol ){
-    //         return -1;
-    //     }
-    //     if ( a.symbol > b.symbol ){
-    //         return 1;
-    //     }
-    //     return 0;
-    // }
-
-
-    // const addToStockStash = () => {
-    //     // console.log('stockResults is: ', stockResults)
-    //     // console.log('stockStash before updating is: ', stockStash)
-    //     const listOfStockSymbolsInStash: any = () => {
-    //         return stockStash.map((stock: any) => {
-    //             return stock.symbol
-    //         })
-    //     }
-    //     if (listOfStockSymbolsInStash().includes(stockResults[0].symbol)) {
-    //         return alert('The stock has already been added to your Stash before. Please add a different stock instead.')
-    //     }   
-    //     setStockStash([...stockStash, ...stockResults].sort(compareForSorting))
-    //     // console.log('stockStash AFTER updating is: ', stockStash)
-    // }
-
-
-    // const tablesShownPostSearch = () => {
-    //     // console.log(mostRecentSearch, stockResults, stockHourlyResults)
-    //     if (stockResults.length > 0) {
-    //         return (
-    //             <div>
-    //                 <br></br>
-    //                 {<h2>My Stock Stash</h2>}
-    //                 {myStashTable()}
-    //                 <br></br>
-    //                 <h2>{stockResults[0].symbol} Profile</h2>
-    //                 {snapshotTable()}
-    //                 <button type="button" className="addToStockStashButton" onClick={addToStockStash}>Add to Stash</button>
-    //                 <br></br>
-    //                 <br></br>
-    //                 {hourlyStockChart()}
-    //                 <br></br>
-    //                 <h2>{stockResults[0].symbol} Hourly Historicals</h2>
-    //                 {hourlyStockTable()}
-    //                 <br></br>
-    //             </div>
-    //         )
-    //     }
-    // }   
-
-
-    // const toggleAllStocksTable = () => {
-    //   setAllStocksTableVisability(!allStocksTableVisability)
-    //   // console.log('stocktablevisibility state after toggle: ', AllStocksTableVisability)
-    // }
 
 
     const displayAllStocksTable = () => {
@@ -415,7 +239,6 @@ const App = () => {
         })
     }
 
-
   
     const setSearchStatesToText = (e: any) => {
         console.log(e.target.innerText)
@@ -452,6 +275,7 @@ const App = () => {
         }
     }
 
+
     const onChangeHandle = (e: any) => {
         console.log('value is:', e.target.value)
         setMostRecentSearch(e.target.value.toUpperCase())
@@ -470,9 +294,9 @@ const App = () => {
           }, 1500)
     }
 
+
     const asyncSearchBar = () => {
         
-
         //save a reference to the TextField component, and use this ref to focus once another element is clicked (once some event was triggered).
         let inputRef
 
@@ -528,10 +352,7 @@ const App = () => {
                 />
             </form>
         )
-
-
     }
-
 
 
     if(error) {
