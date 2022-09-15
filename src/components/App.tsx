@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import './App.css';
 import { Table, Col, Divider, Row, Button, Radio, Space , Input, Card} from 'antd';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Legend, Line } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SearchBar from './searchbar/SearchBar';
 // import myStashColumns from '../datatypes/myStashColumns';
 // import snapshotColumns from '../datatypes/snapshotColumns';
@@ -12,6 +12,15 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import LoadingSpinner from "./LoadingSpinner";
+
+import AsyncSearchBar from "./searchbar/AsyncSearchBar";
+import ReadMore from "./ReadMore";
+import dayOrNight from "../utils/dayOrNight";
+import toTitleCase from "../utils/toTitleCase";
+import numberFormat from "../utils/numberFormat";
+import HourlyStockChart from "./HourlyStockChart";
+import TimePeriodStockChart from "./TimePeriodStockChart";
+import AllStocksTable from "./AllStocksTable";
 
 
 const App = () => {
@@ -36,50 +45,52 @@ const App = () => {
   const [inputValue, setInputValue] = useState('')
 
   const [open, setOpen] = useState(false)
-  const [options, setOptions] = useState([])
+  const [options, setOptions] = useState<any>([])
   const loading = open && options.length === 0
   
 
+    // ~~~~MOVED TO ReadMore.tsx~~~~
+    // const ReadMore = ({ children }: any) => {
+    //     const text = children;
+    //     const toggleReadMore = () => {
+    //     setIsReadMore(!isReadMore)
+    //     }
+    //     return (
+    //     <h3 className="read-more">
+    //         {isReadMore ? text.slice(0, 350) : text}
+    //         <span onClick={toggleReadMore} className="read-or-hide">
+    //         {isReadMore ? "...read more" : " show less"}
+    //         </span>
+    //     </h3>
+    //     )
+    // }
 
-    const ReadMore = ({ children }: any) => {
-        const text = children;
-        const toggleReadMore = () => {
-        setIsReadMore(!isReadMore);
-        };
-        return (
-        <h3 className="read-more">
-            {isReadMore ? text.slice(0, 350) : text}
-            <span onClick={toggleReadMore} className="read-or-hide">
-            {isReadMore ? "...read more" : " show less"}
-            </span>
-        </h3>
-        );
-    };
+    // ~~~~MOVED TO UTILS FOLDER~~~~
+    // const toTitleCase = (str: string) => {
+    //     return str.replace(
+    //       /\w\S*/g,
+    //       function(txt) {
+    //         return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+    //       }
+    //     );
+    //   }
+
+    // ~~~~MOVED TO UTILS FOLDER~~~~
+    // const numberFormat = (num: number) => {
+    //     if(num < 1000){
+    //         return num
+    //     } else if (num < 1000000) {
+    //         return (num/1000).toFixed(2) + 'K'
+    //     } else if (num < 1000000000) {
+    //         return (num/1000000).toFixed(2) + 'M'
+    //     } else if (num < 1000000000000) {
+    //         return (num/1000000000).toFixed(2) + 'B'
+    //     } else if (num >= 1000000000000) {
+    //         return (num/1000000000000).toFixed(2) + 'T'
+    //     }
+    // }
 
 
-    const toTitleCase = (str: string) => {
-        return str.replace(
-          /\w\S*/g,
-          function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-          }
-        );
-      }
-
-
-    const numberFormat = (num: number) => {
-        if(num < 1000){
-            return num
-        } else if (num < 1000000) {
-            return (num/1000).toFixed(2) + 'K'
-        } else if (num < 1000000000) {
-            return (num/1000000).toFixed(2) + 'M'
-        } else if (num < 1000000000000) {
-            return (num/1000000000).toFixed(2) + 'B'
-        } else if (num >= 1000000000000) {
-            return (num/1000000000000).toFixed(2) + 'T'
-        }
-    }
 
 
     //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
@@ -93,7 +104,7 @@ const App = () => {
     useEffect(() => {   
         // API Calls for ALL stocks
         //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=9d711c9bbba5f849bc33c4e46d3a775c').then(async (res) => {
+        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
             const stockData = await res.json()
             // console.log('stockData[0]:', stockData[0]);
             setAllStocks(stockData)
@@ -126,7 +137,7 @@ const App = () => {
         })
 
         if (mostRecentSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
+            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
             .then((res) => {
                 return res.json()
             })
@@ -165,20 +176,22 @@ const App = () => {
     
 
     useEffect(() => {
-        setTimeout(async () => {
-            await fetchStockInfo()
-            .then(([stocks, stockHourly, companyProfile]) => {
-                setMostRecentSearch(inputValue)
-                setLastSearch(inputValue)
-                setStockResults(stocks)
-                setStockHourlyResults(stockHourly)
-                setCompanyProfile(companyProfile)
-            })
-        }, 100)
+        if (isLoading === true) {
+            setTimeout(async () => {
+                await fetchStockInfo()
+                .then(([stocks, stockHourly, companyProfile]) => {
+                    setMostRecentSearch(inputValue)
+                    setLastSearch(inputValue)
+                    setStockResults(stocks)
+                    setStockHourlyResults(stockHourly)
+                    setCompanyProfile(companyProfile)
+                })
+            }, 100)
 
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 1500)
+            setTimeout(() => {
+                setIsLoading(false)
+            }, 1500)
+        }
     }, [inputValue])
 
       
@@ -186,82 +199,90 @@ const App = () => {
     // const myStashTable = () => <Table className="flex-container" columns={myStashColumns} dataSource={stockStash} />;
     // const hourlyStockTable = () => <Table className="flex-container" columns={timePeriodColumns} dataSource={stockHourlyResults} />; 
     // const timePeriodStockTable = () => <Table className="flex-container" columns={timePeriodColumns} dataSource={stockTimePeriodResults} />; 
-    const allStocksTable = () => <Table className="flex-container" columns={allStocksColumns} dataSource={allStocks} />
 
 
-    const hourlyStockChart = () => {
-        const dayOrNight = (hourInStringFormat: string) => {
-            if (Number(hourInStringFormat) === 12) {
-               return "12PM"
-            } else if (Number(hourInStringFormat) > 12) { 
-               return (Number(hourInStringFormat) - 12).toString() + "PM"
-            } else {
-               return Number(hourInStringFormat).toString() + "AM"
+    // ~~~~MOVED TO AllStocksTable.tsx~~~~
+    // const allStocksTable = () => <Table className="flex-container" columns={allStocksColumns} dataSource={allStocks} />
+
+
+    // ~~~~MOVED TO UTILS FOLDER~~~~
+    // const dayOrNight = (hourInStringFormat: string) => {
+    //     if (Number(hourInStringFormat) === 12) {
+    //        return "12PM"
+    //     } else if (Number(hourInStringFormat) > 12) { 
+    //        return (Number(hourInStringFormat) - 12).toString() + "PM"
+    //     } else {
+    //        return Number(hourInStringFormat).toString() + "AM"
+    //     }
+    // }
+
+
+    const abridgedHourlyStockData = 
+        stockHourlyResults.slice(0,8).reverse()
+        .map((hourStat: any) => {
+        return (
+            {
+                date: dayOrNight(hourStat.date.substr(11, 2)),
+                low: hourStat.low,
+                high: hourStat.high,
+                open: hourStat.open,
+                close: hourStat.close,
+                volume: hourStat.volume
             }
-        }
-
-        const abridgedHourlyStockData = 
-            stockHourlyResults.slice(0,8).reverse()
-            .map((hourStat: any) => {
-            return (
-                {
-                    date: dayOrNight(hourStat.date.substr(11, 2)),
-                    low: hourStat.low,
-                    high: hourStat.high,
-                    open: hourStat.open,
-                    close: hourStat.close,
-                    volume: hourStat.volume
-                }
-            )
-        })
-
-        return (
-            <div className="chart-wrapper">
-                <ResponsiveContainer width="99%" height={400}>
-                    <AreaChart
-                        data={abridgedHourlyStockData}
-                        margin={{
-                            top: 0,
-                            right: 0,
-                            left: 0,
-                            bottom: 0,
-                        }}
-                    >
-                        <XAxis dataKey="date" />
-                        <YAxis type="number" domain={['auto', 'auto']} />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
-                    </AreaChart> 
-                </ResponsiveContainer>
-            </div>
         )
-    }
+    })
 
 
-    const timePeriodStockChart = () => {
-        return (
-            <div className="chart-wrapper">
-                <ResponsiveContainer width="99%" height={400}>     
-                    <AreaChart
-                        data={stockTimePeriodResults}
-                        margin={{
-                            top: 0,
-                            right: 0,
-                            left: 0,
-                            bottom: 0,
-                        }}
-                    >
-                        <XAxis dataKey="date" />
-                        <YAxis type="number" domain={['auto', 'auto']} />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
-                    </AreaChart> 
-                </ResponsiveContainer>                 
-            </div>
-        )
-    }
+    // ~~~~MOVED TO HourlyStockChart.tsx~~~~
+    // const hourlyStockChart = () => {
+    //     return (
+    //         <div className="chart-wrapper">
+    //             <ResponsiveContainer width="99%" height={400}>
+    //                 <AreaChart
+    //                     data={abridgedHourlyStockData}
+    //                     margin={{
+    //                         top: 0,
+    //                         right: 0,
+    //                         left: 0,
+    //                         bottom: 0,
+    //                     }}
+    //                 >
+    //                     <XAxis dataKey="date" />
+    //                     <YAxis type="number" domain={['auto', 'auto']} />
+    //                     <CartesianGrid strokeDasharray="3 3" />
+    //                     <Tooltip />
+    //                     <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
+    //                 </AreaChart> 
+    //             </ResponsiveContainer>
+    //         </div>
+    //     )
+    // }
+
+
+    // ~~~~MOVED TO TimePeriodStockChart.tsx~~~~
+    // const timePeriodStockChart = () => {
+    //     return (
+    //         <div className="chart-wrapper">
+    //             <ResponsiveContainer width="99%" height={400}>     
+    //                 <AreaChart
+    //                     data={stockTimePeriodResults}
+    //                     margin={{
+    //                         top: 0,
+    //                         right: 0,
+    //                         left: 0,
+    //                         bottom: 0,
+    //                     }}
+    //                 >
+    //                     <XAxis dataKey="date" />
+    //                     <YAxis type="number" domain={['auto', 'auto']} />
+    //                     <CartesianGrid strokeDasharray="3 3" />
+    //                     <Tooltip />
+    //                     <Area type="monotone" dataKey="close" name="Price" stroke="#1da842" fill="#1da842" />
+    //                 </AreaChart> 
+    //             </ResponsiveContainer>                 
+    //         </div>
+    //     )
+    // }
 
 
     // const compareForSorting = (a: any, b: any) => {
@@ -324,15 +345,16 @@ const App = () => {
 
 
     const displayAllStocksTable = () => {
-        return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
+        // return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
+        return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={allStocks} /></div> : null
     }
 
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=9d711c9bbba5f849bc33c4e46d3a775c`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=9d711c9bbba5f849bc33c4e46d3a775c`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         ])
 
         const stocks = await stockData.json()
@@ -370,7 +392,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
         .then((res) => {
             return res.json()
         })
@@ -430,26 +452,26 @@ const App = () => {
         }
     }
 
+    const onChangeHandle = (e: any) => {
+        console.log('value is:', e.target.value)
+        setMostRecentSearch(e.target.value.toUpperCase())
+        // console.log(mostRecentSearch)
+
+        setTimeout(async () => {
+            await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                console.log('data is: ', data)
+                setOptions(data)
+            })
+            // console.log("DelayED for 1.5 second.");
+          }, 1500)
+    }
 
     const asyncSearchBar = () => {
         
-        const onChangeHandle = (e: any) => {
-            console.log('value is:', e.target.value)
-            setMostRecentSearch(e.target.value.toUpperCase())
-            // console.log(mostRecentSearch)
-
-            setTimeout(async () => {
-                await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=9d711c9bbba5f849bc33c4e46d3a775c`)
-                .then((res) => {
-                    return res.json()
-                })
-                .then((data) => {
-                    console.log('data is: ', data)
-                    setOptions(data)
-                })
-                // console.log("DelayED for 1.5 second.");
-              }, 1500)
-        }
 
         //save a reference to the TextField component, and use this ref to focus once another element is clicked (once some event was triggered).
         let inputRef
@@ -542,9 +564,11 @@ const App = () => {
 
     const showSelectedPeriodChart = () => {
         if (timePeriod === '1D') {
-            return hourlyStockChart()
+            // return hourlyStockChart()
+            return <HourlyStockChart abridgedHourlyStockData={abridgedHourlyStockData} /> 
         }
-        return timePeriodStockChart()
+        // return timePeriodStockChart()
+        return <TimePeriodStockChart stockTimePeriodResults={stockTimePeriodResults} />
     }
 
 
@@ -619,7 +643,7 @@ const App = () => {
                         <Col span={10} offset={7}>
                         <Divider orientation="left">About</Divider>
                             <h3 className="h3-about">
-                            <ReadMore>
+                            <ReadMore setIsReadMore={setIsReadMore} isReadMore={isReadMore}>
                                 {companyProfile[0].description}
                             </ReadMore>
                             </h3>  
@@ -661,6 +685,7 @@ const App = () => {
          <div className="App">
             <br />
             {asyncSearchBar()}
+            {/* <AsyncSearchBar handleSubmit={handleSubmit} onChangeHandle={onChangeHandle} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} options={options} setOptions={setOptions} open={open} setOpen={setOpen} /> */}
             {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
             {displayAllStocksTable()}
             {stockQuickStats()}
