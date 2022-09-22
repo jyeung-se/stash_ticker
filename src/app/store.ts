@@ -5,7 +5,7 @@ import appLoadingReducer from  '../components/loadingSlice'
 import searchReducer from '../components/searchSlice'
 
 
-const store = configureStore({
+const store: any = configureStore({
   reducer: {
     totalStocks: allStocksReducer,
     selectedStock: selectedStockReducer,

@@ -25,7 +25,7 @@ import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
 import { getSelectedStock } from "../components/selectedStockSlice";
-import { setSearchValue } from "../components/searchSlice";
+import { setSearchValue, setSubmittedSearchValue } from "../components/searchSlice";
 
 
 const App = () => {
@@ -75,7 +75,7 @@ const App = () => {
     // useEffect(() => {   
     //     // API Calls for ALL stocks
     //     //Endpoint = Symbols List
-    //     fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+    //     fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
     //         const stockData = await res.json()
     //         // console.log('stockData[0]:', stockData[0]);
     //         setAllStocks(stockData)
@@ -88,35 +88,35 @@ const App = () => {
     // }, [])
     
 
-    useEffect(() => {
-        const chartButtonDays =  
-        [
-            {period: '1W', days: 7},
-            {period: '1M', days: 30},
-            {period: '3M', days: 90},
-            {period: '6M', days: 180},
-            {period: '1Y', days: 365}
-        ]
+    // useEffect(() => {
+    //     const chartButtonDays =  
+    //     [
+    //         {period: '1W', days: 7},
+    //         {period: '1M', days: 30},
+    //         {period: '3M', days: 90},
+    //         {period: '6M', days: 180},
+    //         {period: '1Y', days: 365}
+    //     ]
         
-        let targetDays
+    //     let targetDays
         
-        chartButtonDays.map((time) => {
-            if (time.period === timePeriod) {
-                targetDays = time.days
-                // console.log('targetDays is: ', targetDays)
-            }
-        })
+    //     chartButtonDays.map((time) => {
+    //         if (time.period === timePeriod) {
+    //             targetDays = time.days
+    //             // console.log('targetDays is: ', targetDays)
+    //         }
+    //     })
 
-        if (mostRecentSearch !== '') {
-            fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setStockTimePeriodResults(data.historical.reverse())
-            })
-        }
-    }, [lastSearch])
+    //     if (mostRecentSearch !== '') {
+    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
+    //         .then((res) => {
+    //             return res.json()
+    //         })
+    //         .then((data) => {
+    //             setStockTimePeriodResults(data.historical.reverse())
+    //         })
+    //     }
+    // }, [lastSearch])
 
 
     // useEffect(() => {
@@ -146,40 +146,56 @@ const App = () => {
     // }, [inputValue])
     
 
-    useEffect(() => {
-        if (isLoading === true) {
-            setTimeout(async () => {
-                await fetchStockInfo()
-                .then(([stocks, stockHourly, companyProfile]) => {
-                    setMostRecentSearch(inputValue)
-                    setLastSearch(inputValue)
-                    setStockResults(stocks)
-                    setStockHourlyResults(stockHourly)
-                    setCompanyProfile(companyProfile)
-                })
-            }, 100)
+    // useEffect(() => {
+    //     if (isLoading === true) {
+    //         setTimeout(async () => {
+    //             await fetchStockInfo()
+    //             .then(([stocks, stockHourly, companyProfile]) => {
+    //                 setMostRecentSearch(inputValue)
+    //                 setLastSearch(inputValue)
+    //                 setStockResults(stocks)
+    //                 setStockHourlyResults(stockHourly)
+    //                 setCompanyProfile(companyProfile)
+    //             })
+    //         }, 100)
 
-            setTimeout(() => {
-                setIsLoading(false)
-            }, 1500)
-        }
-    }, [inputValue])
+    //         setTimeout(() => {
+    //             setIsLoading(false)
+    //         }, 1500)
+    //     }
+    // }, [inputValue])
+
+
+    // const abridgedHourlyStockData = 
+    //     stockHourlyResults.slice(0,8).reverse()
+    //     .map((hourStat: any) => {
+    //     return (
+    //         {
+    //             date: dayOrNight(hourStat.date.substr(11, 2)),
+    //             low: hourStat.low,
+    //             high: hourStat.high,
+    //             open: hourStat.open,
+    //             close: hourStat.close,
+    //             volume: hourStat.volume
+    //         }
+    //     )
+    // })
 
 
     const abridgedHourlyStockData = 
-        stockHourlyResults.slice(0,8).reverse()
-        .map((hourStat: any) => {
-        return (
-            {
-                date: dayOrNight(hourStat.date.substr(11, 2)),
-                low: hourStat.low,
-                high: hourStat.high,
-                open: hourStat.open,
-                close: hourStat.close,
-                volume: hourStat.volume
-            }
-        )
-    })
+    store.getState().selectedStock.selectedStockHourlyStats.slice(0,8).reverse()
+    .map((hourStat: any) => {
+    return (
+        {
+            date: dayOrNight(hourStat.date.substr(11, 2)),
+            low: hourStat.low,
+            high: hourStat.high,
+            open: hourStat.open,
+            close: hourStat.close,
+            volume: hourStat.volume
+        }
+    )
+})
 
 
     const displayAllStocksTable = () => {
@@ -190,9 +206,9 @@ const App = () => {
 
     const fetchStockInfo = async () => {
         const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         ])
 
         const stocks = await stockData.json()
@@ -230,7 +246,7 @@ const App = () => {
             }
         })
 
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
         .then((res) => {
             return res.json()
         })
@@ -243,10 +259,10 @@ const App = () => {
         .then((reversedData) => {
             // console.log('reversedData is: ', reversedData)
             // console.log('data.reverse()[0].close is: ', reversedData[0].close)
-            // console.log('stockResults[0].price is: ', stockResults[0].price)
-            // console.log('stockResults[0].price - data.reverse()[0].close is: ', stockResults[0].price - reversedData[0].close)
-            setStockPriceDollarChange(stockResults[0].price - reversedData[0].close)
-            setStockPricePercentChange((stockResults[0].price - reversedData[0].close) / reversedData[0].close)
+            // console.log('store.getState().selectedStock.selectedStockStats[0].price is: ', store.getState().selectedStock.selectedStockStats[0].price)
+            // console.log('store.getState().selectedStock.selectedStockStats[0].price - data.reverse()[0].close is: ', store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close)
+            setStockPriceDollarChange(store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close)
+            setStockPricePercentChange((store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close) / reversedData[0].close)
         })
         .catch((error: string) => {
             console.error(error)
@@ -261,26 +277,53 @@ const App = () => {
     }
 
 
-    const handleSubmit = (e: any) => {
+    // const handleSubmit = (e: any) => {
+    //     e.preventDefault()
+
+    //     if (isLoading === false) {
+    //         setIsLoading(true)
+    //         setTimeout(async () => {
+    //             await fetchStockInfo()
+    //             .then(([stocks, stockHourly, companyProfile]) => {
+    //                     setInputValue(e.target.innerText)
+    //                     setSearchStatesToText(e)
+    //                     setStockResults(stocks)
+    //                     setStockHourlyResults(stockHourly)
+    //                     setCompanyProfile(companyProfile)
+    //                 }).catch((error) => {
+    //                     console.error(error)
+    //                 })
+    //             setAllStocksTableVisability(false)
+    //             displayAllStocksTable()
+    //             setIsReadMore(true)            
+    //         }, 100)
+
+    //     } else if (e.target.innerText === '' || e.target.innerText === null) {
+    //         return false
+    //     } else {
+    //         alert("Please check to see if you have entered a correct stock symbol, then try again.")
+    //     }
+    // }
+
+
+
+    const handleSubmitRedux = (e: any) => {
         e.preventDefault()
 
         if (isLoading === false) {
             setIsLoading(true)
             setTimeout(async () => {
-                await fetchStockInfo()
-                .then(([stocks, stockHourly, companyProfile]) => {
                         setInputValue(e.target.innerText)
                         setSearchStatesToText(e)
-                        setStockResults(stocks)
-                        setStockHourlyResults(stockHourly)
-                        setCompanyProfile(companyProfile)
-                    }).catch((error) => {
-                        console.error(error)
-                    })
+                        console.log(e.target.innerText)
+                        console.log(store.getState())
+                        dispatch(setSubmittedSearchValue('AAPL'))
+                        dispatch(getSelectedStock())
                 setAllStocksTableVisability(false)
                 displayAllStocksTable()
                 setIsReadMore(true)            
             }, 100)
+            setIsLoading(false)
 
         } else if (e.target.innerText === '' || e.target.innerText === null) {
             return false
@@ -290,13 +333,14 @@ const App = () => {
     }
 
 
+
     const onChangeHandle = (e: any) => {
         console.log('value is:', e.target.value)
         setMostRecentSearch(e.target.value.toUpperCase())
         // console.log(mostRecentSearch)
 
         setTimeout(async () => {
-            await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+            await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
             .then((res) => {
                 return res.json()
             })
@@ -310,7 +354,7 @@ const App = () => {
 
 
     const handleOnChange = (e: any) => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         dispatch(setSearchValue(e.target.value))
         console.log(store.getState().search)
     }
@@ -322,7 +366,7 @@ const App = () => {
         let inputRef
 
         return (
-            <form onSubmit={(e) => handleSubmit(e)} className="async-search-field">
+            <form onSubmit={(e) => handleSubmitRedux(e)} className="async-search-field">
                 <button type="submit" className="async-search-button">
                     <img src="search.png" className="async-search-button"/>
                 </button>
@@ -337,7 +381,7 @@ const App = () => {
                         setOpen(false)
                     }}
                     onChange={(e) => {
-                        handleSubmit(e)
+                        handleSubmitRedux(e)
                     }}
                     isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
                     getOptionLabel={option => option.symbol}
@@ -417,7 +461,7 @@ const App = () => {
 
     const chartHeaderPriceStats = () => {
         if (timePeriod === '1D') {
-            return stockResults[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{stockResults[0].change.toFixed(2)} ({stockResults[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockResults[0].change.toFixed(2)} ({stockResults[0].changesPercentage.toFixed(2)}%) Today</h2>
+            return store.getState().selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{store.getState().selectedStock.selectedStockStats[0].change.toFixed(2)} ({store.getState().selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{store.getState().selectedStock.selectedStockStats[0].change.toFixed(2)} ({store.getState().selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
         } else {
             return stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
         }
@@ -428,15 +472,17 @@ const App = () => {
         if (isLoading === true) {
             return <LoadingSpinner />
             
-        } else if (stockResults.length > 0 && stockHourlyResults.length > 0) {
+        // } else if (stockResults.length > 0 && stockHourlyResults.length > 0) {
+        } else if (store.getState().selectedStock.selectedStockStats.length > 0) {
+            console.log('store in stockQuickStats', store.getState())
             console.log('stockResults in stockQuickStats', stockResults)
             return (
                 <div>
                     <div className="stock-header">
                         <Divider orientation="left"></Divider>
-                        {<h1 className="stock-name">{stockResults[0].name} ({stockResults[0].symbol})</h1>} 
+                        {<h1 className="stock-name">{store.getState().selectedStock.selectedStockStats[0].name} ({store.getState().selectedStock.selectedStockStats[0].symbol})</h1>} 
                         <br />
-                        <h1 className="stock-price">${stockResults[0].price.toFixed(2)}</h1> 
+                        <h1 className="stock-price">${store.getState().selectedStock.selectedStockStats[0].price.toFixed(2)}</h1> 
                         <br />
                         {chartHeaderPriceStats()}
                     </div>
@@ -453,31 +499,31 @@ const App = () => {
                     </Col>
                         <Col span={3} offset={7}>
                             <h3 className="h3-left">Market Cap</h3>
-                            <h3 className="h3-about-data">{numberFormat(stockResults[0].marketCap)}</h3>
+                            <h3 className="h3-about-data">{numberFormat(store.getState().selectedStock.selectedStockStats[0].marketCap)}</h3>
                             <h3 className="h3-left">High today</h3>
-                            <h3 className="h3-about-data">${stockResults[0].dayHigh.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].dayHigh.toFixed(2)}</h3>
                             <h3 className="h3-left">52 Week high</h3>
-                            <h3 className="h3-about-data">${stockResults[0].yearHigh.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].yearHigh.toFixed(2)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Price-Earnings ratio</h3>
-                            <h3 className="h3-about-data">{stockResults[0].pe === null ? 0 : stockResults[0].pe.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">{store.getState().selectedStock.selectedStockStats[0].pe === null ? 0 : store.getState().selectedStock.selectedStockStats[0].pe.toFixed(2)}</h3>
                             <h3 className="h3-left">Low today</h3>
-                            <h3 className="h3-about-data">${stockResults[0].dayLow.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].dayLow.toFixed(2)}</h3>
                             <h3 className="h3-left">52 Week low</h3>
-                            <h3 className="h3-about-data">${stockResults[0].yearLow.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].yearLow.toFixed(2)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Dividend yield</h3>
-                            <h3 className="h3-about-data">{companyProfile[0].lastDiv === 0 ? '-' : companyProfile[0].lastDiv.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].lastDiv === 0 ? '-' : store.getState().selectedStock.SelectedStockCompanyInfo[0].lastDiv.toFixed(2)}</h3>
                             <h3 className="h3-left">Open price</h3>
-                            <h3 className="h3-about-data">${stockResults[0].open.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].open.toFixed(2)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Average volume</h3>
-                            <h3 className="h3-about-data">{numberFormat(stockResults[0].avgVolume)}</h3>
+                            <h3 className="h3-about-data">{numberFormat(store.getState().selectedStock.selectedStockStats[0].avgVolume)}</h3>
                             <h3 className="h3-left">Volume</h3>
-                            <h3 className="h3-about-data">{numberFormat(stockResults[0].volume)}</h3>
+                            <h3 className="h3-about-data">{numberFormat(store.getState().selectedStock.selectedStockStats[0].volume)}</h3>
                         </Col>
                     </Row>
                     <br />
@@ -487,7 +533,7 @@ const App = () => {
                         <Divider orientation="left">About</Divider>
                             <h3 className="h3-about">
                             <ReadMore setIsReadMore={setIsReadMore} isReadMore={isReadMore}>
-                                {companyProfile[0].description}
+                                {store.getState().selectedStock.SelectedStockCompanyInfo[0].description}
                             </ReadMore>
                             </h3>  
                         </Col>
@@ -497,19 +543,19 @@ const App = () => {
                     <Row>
                         <Col span={3} offset={7}>
                             <h3 className="h3-left">CEO</h3>
-                            <h3 className="h3-about-data">{companyProfile[0].ceo}</h3>
+                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].ceo}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Employees</h3>
-                            <h3 className="h3-about-data">{companyProfile[0].fullTimeEmployees}</h3>
+                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].fullTimeEmployees}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Headquarters</h3>
-                            <h3 className="h3-about-data">{companyProfile[0].city},<br></br> {toTitleCase(companyProfile[0].state)}</h3>
+                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].city},<br></br> {toTitleCase(store.getState().selectedStock.SelectedStockCompanyInfo[0].state)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">IPO Date</h3>
-                            <h3 className="h3-about-data">{companyProfile[0].ipoDate}</h3>
+                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].ipoDate}</h3>
                         </Col>
                     </Row>
                     <br />
