@@ -3,7 +3,7 @@ import moment from "moment";
 import './App.css';
 import { Table, Col, Divider, Row, Button, Radio, Space , Input, Card} from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import SearchBar from './searchbar/SearchBar';
+import SearchBar from '../components/searchbar/SearchBar';
 // import myStashColumns from '../datatypes/myStashColumns';
 // import snapshotColumns from '../datatypes/snapshotColumns';
 // import timePeriodColumns from '../datatypes/timePeriodColumns';
@@ -11,16 +11,19 @@ import allStocksColumns from '../datatypes/allStocksColumns';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
 
-import AsyncSearchBar from "./searchbar/AsyncSearchBar";
-import ReadMore from "./ReadMore";
+import AsyncSearchBar from "../components/searchbar/AsyncSearchBar";
+import ReadMore from "../components/ReadMore";
 import dayOrNight from "../utils/dayOrNight";
 import toTitleCase from "../utils/toTitleCase";
 import numberFormat from "../utils/numberFormat";
-import HourlyStockChart from "./HourlyStockChart";
-import TimePeriodStockChart from "./TimePeriodStockChart";
-import AllStocksTable from "./AllStocksTable";
+import HourlyStockChart from "../components/HourlyStockChart";
+import TimePeriodStockChart from "../components/TimePeriodStockChart";
+import AllStocksTable from "../components/AllStocksTable";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllStocks } from "../components/allStocksSlice";
+import store, { AppDispatch } from "./store";
 
 
 const App = () => {
@@ -58,20 +61,29 @@ const App = () => {
     //API key#4: 9d711c9bbba5f849bc33c4e46d3a775c -solarlee27
 
 
+    const dispatch = useDispatch<AppDispatch>()
+    const {initialHomePageStocks, appLoading} = useSelector((state: any) => state.totalStocks)
+
     useEffect(() => {   
-        // API Calls for ALL stocks
-        //Endpoint = Symbols List
-        fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
-            const stockData = await res.json()
-            // console.log('stockData[0]:', stockData[0]);
-            setAllStocks(stockData)
-            const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
-            // console.log('list of stock tickers is: ', listOfStockTickers)
-            setStockTickers(listOfStockTickers)
-        }).catch((error) => {
-            console.error(error);
-        });
+        dispatch(getAllStocks())
+        // console.log(initialHomePageStocks)
     }, [])
+
+
+    // useEffect(() => {   
+    //     // API Calls for ALL stocks
+    //     //Endpoint = Symbols List
+    //     fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=4672ed38f1e727b95f8a9cbd22574eed').then(async (res) => {
+    //         const stockData = await res.json()
+    //         // console.log('stockData[0]:', stockData[0]);
+    //         setAllStocks(stockData)
+    //         const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
+    //         // console.log('list of stock tickers is: ', listOfStockTickers)
+    //         setStockTickers(listOfStockTickers)
+    //     }).catch((error) => {
+    //         console.error(error);
+    //     });
+    // }, [])
     
 
     useEffect(() => {
@@ -170,7 +182,7 @@ const App = () => {
 
     const displayAllStocksTable = () => {
         // return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
-        return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={allStocks} /></div> : null
+        return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={initialHomePageStocks} /></div> : null
     }
 
 
