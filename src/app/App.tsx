@@ -21,9 +21,11 @@ import numberFormat from "../utils/numberFormat";
 import HourlyStockChart from "../components/HourlyStockChart";
 import TimePeriodStockChart from "../components/TimePeriodStockChart";
 import AllStocksTable from "../components/AllStocksTable";
+import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
-import store, { AppDispatch } from "./store";
+import { getSelectedStock } from "../components/selectedStockSlice";
+import { setSearchValue } from "../components/searchSlice";
 
 
 const App = () => {
@@ -307,6 +309,13 @@ const App = () => {
     }
 
 
+    const handleOnChange = (e: any) => {
+        console.log(e.target.value)
+        dispatch(setSearchValue(e.target.value))
+        console.log(store.getState().search)
+    }
+
+
     const asyncSearchBar = () => {
         
         //save a reference to the TextField component, and use this ref to focus once another element is clicked (once some event was triggered).
@@ -343,7 +352,8 @@ const App = () => {
                         onChange={e => {
                             // dont fire API if the input is blank or empty
                             if (e.target.value !== '') {
-                                onChangeHandle(e)
+                                // onChangeHandle(e)
+                                handleOnChange(e)
                             }
                         }}
                         inputRef={input => {

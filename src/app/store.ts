@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import allStocksReducer from '../components/allStocksSlice'
 import selectedStockReducer from '../components/selectedStockSlice'
 import appLoadingReducer from  '../components/loadingSlice'
+import searchReducer from '../components/searchSlice'
 
 
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
     totalStocks: allStocksReducer,
     selectedStock: selectedStockReducer,
     appLoading: appLoadingReducer,
+    search: searchReducer,
   },
 })
 
