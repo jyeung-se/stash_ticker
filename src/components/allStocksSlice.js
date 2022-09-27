@@ -5,7 +5,7 @@ export const getAllStocks = createAsyncThunk(
   "allStocks/getAllStocks",
   async () => {
     try {
-      const res = await fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba')
+      const res = await fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=f2fd9f5601de912d73c808de0f575e3f')
       .then((res) => res.json())
       return res
     } catch (error) {

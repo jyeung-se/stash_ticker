@@ -24,35 +24,32 @@ import AllStocksTable from "../components/AllStocksTable";
 import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
-import { getSelectedStock } from "../components/selectedStockSlice";
-import { setSearchValue, setSubmittedSearchValue } from "../components/searchSlice";
+import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays } from "../components/selectedStockSlice";
+import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOptions } from "../components/searchSlice";
 
 
 const App = () => {
 
-  const [error, setError] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [stockTickers, setStockTickers] = useState<any>([])
-  const [allStocks, setAllStocks] = useState<any>([])
-  const [stockResults, setStockResults] = useState<any>([])
-  const [stockHourlyResults, setStockHourlyResults] = useState<any>([])
-  const [mostRecentSearch, setMostRecentSearch] = useState('')
-//   const [stockStash, setStockStash] = useState<any>([])
-  const [allStocksTableVisability, setAllStocksTableVisability] = useState(true)
-  const [timePeriod, setTimePeriod] = useState('1D')
-  const [stockTimePeriodResults, setStockTimePeriodResults] = useState<any>([])
-  const [companyProfile, setCompanyProfile] = useState<any>([])
-//   const [filteredStockTickers, setFilteredStockTickers] = useState<any>([])
-  const [isReadMore, setIsReadMore] = useState(true);
-  const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
-  const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
-  const [lastSearch, setLastSearch] = useState('')
-  const [inputValue, setInputValue] = useState('')
+    const [error, setError] = useState(null)
+    const [timePeriod, setTimePeriod] = useState('1D')
+    const [isReadMore, setIsReadMore] = useState(true);
+    const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
+    const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
 
-  const [open, setOpen] = useState(false)
-  const [options, setOptions] = useState<any>([])
-  const loading = open && options.length === 0
-  
+    const dispatch = useDispatch<AppDispatch>()
+    const search = useSelector((state: any) => state.search)
+    const selectedStock = useSelector((state: any) => state.selectedStock)
+    const {initialHomePageStocks, appLoading} = useSelector((state: any) => state.totalStocks)
+
+    const open = useSelector((state: any) => state.search.searchOpen)
+    const options = useSelector((state: any) => state.search.searchOptions)
+    const searchLoading = useSelector((state: any) => state.selectedStock.searchLoading)
+    const targetDays = useSelector((state: any) => state.selectedStock.targetDays)
+    const selectedStockTimePeriodStats = useSelector((state: any) => state.selectedStock.selectedStockTimePeriodStats.historical) 
+
+
+    const loading = useSelector((state: any) => state.search.typeahead && state.search.searchOptions.length === 0)
+
 
 
     //Each API key has 250 free daily api calls, replace key with the other if hit cap for calls. 
@@ -63,8 +60,6 @@ const App = () => {
     //API key#4: 9d711c9bbba5f849bc33c4e46d3a775c -solarlee27
 
 
-    const dispatch = useDispatch<AppDispatch>()
-    const {initialHomePageStocks, appLoading} = useSelector((state: any) => state.totalStocks)
 
     useEffect(() => {   
         dispatch(getAllStocks())
@@ -72,155 +67,32 @@ const App = () => {
     }, [])
 
 
-    // useEffect(() => {   
-    //     // API Calls for ALL stocks
-    //     //Endpoint = Symbols List
-    //     fetch('https://financialmodelingprep.com/api/v3/stock/list?apikey=82c67b0e070a79fd0ab79b7b1987b6ba').then(async (res) => {
-    //         const stockData = await res.json()
-    //         // console.log('stockData[0]:', stockData[0]);
-    //         setAllStocks(stockData)
-    //         const listOfStockTickers = stockData.map((ticker: any) => ticker.symbol)
-    //         // console.log('list of stock tickers is: ', listOfStockTickers)
-    //         setStockTickers(listOfStockTickers)
-    //     }).catch((error) => {
-    //         console.error(error);
-    //     });
-    // }, [])
-    
-
-    // useEffect(() => {
-    //     const chartButtonDays =  
-    //     [
-    //         {period: '1W', days: 7},
-    //         {period: '1M', days: 30},
-    //         {period: '3M', days: 90},
-    //         {period: '6M', days: 180},
-    //         {period: '1Y', days: 365}
-    //     ]
-        
-    //     let targetDays
-        
-    //     chartButtonDays.map((time) => {
-    //         if (time.period === timePeriod) {
-    //             targetDays = time.days
-    //             // console.log('targetDays is: ', targetDays)
-    //         }
-    //     })
-
-    //     if (mostRecentSearch !== '') {
-    //         fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-    //         .then((res) => {
-    //             return res.json()
-    //         })
-    //         .then((data) => {
-    //             setStockTimePeriodResults(data.historical.reverse())
-    //         })
-    //     }
-    // }, [lastSearch])
-
-
-    // useEffect(() => {
-    //     setIsLoading(true)
-    //     setTimeout(async () => {
-    //         if (stockTickers.includes(inputValue)) {
-    //             await fetchStockInfo()
-    //             .then(([stocks, stockHourly, companyProfile]) => {
-    //                 setMostRecentSearch(inputValue)
-    //                 setLastSearch(inputValue)
-    //                 setStockResults(stocks)
-    //                 setStockHourlyResults(stockHourly)
-    //                 setCompanyProfile(companyProfile)
-    //             }).catch((error) => {
-    //                 console.error(error)
-    //             })
-    //             setAllStocksTableVisability(false)
-    //             displayAllStocksTable()
-    //             setIsReadMore(true)
-    //             }
-    //         }, 100)
-    //         setTimeout(() => {
-    //             setIsLoading(false)
-    //             console.log('stockResults in after inputValue useEffect rerender', stockResults)
-    //         }, 2000)
-
-    // }, [inputValue])
-    
-
-    // useEffect(() => {
-    //     if (isLoading === true) {
-    //         setTimeout(async () => {
-    //             await fetchStockInfo()
-    //             .then(([stocks, stockHourly, companyProfile]) => {
-    //                 setMostRecentSearch(inputValue)
-    //                 setLastSearch(inputValue)
-    //                 setStockResults(stocks)
-    //                 setStockHourlyResults(stockHourly)
-    //                 setCompanyProfile(companyProfile)
-    //             })
-    //         }, 100)
-
-    //         setTimeout(() => {
-    //             setIsLoading(false)
-    //         }, 1500)
-    //     }
-    // }, [inputValue])
-
-
-    // const abridgedHourlyStockData = 
-    //     stockHourlyResults.slice(0,8).reverse()
-    //     .map((hourStat: any) => {
-    //     return (
-    //         {
-    //             date: dayOrNight(hourStat.date.substr(11, 2)),
-    //             low: hourStat.low,
-    //             high: hourStat.high,
-    //             open: hourStat.open,
-    //             close: hourStat.close,
-    //             volume: hourStat.volume
-    //         }
-    //     )
-    // })
-
 
     const abridgedHourlyStockData = 
-    store.getState().selectedStock.selectedStockHourlyStats.slice(0,8).reverse()
+    selectedStock.selectedStockHourlyStats.slice(0,8).reverse()
     .map((hourStat: any) => {
-    return (
-        {
-            date: dayOrNight(hourStat.date.substr(11, 2)),
-            low: hourStat.low,
-            high: hourStat.high,
-            open: hourStat.open,
-            close: hourStat.close,
-            volume: hourStat.volume
-        }
-    )
-})
+        return (
+            {
+                date: dayOrNight(hourStat.date.substr(11, 2)),
+                low: hourStat.low,
+                high: hourStat.high,
+                open: hourStat.open,
+                close: hourStat.close,
+                volume: hourStat.volume
+            }
+        )
+    })
 
 
     const displayAllStocksTable = () => {
         // return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
-        return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={initialHomePageStocks} /></div> : null
+        if (search.submittedSearchValue === '') {
+            return <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={initialHomePageStocks} /></div>
+        }
     }
 
-
-    const fetchStockInfo = async () => {
-        const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-            fetch(`https://financialmodelingprep.com/api/v3/quote/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
-            fetch(`https://financialmodelingprep.com/api/v3/profile/${mostRecentSearch}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-        ])
-
-        const stocks = await stockData.json()
-        const stockHourly = await stockHourlyData.json()
-        const companyProfile = await companyProfileData.json()
-
-        return [stocks, stockHourly, companyProfile]
-    }
-    
 
     const handleTimePeriodChange = (e: any) => {
-        setTimePeriod(e.target.value)
         // console.log('e.target.value is: ', e.target.value)
 
         // use the below for calculating business days between 2 dates. then interpolate into fetch url: targetDays.
@@ -228,104 +100,29 @@ const App = () => {
         let diff = moment('12-01-2021', 'MM-DD-YYYY').businessDiff(moment('12-31-2021','MM-DD-YYYY'))
         // console.log(diff)
 
-        const chartButtonDays =  
-            [
-                {period: '1W', days: 7},
-                {period: '1M', days: 30},
-                {period: '3M', days: 90},
-                {period: '6M', days: 180},
-                {period: '1Y', days: 365}
-            ]
-            
-        let targetDays
-        
-        chartButtonDays.map((time) => {
-            if (time.period === e.target.value) {
-                targetDays = time.days
-                // console.log('targetDays is: ', targetDays)
-            }
-        })
-
-        fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${lastSearch}?timeseries=${targetDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-        .then((res) => {
-            return res.json()
-        })
-        .then((data) => {
-            // console.log('data is: ', data)
-            setStockTimePeriodResults(data.historical.reverse())
-            // console.log('stockTimePeriodResults is: ', stockTimePeriodResults)
-            return data.historical
-        })
-        .then((reversedData) => {
-            // console.log('reversedData is: ', reversedData)
-            // console.log('data.reverse()[0].close is: ', reversedData[0].close)
-            // console.log('store.getState().selectedStock.selectedStockStats[0].price is: ', store.getState().selectedStock.selectedStockStats[0].price)
-            // console.log('store.getState().selectedStock.selectedStockStats[0].price - data.reverse()[0].close is: ', store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close)
-            setStockPriceDollarChange(store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close)
-            setStockPricePercentChange((store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close) / reversedData[0].close)
-        })
-        .catch((error: string) => {
-            console.error(error)
-        })
+        dispatch(setTargetDays(e.target.value))
+        dispatch(getSelectedStockTimePeriod())
     }
-
-  
-    const setSearchStatesToText = (e: any) => {
-        console.log(e.target.innerText)
-        setMostRecentSearch(e.target.innerText)
-        setLastSearch(e.target.innerText)
-    }
-
-
-    // const handleSubmit = (e: any) => {
-    //     e.preventDefault()
-
-    //     if (isLoading === false) {
-    //         setIsLoading(true)
-    //         setTimeout(async () => {
-    //             await fetchStockInfo()
-    //             .then(([stocks, stockHourly, companyProfile]) => {
-    //                     setInputValue(e.target.innerText)
-    //                     setSearchStatesToText(e)
-    //                     setStockResults(stocks)
-    //                     setStockHourlyResults(stockHourly)
-    //                     setCompanyProfile(companyProfile)
-    //                 }).catch((error) => {
-    //                     console.error(error)
-    //                 })
-    //             setAllStocksTableVisability(false)
-    //             displayAllStocksTable()
-    //             setIsReadMore(true)            
-    //         }, 100)
-
-    //     } else if (e.target.innerText === '' || e.target.innerText === null) {
-    //         return false
-    //     } else {
-    //         alert("Please check to see if you have entered a correct stock symbol, then try again.")
-    //     }
-    // }
-
 
 
     const handleSubmitRedux = (e: any) => {
         e.preventDefault()
 
-        if (isLoading === false) {
-            setIsLoading(true)
+        if (searchLoading === false) {
+            dispatch(setSearchLoading())
             setTimeout(async () => {
-                        setInputValue(e.target.innerText)
-                        setSearchStatesToText(e)
-                        console.log(e.target.innerText)
-                        console.log(store.getState())
-                        dispatch(setSubmittedSearchValue('AAPL'))
-                        dispatch(getSelectedStock())
-                setAllStocksTableVisability(false)
+                dispatch(setSubmittedSearchValue(search.searchValue))
+                dispatch(getSelectedStock())
                 displayAllStocksTable()
-                setIsReadMore(true)            
+                setIsReadMore(true)         
             }, 100)
-            setIsLoading(false)
 
-        } else if (e.target.innerText === '' || e.target.innerText === null) {
+            setTimeout(() => {
+                dispatch(setSearchLoading())
+            }, 2000)
+
+        // } else if (e.target.innerText === '' || e.target.innerText === null) {
+        } else if (search.searchValue === '' || search.searchValue === null) {
             return false
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
@@ -333,30 +130,10 @@ const App = () => {
     }
 
 
-
-    const onChangeHandle = (e: any) => {
-        console.log('value is:', e.target.value)
-        setMostRecentSearch(e.target.value.toUpperCase())
-        // console.log(mostRecentSearch)
-
-        setTimeout(async () => {
-            await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${e.target.value.toUpperCase()}&limit=10&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                console.log('data is: ', data)
-                setOptions(data)
-            })
-            // console.log("DelayED for 1.5 second.");
-          }, 1500)
-    }
-
-
-    const handleOnChange = (e: any) => {
-        // console.log(e.target.value)
-        dispatch(setSearchValue(e.target.value))
-        console.log(store.getState().search)
+    const handleSearchOnChange = (e: any) => {
+        console.log(e.target.value)
+        console.log('search.searchOpen is', search.searchOpen)
+        dispatch(setSearchValue(e.target.value.toUpperCase()))
     }
 
 
@@ -375,17 +152,16 @@ const App = () => {
                     style={{ width: 300 }}
                     open={open}
                     onOpen={() => {
-                        setOpen(true)
+                        // setOpen(true)
+                        dispatch(setTypeaheadOpen())
                     }}
                     onClose={() => {
-                        setOpen(false)
-                    }}
-                    onChange={(e) => {
-                        handleSubmitRedux(e)
+                        // setOpen(false)
+                        dispatch(setTypeaheadOpen())
                     }}
                     isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
                     getOptionLabel={option => option.symbol}
-                    options={mostRecentSearch !== "" ? options : [{symbol: '-'}]}
+                    options={Array.isArray(options) && options.length > 0 ? options : [{symbol: '-'}]}
                     loading={loading}
                     disableClearable
                     renderInput={params => (
@@ -395,9 +171,14 @@ const App = () => {
                         variant="standard"
                         onChange={e => {
                             // dont fire API if the input is blank or empty
-                            if (e.target.value !== '') {
+                            console.log(e.target.value)
+                            if (e.target.value !== '' || e.target.value !== null) {
                                 // onChangeHandle(e)
-                                handleOnChange(e)
+                                handleSearchOnChange(e)
+                                setTimeout(() => {
+                                    dispatch(getSearchOptions())
+                                }, 1500)
+                                console.log(search)
                             }
                         }}
                         inputRef={input => {
@@ -408,7 +189,7 @@ const App = () => {
                             ...params.InputProps,
                             endAdornment: (
                             <React.Fragment>
-                                {mostRecentSearch !== "" ? (loading ? <CircularProgress color="inherit" size={20} /> : null) : null}
+                                {search.searchValue !== "" ? (loading ? <CircularProgress color="inherit" size={20} /> : null) : null}
                                 {params.InputProps.endAdornment}
                             </React.Fragment>
                             )
@@ -438,7 +219,7 @@ const App = () => {
         
         const allButtons = chartTimePeriods.map((time) => {
             return (
-                <Radio.Group key={time} value={timePeriod} onChange={e => handleTimePeriodChange(e)}>
+                <Radio.Group key={time} value={selectedStock.targetDays} onChange={e => handleTimePeriodChange(e)}>
                     <Radio.Button value={time}>{time}</Radio.Button>
                 </Radio.Group>
             )
@@ -450,12 +231,13 @@ const App = () => {
 
 
     const showSelectedPeriodChart = () => {
-        if (timePeriod === '1D') {
+        if (targetDays === '1D') {
             // return hourlyStockChart()
             return <HourlyStockChart abridgedHourlyStockData={abridgedHourlyStockData} /> 
         }
         // return timePeriodStockChart()
-        return <TimePeriodStockChart stockTimePeriodResults={stockTimePeriodResults} />
+        return <TimePeriodStockChart stockTimePeriodResults={selectedStockTimePeriodStats} />
+        // return <TimePeriodStockChart stockTimePeriodResults={stockTimePeriodResults} />
     }
 
 
@@ -469,20 +251,18 @@ const App = () => {
 
 
     const stockQuickStats = () => {
-        if (isLoading === true) {
+        if (searchLoading === true) {
             return <LoadingSpinner />
             
         // } else if (stockResults.length > 0 && stockHourlyResults.length > 0) {
-        } else if (store.getState().selectedStock.selectedStockStats.length > 0) {
-            console.log('store in stockQuickStats', store.getState())
-            console.log('stockResults in stockQuickStats', stockResults)
+        } else if (selectedStock.selectedStockStats.length > 0) {
             return (
                 <div>
                     <div className="stock-header">
                         <Divider orientation="left"></Divider>
-                        {<h1 className="stock-name">{store.getState().selectedStock.selectedStockStats[0].name} ({store.getState().selectedStock.selectedStockStats[0].symbol})</h1>} 
+                        {<h1 className="stock-name">{selectedStock.selectedStockStats[0].name} ({selectedStock.selectedStockStats[0].symbol})</h1>} 
                         <br />
-                        <h1 className="stock-price">${store.getState().selectedStock.selectedStockStats[0].price.toFixed(2)}</h1> 
+                        <h1 className="stock-price">${selectedStock.selectedStockStats[0].price.toFixed(2)}</h1> 
                         <br />
                         {chartHeaderPriceStats()}
                     </div>
@@ -499,31 +279,31 @@ const App = () => {
                     </Col>
                         <Col span={3} offset={7}>
                             <h3 className="h3-left">Market Cap</h3>
-                            <h3 className="h3-about-data">{numberFormat(store.getState().selectedStock.selectedStockStats[0].marketCap)}</h3>
+                            <h3 className="h3-about-data">{numberFormat(selectedStock.selectedStockStats[0].marketCap)}</h3>
                             <h3 className="h3-left">High today</h3>
-                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].dayHigh.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${selectedStock.selectedStockStats[0].dayHigh.toFixed(2)}</h3>
                             <h3 className="h3-left">52 Week high</h3>
-                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].yearHigh.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${selectedStock.selectedStockStats[0].yearHigh.toFixed(2)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Price-Earnings ratio</h3>
-                            <h3 className="h3-about-data">{store.getState().selectedStock.selectedStockStats[0].pe === null ? 0 : store.getState().selectedStock.selectedStockStats[0].pe.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockStats[0].pe === null ? 0 : selectedStock.selectedStockStats[0].pe.toFixed(2)}</h3>
                             <h3 className="h3-left">Low today</h3>
-                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].dayLow.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${selectedStock.selectedStockStats[0].dayLow.toFixed(2)}</h3>
                             <h3 className="h3-left">52 Week low</h3>
-                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].yearLow.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${selectedStock.selectedStockStats[0].yearLow.toFixed(2)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Dividend yield</h3>
-                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].lastDiv === 0 ? '-' : store.getState().selectedStock.SelectedStockCompanyInfo[0].lastDiv.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].lastDiv === 0 ? '-' : selectedStock.selectedStockCompanyInfo[0].lastDiv.toFixed(2)}</h3>
                             <h3 className="h3-left">Open price</h3>
-                            <h3 className="h3-about-data">${store.getState().selectedStock.selectedStockStats[0].open.toFixed(2)}</h3>
+                            <h3 className="h3-about-data">${selectedStock.selectedStockStats[0].open.toFixed(2)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Average volume</h3>
-                            <h3 className="h3-about-data">{numberFormat(store.getState().selectedStock.selectedStockStats[0].avgVolume)}</h3>
+                            <h3 className="h3-about-data">{numberFormat(selectedStock.selectedStockStats[0].avgVolume)}</h3>
                             <h3 className="h3-left">Volume</h3>
-                            <h3 className="h3-about-data">{numberFormat(store.getState().selectedStock.selectedStockStats[0].volume)}</h3>
+                            <h3 className="h3-about-data">{numberFormat(selectedStock.selectedStockStats[0].volume)}</h3>
                         </Col>
                     </Row>
                     <br />
@@ -533,7 +313,7 @@ const App = () => {
                         <Divider orientation="left">About</Divider>
                             <h3 className="h3-about">
                             <ReadMore setIsReadMore={setIsReadMore} isReadMore={isReadMore}>
-                                {store.getState().selectedStock.SelectedStockCompanyInfo[0].description}
+                                {selectedStock.selectedStockCompanyInfo[0].description}
                             </ReadMore>
                             </h3>  
                         </Col>
@@ -543,19 +323,19 @@ const App = () => {
                     <Row>
                         <Col span={3} offset={7}>
                             <h3 className="h3-left">CEO</h3>
-                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].ceo}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].ceo}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Employees</h3>
-                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].fullTimeEmployees}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].fullTimeEmployees}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Headquarters</h3>
-                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].city},<br></br> {toTitleCase(store.getState().selectedStock.SelectedStockCompanyInfo[0].state)}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].city},<br></br> {toTitleCase(selectedStock.selectedStockCompanyInfo[0].state)}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">IPO Date</h3>
-                            <h3 className="h3-about-data">{store.getState().selectedStock.SelectedStockCompanyInfo[0].ipoDate}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].ipoDate}</h3>
                         </Col>
                     </Row>
                     <br />
@@ -575,10 +355,8 @@ const App = () => {
             <br />
             {asyncSearchBar()}
             {/* <AsyncSearchBar handleSubmit={handleSubmit} onChangeHandle={onChangeHandle} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} options={options} setOptions={setOptions} open={open} setOpen={setOpen} /> */}
-            {/* <SearchBar handleSubmit={handleSubmit} setMostRecentSearch={setMostRecentSearch} mostRecentSearch={mostRecentSearch} /> */}
             {displayAllStocksTable()}
             {stockQuickStats()}
-            {/* {isLoading ? <LoadingSpinner /> : ((stockResults.length > 0 && stockHourlyResults.length > 0) ? stockQuickStats() : null)} */}
         </div>
     )
 }
