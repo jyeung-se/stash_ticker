@@ -24,7 +24,7 @@ import AllStocksTable from "../components/AllStocksTable";
 import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
-import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays } from "../components/selectedStockSlice";
+import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays, setStockPriceDollarChange, setStockPricePercentChange } from "../components/selectedStockSlice";
 import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOptions } from "../components/searchSlice";
 
 
@@ -232,18 +232,15 @@ const App = () => {
 
     const showSelectedPeriodChart = () => {
         if (targetDays === '1D') {
-            // return hourlyStockChart()
             return <HourlyStockChart abridgedHourlyStockData={abridgedHourlyStockData} /> 
         }
-        // return timePeriodStockChart()
         return <TimePeriodStockChart stockTimePeriodResults={selectedStockTimePeriodStats} />
-        // return <TimePeriodStockChart stockTimePeriodResults={stockTimePeriodResults} />
     }
 
 
     const chartHeaderPriceStats = () => {
         if (timePeriod === '1D') {
-            return store.getState().selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{store.getState().selectedStock.selectedStockStats[0].change.toFixed(2)} ({store.getState().selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{store.getState().selectedStock.selectedStockStats[0].change.toFixed(2)} ({store.getState().selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
+            return selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
         } else {
             return stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
         }
@@ -264,7 +261,7 @@ const App = () => {
                         <br />
                         <h1 className="stock-price">${selectedStock.selectedStockStats[0].price.toFixed(2)}</h1> 
                         <br />
-                        {chartHeaderPriceStats()}
+                        {store.getState().selectedStock.selectedStockStats ? chartHeaderPriceStats() : null}
                     </div>
                     {showSelectedPeriodChart()}
                     <br />
@@ -331,7 +328,7 @@ const App = () => {
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">Headquarters</h3>
-                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].city},<br></br> {toTitleCase(selectedStock.selectedStockCompanyInfo[0].state)}</h3>
+                            <h3 className="h3-about-data">{selectedStock.selectedStockCompanyInfo[0].city !== null ? toTitleCase(selectedStock.selectedStockCompanyInfo[0].city) : null},<br></br> {selectedStock.selectedStockCompanyInfo[0].state !== null ? toTitleCase(selectedStock.selectedStockCompanyInfo[0].state) : null}</h3>
                         </Col>
                         <Col span={3}>
                             <h3 className="h3-left">IPO Date</h3>

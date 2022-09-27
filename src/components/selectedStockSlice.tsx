@@ -7,9 +7,9 @@ export const getSelectedStock: any = createAsyncThunk(
   async () => {
     try {
     const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=f2fd9f5601de912d73c808de0f575e3f`),
-      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=f2fd9f5601de912d73c808de0f575e3f`),
-      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=f2fd9f5601de912d73c808de0f575e3f`)
+      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`)
     ])
 
     const stocks = await stockData.json()
@@ -45,7 +45,7 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
     })
 
     try {
-      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=f2fd9f5601de912d73c808de0f575e3f`)
+      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
       const stockTimePeriod = await stockData.json()
         .then((data) => {
             return data
@@ -73,10 +73,14 @@ export const selectedStockSlice = createSlice({
     selectedStockCompanyInfo: [],
     selectedStockTimePeriodStats: [],
     targetDays: '1D',
+    stockPriceDollarChange: 0,
+    stockPricePercentChange: 0,
   },
   reducers: {
     setSearchLoading: (state) => {state.searchLoading = !state.searchLoading},
     setTargetDays: (state, action) => {state.targetDays = action.payload},
+    setStockPriceDollarChange: (state, action) => {state.stockPriceDollarChange = action.payload},
+    setStockPricePercentChange: (state, action) => {state.stockPricePercentChange = action.payload},
   },
   extraReducers: {
     // [getSelectedStock.pending]: (state) => {
@@ -105,6 +109,6 @@ export const selectedStockSlice = createSlice({
   }
 })
 
-export const { setSearchLoading, setTargetDays } = selectedStockSlice.actions
+export const { setSearchLoading, setTargetDays, setStockPriceDollarChange, setStockPricePercentChange } = selectedStockSlice.actions
 export default selectedStockSlice.reducer
 

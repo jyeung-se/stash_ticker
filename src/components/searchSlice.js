@@ -6,7 +6,7 @@ export const getSearchOptions = createAsyncThunk(
   "search/getSearchOptions",
   async () => {
     try {
-      const res = await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${store.getState().search.searchValue}&limit=10&apikey=f2fd9f5601de912d73c808de0f575e3f`)
+      const res = await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${store.getState().search.searchValue}&limit=10&apikey=0fbc3128ecb93418721f51d266327cd4`)
       .then((res) => res.json())
       console.log('typeahead stock symbols', res)
       return res
