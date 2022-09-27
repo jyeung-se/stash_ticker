@@ -7,9 +7,9 @@ export const getSelectedStock: any = createAsyncThunk(
   async () => {
     try {
     const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`)
+      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
+      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
     ])
 
     const stocks = await stockData.json()
@@ -45,10 +45,11 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
     })
 
     try {
-      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
       const stockTimePeriod = await stockData.json()
         .then((data) => {
-            return data
+          console.log(data)
+            return data.historical.reverse()
         })
 
       return stockTimePeriod
@@ -61,7 +62,6 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
     }
   }
 )
-
 
 
 export const selectedStockSlice = createSlice({
@@ -88,13 +88,14 @@ export const selectedStockSlice = createSlice({
     // },
     [getSelectedStock.fulfilled]: (state, action) => {
       // state.searchLoading = false
+      console.log(action.payload)
       state.selectedStockStats = action.payload[0]
       state.selectedStockHourlyStats = action.payload[1]
       state.selectedStockCompanyInfo = action.payload[2]
     },
-    // [getSelectedStock.rejected]: (state) => {
-    //   state.searchLoading = false
-    // },
+    [getSelectedStock.rejected]: (state) => {
+      state.searchLoading = false
+    },
 
     // [getSelectedStockTimePeriod.pending]: (state) => {
     //   state.searchLoading = true
@@ -103,9 +104,9 @@ export const selectedStockSlice = createSlice({
       // state.searchLoading = false
       state.selectedStockTimePeriodStats = action.payload
     },
-    // [getSelectedStockTimePeriod.rejected]: (state) => {
-    //   state.searchLoading = false
-    // }
+    [getSelectedStockTimePeriod.rejected]: (state) => {
+      state.searchLoading = false
+    }
   }
 })
 

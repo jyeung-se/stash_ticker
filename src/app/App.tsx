@@ -31,7 +31,7 @@ import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOpt
 const App = () => {
 
     const [error, setError] = useState(null)
-    const [timePeriod, setTimePeriod] = useState('1D')
+    // const [timePeriod, setTimePeriod] = useState('1D')
     const [isReadMore, setIsReadMore] = useState(true);
     const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
     const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
@@ -45,7 +45,7 @@ const App = () => {
     const options = useSelector((state: any) => state.search.searchOptions)
     const searchLoading = useSelector((state: any) => state.selectedStock.searchLoading)
     const targetDays = useSelector((state: any) => state.selectedStock.targetDays)
-    const selectedStockTimePeriodStats = useSelector((state: any) => state.selectedStock.selectedStockTimePeriodStats.historical) 
+    const selectedStockTimePeriodStats = useSelector((state: any) => state.selectedStock.selectedStockTimePeriodStats) 
 
 
     const loading = useSelector((state: any) => state.search.typeahead && state.search.searchOptions.length === 0)
@@ -58,14 +58,13 @@ const App = () => {
     //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
     //API key#4: 0fbc3128ecb93418721f51d266327cd4 -jaysolarlee
     //API key#4: 9d711c9bbba5f849bc33c4e46d3a775c -solarlee27
-
+    //API key#4: 04ca01ddef8b21144591ac6ddca362d4 -jsolarislee
 
 
     useEffect(() => {   
         dispatch(getAllStocks())
         // console.log(initialHomePageStocks)
     }, [])
-
 
 
     const abridgedHourlyStockData = 
@@ -105,23 +104,20 @@ const App = () => {
     }
 
 
-    const handleSubmitRedux = (e: any) => {
+    const handleSubmitForm = (e: any) => {
         e.preventDefault()
 
         if (searchLoading === false) {
             dispatch(setSearchLoading())
-            setTimeout(async () => {
+            setTimeout(() => {
                 dispatch(setSubmittedSearchValue(search.searchValue))
                 dispatch(getSelectedStock())
-                displayAllStocksTable()
                 setIsReadMore(true)         
             }, 100)
 
             setTimeout(() => {
                 dispatch(setSearchLoading())
             }, 2000)
-
-        // } else if (e.target.innerText === '' || e.target.innerText === null) {
         } else if (search.searchValue === '' || search.searchValue === null) {
             return false
         } else {
@@ -130,10 +126,34 @@ const App = () => {
     }
 
 
-    const handleSearchOnChange = (e: any) => {
-        console.log(e.target.value)
-        console.log('search.searchOpen is', search.searchOpen)
-        dispatch(setSearchValue(e.target.value.toUpperCase()))
+    const handleSubmitAutocomplete = (e: any, value: any) => {
+        e.preventDefault()
+
+        if (searchLoading === false) {
+            dispatch(setSearchLoading())
+            setTimeout(() => {
+                dispatch(setSubmittedSearchValue(value.symbol))
+                dispatch(getSelectedStock())
+                setIsReadMore(true)         
+            }, 100)
+
+            setTimeout(() => {
+                dispatch(setSearchLoading())
+            }, 2000)
+        } else if (value.symbol === '' || value.symbol === null) {
+            return false
+        } else {
+            alert("Please check to see if you have entered a correct stock symbol, then try again.")
+        }
+    }
+
+
+    const handleSearchOnChange = (e: any, value: any) => {
+        console.log('e: ', e)
+        console.log('value: ', value)
+        dispatch(setSearchValue(value.symbol.toUpperCase()))
+        dispatch(setSubmittedSearchValue(value.symbol.toUpperCase()))
+        handleSubmitAutocomplete(e, value)
     }
 
 
@@ -143,7 +163,7 @@ const App = () => {
         let inputRef
 
         return (
-            <form onSubmit={(e) => handleSubmitRedux(e)} className="async-search-field">
+            <form onSubmit={(e) => handleSubmitForm(e)} className="async-search-field">
                 <button type="submit" className="async-search-button">
                     <img src="search.png" className="async-search-button"/>
                 </button>
@@ -152,13 +172,12 @@ const App = () => {
                     style={{ width: 300 }}
                     open={open}
                     onOpen={() => {
-                        // setOpen(true)
                         dispatch(setTypeaheadOpen())
                     }}
                     onClose={() => {
-                        // setOpen(false)
                         dispatch(setTypeaheadOpen())
                     }}
+                    onChange={(e, value) => handleSearchOnChange(e, value)}
                     isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
                     getOptionLabel={option => option.symbol}
                     options={Array.isArray(options) && options.length > 0 ? options : [{symbol: '-'}]}
@@ -173,12 +192,10 @@ const App = () => {
                             // dont fire API if the input is blank or empty
                             console.log(e.target.value)
                             if (e.target.value !== '' || e.target.value !== null) {
-                                // onChangeHandle(e)
-                                handleSearchOnChange(e)
+                                dispatch(setSearchValue(e.target.value.toUpperCase()))
                                 setTimeout(() => {
                                     dispatch(getSearchOptions())
                                 }, 1500)
-                                console.log(search)
                             }
                         }}
                         inputRef={input => {
@@ -233,13 +250,22 @@ const App = () => {
     const showSelectedPeriodChart = () => {
         if (targetDays === '1D') {
             return <HourlyStockChart abridgedHourlyStockData={abridgedHourlyStockData} /> 
+        } else {
+            // dispatch(setStockPriceDollarChange(selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[-1].close))
+            // dispatch(setStockPriceDollarChange((selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[-1].close) / selectedStock.selectedStockTimePeriodStats[-1].close))
+            
+            // CONTINUE OFF HERE: CORRECTLY UPDATE DOLLAR AND PERCENT CHANGE ON BUTTON CLICKS FOR DIFFERENT TIME PERIODS
+        
+            console.log(selectedStock)
+            // dispatch(setStockPriceDollarChange())
+            // dispatch(setStockPricePercentChange())
+            return <TimePeriodStockChart stockTimePeriodResults={selectedStockTimePeriodStats} />
         }
-        return <TimePeriodStockChart stockTimePeriodResults={selectedStockTimePeriodStats} />
     }
 
 
     const chartHeaderPriceStats = () => {
-        if (timePeriod === '1D') {
+        if (targetDays === '1D') {
             return selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
         } else {
             return stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
