@@ -24,7 +24,7 @@ import AllStocksTable from "../components/AllStocksTable";
 import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
-import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays, setStockPriceDollarChange, setStockPricePercentChange } from "../components/selectedStockSlice";
+import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays} from "../components/selectedStockSlice";
 import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOptions } from "../components/searchSlice";
 
 
@@ -154,6 +154,7 @@ const App = () => {
         dispatch(setSearchValue(value.symbol.toUpperCase()))
         dispatch(setSubmittedSearchValue(value.symbol.toUpperCase()))
         handleSubmitAutocomplete(e, value)
+
     }
 
 
@@ -251,12 +252,12 @@ const App = () => {
         if (targetDays === '1D') {
             return <HourlyStockChart abridgedHourlyStockData={abridgedHourlyStockData} /> 
         } else {
-            // dispatch(setStockPriceDollarChange(selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[-1].close))
-            // dispatch(setStockPriceDollarChange((selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[-1].close) / selectedStock.selectedStockTimePeriodStats[-1].close))
+            console.log(selectedStock)
+            // dispatch(setStockPriceDollarChange(selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close))
+            // dispatch(setStockPricePercentChange((selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close) / selectedStock.selectedStockTimePeriodStats[0].close))
             
             // CONTINUE OFF HERE: CORRECTLY UPDATE DOLLAR AND PERCENT CHANGE ON BUTTON CLICKS FOR DIFFERENT TIME PERIODS
         
-            console.log(selectedStock)
             // dispatch(setStockPriceDollarChange())
             // dispatch(setStockPricePercentChange())
             return <TimePeriodStockChart stockTimePeriodResults={selectedStockTimePeriodStats} />

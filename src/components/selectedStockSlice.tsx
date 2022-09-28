@@ -53,10 +53,9 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
         })
 
       return stockTimePeriod
-      // .then((reversedData) => {
-      //     setStockPriceDollarChange(store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close)
-      //     setStockPricePercentChange((store.getState().selectedStock.selectedStockStats[0].price - reversedData[0].close) / reversedData[0].close)
-      // })
+
+        // dispatch(setStockPriceDollarChange(selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close))
+        // dispatch(setStockPriceDollarChange((selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close) / selectedStock.selectedStockTimePeriodStats[0].close))
     } catch (error) {
       console.error(error)
     }
