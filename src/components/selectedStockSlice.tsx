@@ -7,9 +7,9 @@ export const getSelectedStock: any = createAsyncThunk(
   async () => {
     try {
     const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=4672ed38f1e727b95f8a9cbd22574eed`),
-      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
+      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`)
     ])
 
     const stocks = await stockData.json()
@@ -45,10 +45,10 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
     })
 
     try {
-      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
       const stockTimePeriod = await stockData.json()
         .then((data) => {
-          console.log(data)
+          // console.log(data)
             return data.historical.reverse()
         })
 
@@ -78,8 +78,20 @@ export const selectedStockSlice = createSlice({
   reducers: {
     setSearchLoading: (state) => {state.searchLoading = !state.searchLoading},
     setTargetDays: (state, action) => {state.targetDays = action.payload},
-    setStockPriceDollarChange: (state, action) => {state.stockPriceDollarChange = action.payload},
-    setStockPricePercentChange: (state, action) => {state.stockPricePercentChange = action.payload},
+    setStockPriceDollarChange: (state: any) => {
+      // if (state.targetDays !== '1D') {
+        state.stockPriceDollarChange = state.selectedStockStats[0].price - state.selectedStockTimePeriodStats[0].close
+      // } else {
+      //   state.stockPriceDollarChange = state.stockPriceDollarChange
+      // }
+    },
+    setStockPricePercentChange: (state: any) => {
+      // if (state.targetDays !== '1D') {
+      state.stockPricePercentChange = (state.selectedStockStats[0].price - state.selectedStockTimePeriodStats[0].close) / state.selectedStockTimePeriodStats[0].close
+      // } else {
+      //   state.stockPricePercentChange = state.stockPricePercentChange
+      // }
+    },
   },
   extraReducers: {
     // [getSelectedStock.pending]: (state) => {

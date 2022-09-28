@@ -24,19 +24,17 @@ import AllStocksTable from "../components/AllStocksTable";
 import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
-import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays} from "../components/selectedStockSlice";
+import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays, setStockPriceDollarChange, setStockPricePercentChange} from "../components/selectedStockSlice";
 import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOptions } from "../components/searchSlice";
 
 
 const App = () => {
 
     const [error, setError] = useState(null)
-    // const [timePeriod, setTimePeriod] = useState('1D')
     const [isReadMore, setIsReadMore] = useState(true);
-    const [stockPriceDollarChange, setStockPriceDollarChange] = useState(0)
-    const [stockPricePercentChange, setStockPricePercentChange] = useState(0)
 
     const dispatch = useDispatch<AppDispatch>()
+    const globalState = useSelector((state: any) => state)
     const search = useSelector((state: any) => state.search)
     const selectedStock = useSelector((state: any) => state.selectedStock)
     const {initialHomePageStocks, appLoading} = useSelector((state: any) => state.totalStocks)
@@ -61,10 +59,28 @@ const App = () => {
     //API key#4: 04ca01ddef8b21144591ac6ddca362d4 -jsolarislee
 
 
-    useEffect(() => {   
+    useEffect(() => {
         dispatch(getAllStocks())
-        // console.log(initialHomePageStocks)
+        // console.log(store.getState)
     }, [])
+
+
+    useEffect(() => {
+        console.log(globalState)
+        if (search.submittedSearchValue !== '') {
+            dispatch(getSelectedStockTimePeriod())
+        }
+    }, [search.submittedSearchValue])
+
+
+    useEffect(() => {
+        if (targetDays !== '1D') {
+            dispatch(setStockPriceDollarChange())
+            dispatch(setStockPricePercentChange())
+        }
+        console.log(globalState)
+    }, [selectedStockTimePeriodStats])
+
 
 
     const abridgedHourlyStockData = 
@@ -84,7 +100,6 @@ const App = () => {
 
 
     const displayAllStocksTable = () => {
-        // return allStocksTableVisability === true ? <div><br /><h2>All Companies</h2> <br></br> {allStocksTable()}</div> : null
         if (search.submittedSearchValue === '') {
             return <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={initialHomePageStocks} /></div>
         }
@@ -98,9 +113,10 @@ const App = () => {
         const moment = require('moment-business-days')
         let diff = moment('12-01-2021', 'MM-DD-YYYY').businessDiff(moment('12-31-2021','MM-DD-YYYY'))
         // console.log(diff)
-
+        
         dispatch(setTargetDays(e.target.value))
         dispatch(getSelectedStockTimePeriod())
+
     }
 
 
@@ -127,7 +143,6 @@ const App = () => {
 
 
     const handleSubmitAutocomplete = (e: any, value: any) => {
-        e.preventDefault()
 
         if (searchLoading === false) {
             dispatch(setSearchLoading())
@@ -151,8 +166,8 @@ const App = () => {
     const handleSearchOnChange = (e: any, value: any) => {
         console.log('e: ', e)
         console.log('value: ', value)
-        dispatch(setSearchValue(value.symbol.toUpperCase()))
-        dispatch(setSubmittedSearchValue(value.symbol.toUpperCase()))
+        // dispatch(setSearchValue(value.symbol.toUpperCase()))
+        // dispatch(setSubmittedSearchValue(value.symbol.toUpperCase()))
         handleSubmitAutocomplete(e, value)
 
     }
@@ -252,14 +267,6 @@ const App = () => {
         if (targetDays === '1D') {
             return <HourlyStockChart abridgedHourlyStockData={abridgedHourlyStockData} /> 
         } else {
-            console.log(selectedStock)
-            // dispatch(setStockPriceDollarChange(selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close))
-            // dispatch(setStockPricePercentChange((selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close) / selectedStock.selectedStockTimePeriodStats[0].close))
-            
-            // CONTINUE OFF HERE: CORRECTLY UPDATE DOLLAR AND PERCENT CHANGE ON BUTTON CLICKS FOR DIFFERENT TIME PERIODS
-        
-            // dispatch(setStockPriceDollarChange())
-            // dispatch(setStockPricePercentChange())
             return <TimePeriodStockChart stockTimePeriodResults={selectedStockTimePeriodStats} />
         }
     }
@@ -269,7 +276,7 @@ const App = () => {
         if (targetDays === '1D') {
             return selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
         } else {
-            return stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{stockPriceDollarChange.toFixed(2)} ({(stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
+            return selectedStock.stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.stockPriceDollarChange.toFixed(2)} ({(selectedStock.stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.stockPriceDollarChange.toFixed(2)} ({(selectedStock.stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
         }
     }
 

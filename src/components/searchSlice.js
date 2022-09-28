@@ -6,7 +6,7 @@ export const getSearchOptions = createAsyncThunk(
   "search/getSearchOptions",
   async () => {
     try {
-      const res = await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${store.getState().search.searchValue}&limit=10&apikey=4672ed38f1e727b95f8a9cbd22574eed`)
+      const res = await fetch(`https://financialmodelingprep.com/api/v3/search-ticker?query=${store.getState().search.searchValue}&limit=10&apikey=0fbc3128ecb93418721f51d266327cd4`)
       .then((res) => res.json())
       // console.log('typeahead stock symbols', res)
       return res
@@ -29,7 +29,6 @@ export const searchSlice = createSlice({
     reducers: {
       setTypeaheadOpen: (state) => {state.typeahead = !state.typeahead},
       setSearchValue: (state, action) => {state.searchValue = action.payload},
-      setTextInputValue: (state, action) => {state.textInputValue = action.payload},
       setSubmittedSearchValue: (state, action) => {state.submittedSearchValue = action.payload},
       setSearchOptions: (state, action) => {state.searchOptions = action.payload}
     },
