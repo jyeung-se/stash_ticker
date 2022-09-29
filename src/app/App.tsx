@@ -25,19 +25,19 @@ import store, { AppDispatch } from "./store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllStocks } from "../components/allStocksSlice";
 import { getSelectedStock, getSelectedStockTimePeriod, setSearchLoading, setTargetDays, setStockPriceDollarChange, setStockPricePercentChange} from "../components/selectedStockSlice";
-import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOptions } from "../components/searchSlice";
+import { setTypeaheadOpen, setSearchValue, setSubmittedSearchValue, getSearchOptions, setSearchOptions } from "../components/searchSlice";
 
 
 const App = () => {
 
     const [error, setError] = useState(null)
-    const [isReadMore, setIsReadMore] = useState(true);
+    const [isReadMore, setIsReadMore] = useState(true)
 
     const dispatch = useDispatch<AppDispatch>()
     const globalState = useSelector((state: any) => state)
     const search = useSelector((state: any) => state.search)
     const selectedStock = useSelector((state: any) => state.selectedStock)
-    const {initialHomePageStocks, appLoading} = useSelector((state: any) => state.totalStocks)
+    const allStocks = useSelector((state: any) => state.totalStocks)
 
     const open = useSelector((state: any) => state.search.searchOpen)
     const options = useSelector((state: any) => state.search.searchOptions)
@@ -55,20 +55,24 @@ const App = () => {
     //API key#2: 82c67b0e070a79fd0ab79b7b1987b6ba -yahoo
     //API key#3: f2fd9f5601de912d73c808de0f575e3f -skid
     //API key#4: 0fbc3128ecb93418721f51d266327cd4 -jaysolarlee
-    //API key#4: 9d711c9bbba5f849bc33c4e46d3a775c -solarlee27
-    //API key#4: 04ca01ddef8b21144591ac6ddca362d4 -jsolarislee
+    //API key#5: 9d711c9bbba5f849bc33c4e46d3a775c -solarlee27
+    //API key#6: 04ca01ddef8b21144591ac6ddca362d4 -jsolarislee
+    //API key#7: 61ffb513d814a72f80ce47e060b1e7a2 -jsolarlee3
+
 
 
     useEffect(() => {
+        // const stockSymbolList = allStocks.initialHomePageStocks.map((stock: any) => {
+        //     return stock.symbol
+        // })
         dispatch(getAllStocks())
-        // console.log(store.getState)
     }, [])
 
 
     useEffect(() => {
-        console.log(globalState)
-        if (search.submittedSearchValue !== '') {
+        if (search.submittedSearchValue !== '' && targetDays !== '1D') {
             dispatch(getSelectedStockTimePeriod())
+            dispatch(setTargetDays('1D'))
         }
     }, [search.submittedSearchValue])
 
@@ -78,7 +82,6 @@ const App = () => {
             dispatch(setStockPriceDollarChange())
             dispatch(setStockPricePercentChange())
         }
-        console.log(globalState)
     }, [selectedStockTimePeriodStats])
 
 
@@ -101,7 +104,7 @@ const App = () => {
 
     const displayAllStocksTable = () => {
         if (search.submittedSearchValue === '') {
-            return <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={initialHomePageStocks} /></div>
+            return <div><br /><h2>All Companies</h2> <br></br> <AllStocksTable allStocks={allStocks.initialHomePageStocks} /></div>
         }
     }
 
@@ -123,17 +126,18 @@ const App = () => {
     const handleSubmitForm = (e: any) => {
         e.preventDefault()
 
-        if (searchLoading === false) {
+        if (searchLoading === false && allStocks.stockTickers.includes(search.searchValue)) {
             dispatch(setSearchLoading())
-            setTimeout(() => {
-                dispatch(setSubmittedSearchValue(search.searchValue))
-                dispatch(getSelectedStock())
-                setIsReadMore(true)         
-            }, 100)
+
+            dispatch(setSubmittedSearchValue(search.searchValue))
+            dispatch(getSelectedStock())
+            setIsReadMore(true)         
+
 
             setTimeout(() => {
                 dispatch(setSearchLoading())
             }, 2000)
+            dispatch(setSearchValue(''))
         } else if (search.searchValue === '' || search.searchValue === null) {
             return false
         } else {
@@ -143,19 +147,20 @@ const App = () => {
 
 
     const handleSubmitAutocomplete = (e: any, value: any) => {
+        e.preventDefault()
 
-        if (searchLoading === false) {
+        if (searchLoading === false && allStocks.stockTickers.includes(value.symbol)) {
             dispatch(setSearchLoading())
-            setTimeout(() => {
-                dispatch(setSubmittedSearchValue(value.symbol))
-                dispatch(getSelectedStock())
-                setIsReadMore(true)         
-            }, 100)
 
+            dispatch(setSubmittedSearchValue(value.symbol))
+            dispatch(getSelectedStock())
+            setIsReadMore(true)   
+            
             setTimeout(() => {
                 dispatch(setSearchLoading())
             }, 2000)
-        } else if (value.symbol === '' || value.symbol === null) {
+            dispatch(setSearchValue(''))
+        } else if (search.searchValue === '' || search.searchValue === null) {
             return false
         } else {
             alert("Please check to see if you have entered a correct stock symbol, then try again.")
@@ -164,8 +169,8 @@ const App = () => {
 
 
     const handleSearchOnChange = (e: any, value: any) => {
-        console.log('e: ', e)
-        console.log('value: ', value)
+        // console.log('e: ', e)
+        // console.log('value: ', value)
         // dispatch(setSearchValue(value.symbol.toUpperCase()))
         // dispatch(setSubmittedSearchValue(value.symbol.toUpperCase()))
         handleSubmitAutocomplete(e, value)
@@ -192,6 +197,7 @@ const App = () => {
                     }}
                     onClose={() => {
                         dispatch(setTypeaheadOpen())
+                        dispatch(setSearchOptions([]))
                     }}
                     onChange={(e, value) => handleSearchOnChange(e, value)}
                     isOptionEqualToValue={(option: any, value: any) => option.symbol === value.symbol}
@@ -380,7 +386,7 @@ const App = () => {
         }
     }
 
-
+    
     return (
          <div className="App">
             <br />

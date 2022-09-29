@@ -7,9 +7,9 @@ export const getSelectedStock: any = createAsyncThunk(
   async () => {
     try {
     const [stockData, stockHourlyData, companyProfileData] = await Promise.all([
-      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`),
-      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=0fbc3128ecb93418721f51d266327cd4`)
+      fetch(`https://financialmodelingprep.com/api/v3/quote/${store.getState().search.submittedSearchValue}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+      fetch(`https://financialmodelingprep.com/api/v3/historical-chart/1hour/${store.getState().search.submittedSearchValue}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`),
+      fetch(`https://financialmodelingprep.com/api/v3/profile/${store.getState().search.submittedSearchValue}?apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
     ])
 
     const stocks = await stockData.json()
@@ -45,7 +45,7 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
     })
 
     try {
-      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=0fbc3128ecb93418721f51d266327cd4`)
+      const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
       const stockTimePeriod = await stockData.json()
         .then((data) => {
           // console.log(data)
@@ -113,6 +113,7 @@ export const selectedStockSlice = createSlice({
     // },
     [getSelectedStockTimePeriod.fulfilled]: (state, action) => {
       // state.searchLoading = false
+      console.log(action.payload)
       state.selectedStockTimePeriodStats = action.payload
     },
     [getSelectedStockTimePeriod.rejected]: (state) => {
