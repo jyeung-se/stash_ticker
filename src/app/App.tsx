@@ -219,7 +219,7 @@ const App = () => {
                         variant="standard"
                         onChange={e => {
                             // dont fire API if the input is blank or empty
-                            console.log(e.target.value)
+                            // console.log(e.target.value)
                             if (e.target.value !== '' || e.target.value !== null) {
                                 dispatch(setSearchValue(e.target.value.toUpperCase()))
                                 setTimeout(() => {
