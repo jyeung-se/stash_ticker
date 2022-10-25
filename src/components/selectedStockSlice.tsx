@@ -99,7 +99,7 @@ export const selectedStockSlice = createSlice({
     // },
     [getSelectedStock.fulfilled]: (state, action) => {
       // state.searchLoading = false
-      console.log(action.payload)
+      // console.log(action.payload)
       state.selectedStockStats = action.payload[0]
       state.selectedStockHourlyStats = action.payload[1]
       state.selectedStockCompanyInfo = action.payload[2]
@@ -113,7 +113,7 @@ export const selectedStockSlice = createSlice({
     // },
     [getSelectedStockTimePeriod.fulfilled]: (state, action) => {
       // state.searchLoading = false
-      console.log(action.payload)
+      // console.log(action.payload)
       state.selectedStockTimePeriodStats = action.payload
     },
     [getSelectedStockTimePeriod.rejected]: (state) => {

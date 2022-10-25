@@ -11,6 +11,8 @@ import allStocksColumns from '../datatypes/allStocksColumns';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 import LoadingSpinner from "../components/LoadingSpinner";
 
 import AsyncSearchBar from "../components/searchbar/AsyncSearchBar";
@@ -32,6 +34,7 @@ const App = () => {
 
     const [error, setError] = useState(null)
     const [isReadMore, setIsReadMore] = useState(true)
+    const [priceChangeLoading, setPriceChangeLoading] = useState(false)
 
     const dispatch = useDispatch<AppDispatch>()
     const globalState = useSelector((state: any) => state)
@@ -118,7 +121,11 @@ const App = () => {
         // console.log(diff)
         
         dispatch(setTargetDays(e.target.value))
+        setPriceChangeLoading(true)
         dispatch(getSelectedStockTimePeriod())
+        setTimeout(() => {
+            setPriceChangeLoading(false)
+        }, 1300)
 
     }
 
@@ -279,10 +286,18 @@ const App = () => {
 
 
     const chartHeaderPriceStats = () => {
-        if (targetDays === '1D') {
-            return selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
+        if (priceChangeLoading === true) {
+            return (
+                <Box sx={{ width: '800px' }} className="linear-progress" >
+                    <LinearProgress />
+                </Box> 
+            )
         } else {
-            return selectedStock.stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.stockPriceDollarChange.toFixed(2)} ({(selectedStock.stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.stockPriceDollarChange.toFixed(2)} ({(selectedStock.stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
+            if (targetDays === '1D') {
+                return selectedStock.selectedStockStats[0].changesPercentage > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.selectedStockStats[0].change.toFixed(2)} ({selectedStock.selectedStockStats[0].changesPercentage.toFixed(2)}%) Today</h2>
+            } else {
+                return selectedStock.stockPriceDollarChange > 0 ? <h2 className="stock-change-up">$&nbsp;{selectedStock.stockPriceDollarChange.toFixed(2)} ({(selectedStock.stockPricePercentChange * 100).toFixed(2)}%) Today</h2> : <h2 className="stock-change-down">$&nbsp;{selectedStock.stockPriceDollarChange.toFixed(2)} ({(selectedStock.stockPricePercentChange * 100).toFixed(2)}%) Today</h2> 
+            }
         }
     }
 

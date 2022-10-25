@@ -123,6 +123,13 @@ h2 {
   margin-right: -120px;
 }
 
+.linear-progress {
+  display: inline-block;
+  text-align: left;
+  margin-right: -50px;
+  height: 33px;
+}
+
 .header-left {
   color:#000000;
   text-align: left;
