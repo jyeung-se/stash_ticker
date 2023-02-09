@@ -39,5 +39,4 @@ export const allStocksSlice = createSlice({
   }
 })
 
-// export const { getAllStocks } = allStocksSlice.actions
 export default allStocksSlice.reducer

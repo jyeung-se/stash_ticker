@@ -48,14 +48,10 @@ export const getSelectedStockTimePeriod: any = createAsyncThunk(
       const stockData = await fetch(`https://financialmodelingprep.com/api/v3/historical-price-full/${store.getState().search.submittedSearchValue}?timeseries=${numberOfDays}&apikey=82c67b0e070a79fd0ab79b7b1987b6ba`)
       const stockTimePeriod = await stockData.json()
         .then((data) => {
-          // console.log(data)
             return data.historical.reverse()
         })
 
       return stockTimePeriod
-
-        // dispatch(setStockPriceDollarChange(selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close))
-        // dispatch(setStockPriceDollarChange((selectedStock.selectedStockStats[0].price - selectedStock.selectedStockTimePeriodStats[0].close) / selectedStock.selectedStockTimePeriodStats[0].close))
     } catch (error) {
       console.error(error)
     }
@@ -79,27 +75,14 @@ export const selectedStockSlice = createSlice({
     setSearchLoading: (state) => {state.searchLoading = !state.searchLoading},
     setTargetDays: (state, action) => {state.targetDays = action.payload},
     setStockPriceDollarChange: (state: any) => {
-      // if (state.targetDays !== '1D') {
         state.stockPriceDollarChange = state.selectedStockStats[0].price - state.selectedStockTimePeriodStats[0].close
-      // } else {
-      //   state.stockPriceDollarChange = state.stockPriceDollarChange
-      // }
     },
     setStockPricePercentChange: (state: any) => {
-      // if (state.targetDays !== '1D') {
       state.stockPricePercentChange = (state.selectedStockStats[0].price - state.selectedStockTimePeriodStats[0].close) / state.selectedStockTimePeriodStats[0].close
-      // } else {
-      //   state.stockPricePercentChange = state.stockPricePercentChange
-      // }
     },
   },
   extraReducers: {
-    // [getSelectedStock.pending]: (state) => {
-    //   state.searchLoading = true
-    // },
     [getSelectedStock.fulfilled]: (state, action) => {
-      // state.searchLoading = false
-      // console.log(action.payload)
       state.selectedStockStats = action.payload[0]
       state.selectedStockHourlyStats = action.payload[1]
       state.selectedStockCompanyInfo = action.payload[2]
@@ -107,13 +90,7 @@ export const selectedStockSlice = createSlice({
     [getSelectedStock.rejected]: (state) => {
       state.searchLoading = false
     },
-
-    // [getSelectedStockTimePeriod.pending]: (state) => {
-    //   state.searchLoading = true
-    // },
     [getSelectedStockTimePeriod.fulfilled]: (state, action) => {
-      // state.searchLoading = false
-      // console.log(action.payload)
       state.selectedStockTimePeriodStats = action.payload
     },
     [getSelectedStockTimePeriod.rejected]: (state) => {

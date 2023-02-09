@@ -12,7 +12,6 @@ const SearchBar = ({handleSubmit, mostRecentSearch, setMostRecentSearch}: {handl
                     setMostRecentSearch(e.target.value.toLocaleUpperCase())}}
                     placeholder="Search Stock Symbol"
                 />
-                {/* <input type="submit" value="Search" /> */}
             </form>                
         </div>
     )
